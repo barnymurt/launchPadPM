@@ -23,10 +23,10 @@ class TestAgentRegistry:
     
     def test_registry_singleton_pattern(self, clean_registry):
         """Test that AgentRegistry maintains single instance"""
-        agent1 = TestAgent(role="Test Role", name="Test")
+        agent1 = ConcreteTestAgent(role="Test Role", name="Test")
         AgentRegistry.register_agent(agent1)
         
-        agent2 = TestAgent(role="Test Role 2", name="Test2")
+        agent2 = ConcreteTestAgent(role="Test Role 2", name="Test2")
         AgentRegistry.register_agent(agent2)
         
         # Should have 2 agents registered
@@ -42,7 +42,7 @@ class TestAgentRegistry:
     
     def test_register_agent_role_key_normalization(self, clean_registry):
         """Test that role keys are normalized (spaces and slashes)"""
-        agent1 = TestAgent(role="Test Role", name="Test")
+        agent1 = ConcreteTestAgent(role="Test Role", name="Test")
         AgentRegistry.register_agent(agent1)
         
         agent2 = ConcreteTestAgent(role="Data/Metrics Analyst", name="Data")
@@ -83,7 +83,7 @@ class TestAgentRegistry:
     
     def test_set_shared_context(self, clean_registry):
         """Test setting shared context for all agents"""
-        context = AgentContext(product_name="Shared Product", current_sprint=5)
+        context = AgentContext(product_name="Shared Product", sprint_number=5)
         AgentRegistry.set_shared_context(context)
         
         assert AgentRegistry._shared_context == context
