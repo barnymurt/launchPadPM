@@ -58,4 +58,10 @@ try:
 except ImportError:
     pass
 
+try:
+    from .head_of_product_ceo_agent import HeadOfProductCEOAgent
+    _agents.append('HeadOfProductCEOAgent')
+except ImportError:
+    pass
+
 __all__ = _agents

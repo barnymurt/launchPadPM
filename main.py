@@ -58,6 +58,12 @@ try:
 except ImportError:
     PRODUCT_MARKETING_EXECUTIVE_AVAILABLE = False
 
+try:
+    from agents.head_of_product_ceo_agent import HeadOfProductCEOAgent
+    HEAD_OF_PRODUCT_CEO_AVAILABLE = True
+except ImportError:
+    HEAD_OF_PRODUCT_CEO_AVAILABLE = False
+
 
 def initialize_framework(settings: Optional[Settings] = None) -> None:
     """
@@ -133,6 +139,11 @@ def register_available_agents() -> None:
     if PRODUCT_MARKETING_EXECUTIVE_AVAILABLE:
         marketing_agent = ProductMarketingExecutiveAgent()
         AgentRegistry.register_agent(marketing_agent)
+        registered_count += 1
+    
+    if HEAD_OF_PRODUCT_CEO_AVAILABLE:
+        ceo_agent = HeadOfProductCEOAgent()
+        AgentRegistry.register_agent(ceo_agent)
         registered_count += 1
     
     if registered_count > 0:
