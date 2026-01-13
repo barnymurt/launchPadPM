@@ -8,7 +8,7 @@ from agents.base_agent import BaseAgent, AgentContext, AgentResponse
 from abc import ABC
 
 
-class TestAgent(BaseAgent):
+class ConcreteTestAgent(BaseAgent):
     """Test agent for registry tests"""
     
     def get_role_specific_knowledge(self):
@@ -90,7 +90,7 @@ class TestAgentRegistry:
     
     def test_get_shared_context(self, clean_registry):
         """Test getting shared context"""
-        context = AgentContext(product_name="Shared Product", current_sprint=5)
+        context = AgentContext(product_name="Shared Product", sprint_number=5)
         AgentRegistry.set_shared_context(context)
         
         retrieved = AgentRegistry.get_shared_context()
