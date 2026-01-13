@@ -52,6 +52,12 @@ try:
 except ImportError:
     UX_UI_DESIGNER_AVAILABLE = False
 
+try:
+    from agents.product_marketing_executive_agent import ProductMarketingExecutiveAgent
+    PRODUCT_MARKETING_EXECUTIVE_AVAILABLE = True
+except ImportError:
+    PRODUCT_MARKETING_EXECUTIVE_AVAILABLE = False
+
 
 def initialize_framework(settings: Optional[Settings] = None) -> None:
     """
@@ -122,6 +128,11 @@ def register_available_agents() -> None:
     if UX_UI_DESIGNER_AVAILABLE:
         ux_agent = UXUIDesignerAgent()
         AgentRegistry.register_agent(ux_agent)
+        registered_count += 1
+    
+    if PRODUCT_MARKETING_EXECUTIVE_AVAILABLE:
+        marketing_agent = ProductMarketingExecutiveAgent()
+        AgentRegistry.register_agent(marketing_agent)
         registered_count += 1
     
     if registered_count > 0:
