@@ -165,8 +165,10 @@ class ScrumMasterAgent(BaseAgent):
         """
         query_lower = query.lower()
         
-        # Route to appropriate handler
-        if any(word in query_lower for word in ["impediment", "blocker", "blocking", "stuck", "can't"]):
+        # Route to appropriate handler (order matters - more specific first)
+        if any(word in query_lower for word in ["governance", "kickoff", "working agreement", "team charter", "rice"]):
+            return self._handle_governance_query(query, **kwargs)
+        elif any(word in query_lower for word in ["impediment", "blocker", "blocking", "stuck", "can't"]):
             return self._handle_impediment_query(query, **kwargs)
         elif any(word in query_lower for word in ["sprint planning", "planning", "sprint goal"]):
             return self._handle_sprint_planning_query(query, **kwargs)
@@ -192,7 +194,7 @@ class ScrumMasterAgent(BaseAgent):
     def _handle_impediment_query(self, query: str, **kwargs) -> AgentResponse:
         """Handle queries about impediments"""
         recommendations = [
-            "Follow the impediment removal process: Identify → Assess urgency → Determine ownership → Take action → Follow up",
+            "Follow the impediment removal process: Identify -> Assess urgency -> Determine ownership -> Take action -> Follow up",
             "Assess if the impediment is blocking the Sprint Goal or reducing team effectiveness",
             "Determine if the team can resolve it or if it requires organizational change",
             "If organizational, take action to remove it. If team-level, coach them to resolve it",
@@ -533,23 +535,23 @@ class ScrumMasterAgent(BaseAgent):
         response_text = (
             "Team effectiveness is my primary accountability. Let me help you assess and improve it.\n\n"
             "**Healthy Scrum Team Signs:**\n"
-            "✅ Team consistently meets Sprint Goals\n"
-            "✅ Definition of Done is clear and followed\n"
-            "✅ All Scrum events happen within timebox and are productive\n"
-            "✅ Team members openly discuss challenges and ask for help\n"
-            "✅ Product Owner and Developers collaborate effectively\n"
-            "✅ Retrospective action items are implemented\n"
-            "✅ Impediments are surfaced quickly and resolved\n"
-            "✅ Team's velocity is predictable and sustainable\n\n"
+            "[OK] Team consistently meets Sprint Goals\n"
+            "[OK] Definition of Done is clear and followed\n"
+            "[OK] All Scrum events happen within timebox and are productive\n"
+            "[OK] Team members openly discuss challenges and ask for help\n"
+            "[OK] Product Owner and Developers collaborate effectively\n"
+            "[OK] Retrospective action items are implemented\n"
+            "[OK] Impediments are surfaced quickly and resolved\n"
+            "[OK] Team's velocity is predictable and sustainable\n\n"
             "**Warning Signs:**\n"
-            "⚠️ Sprint Goals frequently missed or changed\n"
-            "⚠️ Scrum events are skipped, rushed, or ineffective\n"
-            "⚠️ Tension between Product Owner and Developers\n"
-            "⚠️ Team waits for instructions instead of self-organizing\n"
-            "⚠️ Same impediments persist Sprint after Sprint\n"
-            "⚠️ Low psychological safety (people afraid to speak up)\n"
-            "⚠️ Overtime becoming the norm\n"
-            "⚠️ Quality declining or Definition of Done ignored\n\n"
+            "[WARNING] Sprint Goals frequently missed or changed\n"
+            "[WARNING] Scrum events are skipped, rushed, or ineffective\n"
+            "[WARNING] Tension between Product Owner and Developers\n"
+            "[WARNING] Team waits for instructions instead of self-organizing\n"
+            "[WARNING] Same impediments persist Sprint after Sprint\n"
+            "[WARNING] Low psychological safety (people afraid to speak up)\n"
+            "[WARNING] Overtime becoming the norm\n"
+            "[WARNING] Quality declining or Definition of Done ignored\n\n"
             "**My Approach:**\n"
             "- Coach self-management - help team solve their own problems\n"
             "- Address conflicts and dysfunction, don't avoid them\n"
@@ -727,6 +729,268 @@ class ScrumMasterAgent(BaseAgent):
             response_text=response_text,
             recommendations=recommendations,
             questions=questions
+        )
+    
+    def _handle_governance_query(self, query: str, **kwargs) -> AgentResponse:
+        """Handle queries about team governance, kickoff, and working agreements"""
+        query_lower = query.lower()
+        
+        # Check if this is a governance kickoff request
+        if any(word in query_lower for word in ["kickoff", "governance kickoff", "establish governance", "team kickoff"]):
+            return self._handle_governance_kickoff(query, **kwargs)
+        elif any(word in query_lower for word in ["team charter", "working agreement", "team values"]):
+            return self._handle_team_charter_query(query, **kwargs)
+        elif any(word in query_lower for word in ["rice", "prioritization", "prioritize"]):
+            return self._handle_rice_prioritization_query(query, **kwargs)
+        elif any(word in query_lower for word in ["definition of done", "dod"]):
+            return self._handle_definition_of_done_query(query, **kwargs)
+        else:
+            return self._handle_general_governance_query(query, **kwargs)
+    
+    def _handle_governance_kickoff(self, query: str, **kwargs) -> AgentResponse:
+        """Facilitate a governance kickoff meeting"""
+        response_text = (
+            "Welcome to our Team Governance Kickoff! I'm here to facilitate our agreement on "
+            "how we'll work together as a self-contained product agency.\n\n"
+            "**Purpose:** Establish governance for our Scrum team operating across multiple "
+            "projects, requiring the ability to context-switch between repositories and problem domains.\n\n"
+            "**Agenda (2-3 hours):**\n\n"
+            "1. **Team Working Agreements** (15 min)\n"
+            "   - Team Charter: Purpose, values, communication, decision-making\n"
+            "   - Psychological safety commitments\n"
+            "   - Conflict resolution approach\n\n"
+            "2. **Definition of Done** (20 min)\n"
+            "   - Universal DoD checklist (all projects)\n"
+            "   - Project-specific additions\n"
+            "   - Verification process\n\n"
+            "3. **Prioritization Framework - RICE** (15 min)\n"
+            "   - Formula: (Reach x Impact x Confidence) / Effort\n"
+            "   - Scoring guidelines\n"
+            "   - Process for using RICE\n\n"
+            "4. **Testing & Quality Processes** (15 min)\n"
+            "   - Test pyramid (70% unit, 20% integration, 10% E2E)\n"
+            "   - Bug severity definitions\n"
+            "   - Quality gates\n\n"
+            "5. **Documentation Standards** (15 min)\n"
+            "   - Required docs: README, PROJECT_BRIEF, ARCHITECTURE, ADRs, CHANGELOG\n"
+            "   - Update triggers\n"
+            "   - Storage locations\n\n"
+            "6. **Ticketing & Workflow Process** (15 min)\n"
+            "   - Workflow states: Backlog -> Ready -> In Progress -> In Review -> In Testing -> Done -> Released\n"
+            "   - WIP limits\n"
+            "   - Ticket templates\n\n"
+            "7. **Review Cadences** (10 min)\n"
+            "   - Code reviews (24-hour SLA)\n"
+            "   - Design reviews\n"
+            "   - Sprint Review\n"
+            "   - Retrospective formats\n\n"
+            "8. **Retrospective Practices** (10 min)\n"
+            "   - Formats (Start-Stop-Continue, 4Ls, Sailboat)\n"
+            "   - Action item framework\n"
+            "   - Safe space creation\n\n"
+            "9. **Continuous Learning** (10 min)\n"
+            "   - Individual role learning (2 hours/Sprint)\n"
+            "   - Team knowledge sharing (Learning Lunch)\n"
+            "   - Cross-role shadowing\n\n"
+            "10. **Context Switching Protocols** (15 min)\n"
+            "    - Project onboarding checklist (30-45 min)\n"
+            "    - Documentation requirements\n"
+            "    - Best practices for multi-project work\n\n"
+            "**My Role as Facilitator:**\n"
+            "- Guide discussion through each area\n"
+            "- Ensure all voices are heard\n"
+            "- Summarize agreements after each section\n"
+            "- Check for consensus before moving forward\n"
+            "- Document all decisions\n\n"
+            "**Let's Begin:**\n"
+            "I'll start with Team Working Agreements. This establishes how we'll work together, "
+            "communicate, make decisions, and resolve conflicts.\n\n"
+            "**Team Charter Components:**\n"
+            "- Our Purpose: Why we exist as a team\n"
+            "- Core Values: What we stand for\n"
+            "- Communication: How we'll communicate\n"
+            "- Decision Making: Who decides what\n"
+            "- Conflict Resolution: How we handle disagreements\n"
+            "- Psychological Safety: Creating safe space for all\n\n"
+            "What would you like to discuss first? Or shall I guide you through the Team Charter template?"
+        )
+        
+        recommendations = [
+            "Work through each governance area systematically",
+            "Summarize agreements after each section",
+            "Check for consensus before moving forward",
+            "Document all decisions",
+            "Create actionable agreements, not vague statements",
+            "Ensure all team members participate",
+            "Focus on what will help the team be effective"
+        ]
+        
+        questions = [
+            "What's our team purpose?",
+            "What core values do we share?",
+            "How will we communicate?",
+            "How will we make decisions?",
+            "How will we resolve conflicts?",
+            "What does psychological safety mean to us?",
+            "What working agreements will help us be effective?"
+        ]
+        
+        return self.format_response(
+            response_text=response_text,
+            recommendations=recommendations,
+            questions=questions,
+            requires_collaboration=True,
+            collaborating_roles=["product_owner", "development_engineer", "qa_engineer", "business_analyst", "data_metrics_analyst", "ux_ui_designer"]
+        )
+    
+    def _handle_team_charter_query(self, query: str, **kwargs) -> AgentResponse:
+        """Handle queries about Team Charter and working agreements"""
+        response_text = (
+            "The Team Charter establishes our working agreements and shared values. "
+            "Here's what it should include:\n\n"
+            "**Team Charter Components:**\n\n"
+            "**Our Purpose:**\n"
+            "We are a self-contained product agency that delivers high-quality products "
+            "across multiple domains through empirical Scrum practices, continuous "
+            "discovery, and cross-functional collaboration.\n\n"
+            "**Core Values:**\n"
+            "1. Evidence Over Assumptions - Base decisions on data and user research\n"
+            "2. Quality Without Compromise - Definition of Done is sacred\n"
+            "3. Transparent Collaboration - Make work visible, share openly\n"
+            "4. Continuous Learning - Improve ourselves and our practices\n"
+            "5. User-Centered - Always advocate for end users\n\n"
+            "**Communication:**\n"
+            "- Response Time: 4 hours during work hours\n"
+            "- Async First: Default to async (tickets, docs, Slack)\n"
+            "- Sync When Needed: Meetings for complex discussions\n"
+            "- Documentation: All decisions documented\n"
+            "- Transparency: Share work-in-progress early\n\n"
+            "**Decision Making:**\n"
+            "- Product Decisions: Product Owner (after input)\n"
+            "- Technical Decisions: Developers decide collaboratively\n"
+            "- Process Decisions: Team consensus (SM facilitates)\n"
+            "- Escalation: PO breaks ties if no consensus\n\n"
+            "**Conflict Resolution:**\n"
+            "1. Address directly with person (assume good intent)\n"
+            "2. If unresolved, involve Scrum Master\n"
+            "3. Focus on behaviors/outcomes, not personalities\n"
+            "4. Commit to agreed resolution\n\n"
+            "**Psychological Safety:**\n"
+            "- Safe to fail: Experiments may fail\n"
+            "- Safe to speak: All voices heard\n"
+            "- Safe to challenge: Ideas can be challenged\n"
+            "- Safe to ask: No question is stupid\n"
+            "- Safe to say no: Honesty encouraged\n\n"
+            "Would you like to customize any of these for your team?"
+        )
+        
+        return self.format_response(
+            response_text=response_text,
+            recommendations=[
+                "Customize the Team Charter to fit your team's specific needs",
+                "Ensure all team members agree to the charter",
+                "Make it visible (print and post, or in wiki)",
+                "Review and update quarterly",
+                "Use it as a reference for decision-making"
+            ]
+        )
+    
+    def _handle_rice_prioritization_query(self, query: str, **kwargs) -> AgentResponse:
+        """Handle queries about RICE prioritization framework"""
+        response_text = (
+            "RICE is a prioritization framework that helps us make evidence-based decisions. "
+            "Here's how it works:\n\n"
+            "**RICE Formula:** (Reach x Impact x Confidence) / Effort\n\n"
+            "**1. REACH (1-10):** How many users impacted per quarter?\n"
+            "- 10 = All users (>90%)\n"
+            "- 7 = Most users (50-90%)\n"
+            "- 5 = Many users (25-50%)\n"
+            "- 3 = Some users (10-25%)\n"
+            "- 1 = Few users (<10%)\n"
+            "**Who Scores:** Product Owner + Data Analyst\n\n"
+            "**2. IMPACT (1-10):** How much impact per user?\n"
+            "- 10 = Massive (3x improvement, critical pain)\n"
+            "- 7 = High (2x improvement, major pain)\n"
+            "- 5 = Medium (1.5x improvement, nice)\n"
+            "- 3 = Low (minor improvement)\n"
+            "- 1 = Minimal (cosmetic)\n"
+            "**Who Scores:** Product Owner + UX Designer + Data Analyst\n\n"
+            "**3. CONFIDENCE (50/80/100%):** How confident are we?\n"
+            "- 100% = High (validated with research)\n"
+            "- 80% = Medium (some evidence)\n"
+            "- 50% = Low (hypothesis/assumption)\n"
+            "**Who Scores:** Product Owner (based on evidence)\n\n"
+            "**4. EFFORT (person-weeks):** Total team effort\n"
+            "**Includes:** Design, Development, Testing, Documentation, Analytics, Marketing\n"
+            "**Who Scores:** All Developers (sum estimates)\n\n"
+            "**Example:**\n"
+            "Feature: Auto-save functionality\n"
+            "- Reach: 10 (all users)\n"
+            "- Impact: 10 (prevents data loss)\n"
+            "- Confidence: 100% (validated)\n"
+            "- Effort: 1.5 weeks\n"
+            "**RICE Score = (10 x 10 x 1.0) / 1.5 = 66.7**\n\n"
+            "**Prioritization Process:**\n"
+            "1. Score new items when added to backlog\n"
+            "2. Order backlog by RICE score (highest first)\n"
+            "3. Re-prioritize weekly based on new data\n"
+            "4. PO adjusts for strategy, dependencies, deadlines\n"
+            "5. Document rationale for deviations from RICE\n\n"
+            "**Special Cases:**\n"
+            "- Technical Debt: Reframe as enabler for user value\n"
+            "- Bugs: Use Reach (users affected), Impact (severity), Confidence (100%), Effort (time to fix)\n"
+            "- Critical bugs: Immediate fix regardless of RICE\n"
+            "- Experiments: Value of learning, likelihood of learning\n\n"
+            "Would you like help scoring a specific item?"
+        )
+        
+        return self.format_response(
+            response_text=response_text,
+            recommendations=[
+                "Use RICE for all Product Backlog items",
+                "Re-score items weekly based on new data",
+                "Document rationale for deviations from RICE",
+                "Calibrate quarterly: Did Reach/Impact/Effort match actual?",
+                "Work with Product Owner and Data Analyst on scoring"
+            ],
+            requires_collaboration=True,
+            collaborating_roles=["product_owner", "data_metrics_analyst"]
+        )
+    
+    def _handle_general_governance_query(self, query: str, **kwargs) -> AgentResponse:
+        """Handle general governance queries"""
+        response_text = (
+            f"Team governance establishes how we work together effectively. Let me address: '{query}'\n\n"
+            f"**Governance Areas:**\n"
+            f"- Team Working Agreements (Team Charter)\n"
+            f"- Definition of Done (Universal + project-specific)\n"
+            f"- Prioritization Framework (RICE)\n"
+            f"- Testing & Quality Processes\n"
+            f"- Documentation Standards\n"
+            f"- Ticketing & Workflow Process\n"
+            f"- Review Cadences\n"
+            f"- Retrospective Practices\n"
+            f"- Continuous Learning & Role Improvement\n"
+            f"- Context Switching Protocols\n\n"
+            f"**My Role:**\n"
+            f"- Facilitate governance kickoff meetings\n"
+            f"- Help team establish working agreements\n"
+            f"- Ensure processes are followed\n"
+            f"- Continuously improve governance based on team feedback\n\n"
+            f"Would you like to:\n"
+            f"- Start a governance kickoff?\n"
+            f"- Review a specific governance area?\n"
+            f"- Update existing governance agreements?"
+        )
+        
+        return self.format_response(
+            response_text=response_text,
+            recommendations=[
+                "Start with a governance kickoff to establish all agreements",
+                "Review governance quarterly and adjust as needed",
+                "Make governance visible and accessible to all team members",
+                "Use governance as a guide, not rigid rules"
+            ]
         )
     
     def _handle_general_query(self, query: str, **kwargs) -> AgentResponse:
