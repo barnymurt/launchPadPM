@@ -28,6 +28,18 @@ try:
 except ImportError:
     DEVELOPMENT_ENGINEER_AVAILABLE = False
 
+try:
+    from agents.qa_engineer_agent import QAEngineerAgent
+    QA_ENGINEER_AVAILABLE = True
+except ImportError:
+    QA_ENGINEER_AVAILABLE = False
+
+try:
+    from agents.qa_engineer_agent import QAEngineerAgent
+    QA_ENGINEER_AVAILABLE = True
+except ImportError:
+    QA_ENGINEER_AVAILABLE = False
+
 
 def initialize_framework(settings: Optional[Settings] = None) -> None:
     """
@@ -78,6 +90,11 @@ def register_available_agents() -> None:
     if DEVELOPMENT_ENGINEER_AVAILABLE:
         dev_agent = DevelopmentEngineerAgent()
         AgentRegistry.register_agent(dev_agent)
+        registered_count += 1
+    
+    if QA_ENGINEER_AVAILABLE:
+        qa_agent = QAEngineerAgent()
+        AgentRegistry.register_agent(qa_agent)
         registered_count += 1
     
     if registered_count > 0:

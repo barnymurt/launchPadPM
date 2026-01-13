@@ -28,4 +28,10 @@ try:
 except ImportError:
     pass
 
+try:
+    from .qa_engineer_agent import QAEngineerAgent
+    _agents.append('QAEngineerAgent')
+except ImportError:
+    pass
+
 __all__ = _agents
