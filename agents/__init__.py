@@ -34,4 +34,10 @@ try:
 except ImportError:
     pass
 
+try:
+    from .business_analyst_agent import BusinessAnalystAgent
+    _agents.append('BusinessAnalystAgent')
+except ImportError:
+    pass
+
 __all__ = _agents

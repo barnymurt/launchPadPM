@@ -35,10 +35,10 @@ except ImportError:
     QA_ENGINEER_AVAILABLE = False
 
 try:
-    from agents.qa_engineer_agent import QAEngineerAgent
-    QA_ENGINEER_AVAILABLE = True
+    from agents.business_analyst_agent import BusinessAnalystAgent
+    BUSINESS_ANALYST_AVAILABLE = True
 except ImportError:
-    QA_ENGINEER_AVAILABLE = False
+    BUSINESS_ANALYST_AVAILABLE = False
 
 
 def initialize_framework(settings: Optional[Settings] = None) -> None:
@@ -97,6 +97,11 @@ def register_available_agents() -> None:
         AgentRegistry.register_agent(qa_agent)
         registered_count += 1
     
+    if BUSINESS_ANALYST_AVAILABLE:
+        ba_agent = BusinessAnalystAgent()
+        AgentRegistry.register_agent(ba_agent)
+        registered_count += 1
+    
     if registered_count > 0:
         print(f"[OK] Registered {registered_count} agent(s)")
 
@@ -133,7 +138,7 @@ def query_agent(role: str, query: str) -> None:
         print(f"Available agents: {', '.join(AgentRegistry.list_roles())}")
         return
     
-        print(f"\n[AGENT] Querying {agent.role}...")
+    print(f"\n[AGENT] Querying {agent.role}...")
     print(f"Query: {query}\n")
     print("-" * 50)
     
