@@ -25,7 +25,8 @@ class AgentRegistry:
     @classmethod
     def register_agent(cls, agent: BaseAgent) -> None:
         """Register an agent instance"""
-        cls._agents[agent.role.lower().replace(" ", "_")] = agent
+        role_key = agent.role.lower().replace(" ", "_").replace("/", "_")
+        cls._agents[role_key] = agent
         if cls._context:
             agent.context = cls._context
     
@@ -41,13 +42,14 @@ class AgentRegistry:
             BaseAgent instance or None if not found
         """
         # Try exact match first
-        role_key = role.lower().replace(" ", "_")
+        role_key = role.lower().replace(" ", "_").replace("/", "_")
         if role_key in cls._agents:
             return cls._agents[role_key]
         
         # Try case-insensitive search
         for key, agent in cls._agents.items():
-            if key.lower() == role.lower().replace(" ", "_"):
+            normalized_role = role.lower().replace(" ", "_").replace("/", "_")
+            if key.lower() == normalized_role:
                 return agent
         
         return None

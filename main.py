@@ -40,6 +40,12 @@ try:
 except ImportError:
     BUSINESS_ANALYST_AVAILABLE = False
 
+try:
+    from agents.data_metrics_analyst_agent import DataMetricsAnalystAgent
+    DATA_METRICS_ANALYST_AVAILABLE = True
+except ImportError:
+    DATA_METRICS_ANALYST_AVAILABLE = False
+
 
 def initialize_framework(settings: Optional[Settings] = None) -> None:
     """
@@ -100,6 +106,11 @@ def register_available_agents() -> None:
     if BUSINESS_ANALYST_AVAILABLE:
         ba_agent = BusinessAnalystAgent()
         AgentRegistry.register_agent(ba_agent)
+        registered_count += 1
+    
+    if DATA_METRICS_ANALYST_AVAILABLE:
+        data_agent = DataMetricsAnalystAgent()
+        AgentRegistry.register_agent(data_agent)
         registered_count += 1
     
     if registered_count > 0:

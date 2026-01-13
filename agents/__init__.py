@@ -40,4 +40,10 @@ try:
 except ImportError:
     pass
 
+try:
+    from .data_metrics_analyst_agent import DataMetricsAnalystAgent
+    _agents.append('DataMetricsAnalystAgent')
+except ImportError:
+    pass
+
 __all__ = _agents
