@@ -22,4 +22,10 @@ try:
 except ImportError:
     pass
 
+try:
+    from .development_engineer_agent import DevelopmentEngineerAgent
+    _agents.append('DevelopmentEngineerAgent')
+except ImportError:
+    pass
+
 __all__ = _agents

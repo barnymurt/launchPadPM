@@ -22,6 +22,12 @@ try:
 except ImportError:
     SCRUM_MASTER_AVAILABLE = False
 
+try:
+    from agents.development_engineer_agent import DevelopmentEngineerAgent
+    DEVELOPMENT_ENGINEER_AVAILABLE = True
+except ImportError:
+    DEVELOPMENT_ENGINEER_AVAILABLE = False
+
 
 def initialize_framework(settings: Optional[Settings] = None) -> None:
     """
@@ -50,9 +56,9 @@ def initialize_framework(settings: Optional[Settings] = None) -> None:
     # Register available agents
     register_available_agents()
     
-    print(f"✓ Framework initialized for product: {settings.product_name}")
-    print(f"✓ Collaboration enabled: {settings.enable_collaboration}")
-    print(f"✓ Continuous Discovery enabled: {settings.enable_continuous_discovery}")
+    print(f"[OK] Framework initialized for product: {settings.product_name}")
+    print(f"[OK] Collaboration enabled: {settings.enable_collaboration}")
+    print(f"[OK] Continuous Discovery enabled: {settings.enable_continuous_discovery}")
 
 
 def register_available_agents() -> None:
@@ -69,8 +75,13 @@ def register_available_agents() -> None:
         AgentRegistry.register_agent(sm_agent)
         registered_count += 1
     
+    if DEVELOPMENT_ENGINEER_AVAILABLE:
+        dev_agent = DevelopmentEngineerAgent()
+        AgentRegistry.register_agent(dev_agent)
+        registered_count += 1
+    
     if registered_count > 0:
-        print(f"✓ Registered {registered_count} agent(s)")
+        print(f"[OK] Registered {registered_count} agent(s)")
 
 
 def list_agents() -> None:
@@ -101,11 +112,11 @@ def query_agent(role: str, query: str) -> None:
     """
     agent = AgentRegistry.get_agent(role)
     if not agent:
-        print(f"❌ Agent '{role}' not found.")
+        print(f"[ERROR] Agent '{role}' not found.")
         print(f"Available agents: {', '.join(AgentRegistry.list_roles())}")
         return
     
-    print(f"\n🤖 Querying {agent.role}...")
+        print(f"\n[AGENT] Querying {agent.role}...")
     print(f"Query: {query}\n")
     print("-" * 50)
     
@@ -126,13 +137,13 @@ def query_agent(role: str, query: str) -> None:
             print()
         
         if response.requires_collaboration:
-            print("⚠️  This requires collaboration with:")
+            print("[COLLABORATION] This requires collaboration with:")
             for role in response.collaborating_roles:
                 print(f"  • {role}")
             print()
     
     except Exception as e:
-        print(f"❌ Error processing query: {e}")
+        print(f"[ERROR] Error processing query: {e}")
 
 
 def main():
@@ -152,7 +163,7 @@ def main():
     
     if command == "init":
         initialize_framework()
-        print("\n✓ Framework ready!")
+        print("\n[OK] Framework ready!")
         print("\nNext steps:")
         print("  1. Create agent implementations (see agents/example_agent.py)")
         print("  2. Register agents using AgentRegistry.register_agent()")
