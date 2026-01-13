@@ -16,6 +16,12 @@ try:
 except ImportError:
     PRODUCT_OWNER_AVAILABLE = False
 
+try:
+    from agents.scrum_master_agent import ScrumMasterAgent
+    SCRUM_MASTER_AVAILABLE = True
+except ImportError:
+    SCRUM_MASTER_AVAILABLE = False
+
 
 def initialize_framework(settings: Optional[Settings] = None) -> None:
     """
@@ -56,6 +62,11 @@ def register_available_agents() -> None:
     if PRODUCT_OWNER_AVAILABLE:
         po_agent = ProductOwnerAgent()
         AgentRegistry.register_agent(po_agent)
+        registered_count += 1
+    
+    if SCRUM_MASTER_AVAILABLE:
+        sm_agent = ScrumMasterAgent()
+        AgentRegistry.register_agent(sm_agent)
         registered_count += 1
     
     if registered_count > 0:
