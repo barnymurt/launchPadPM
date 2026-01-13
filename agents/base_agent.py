@@ -47,11 +47,27 @@ class BaseAgent(ABC):
         Args:
             role: The Scrum role (e.g., "Product Owner", "Scrum Master")
             name: Human-readable name for the agent
-            context: Shared context across all agents
+            context: Shared context across all agents (creates default if None)
+            
+        Raises:
+            ValueError: If role or name is empty or None
+            TypeError: If context is provided but not an AgentContext instance
         """
-        self.role = role
-        self.name = name
+        # Input validation
+        if not role or not role.strip():
+            raise ValueError("role cannot be empty or None")
+        if not name or not name.strip():
+            raise ValueError("name cannot be empty or None")
+        if context is not None and not isinstance(context, AgentContext):
+            raise TypeError("context must be an AgentContext instance or None")
+        
+        # Initialize agent properties
+        self.role = role.strip()
+        self.name = name.strip()
         self.context = context or AgentContext()
+        
+        # Load knowledge bases (these are called during initialization)
+        # Note: get_role_specific_knowledge() is abstract and must be implemented by subclasses
         self.scrum_knowledge = self._load_scrum_knowledge()
         self.continuous_discovery_knowledge = self._load_continuous_discovery_knowledge()
         self.role_knowledge = self.get_role_specific_knowledge()
@@ -108,19 +124,62 @@ class BaseAgent(ABC):
         """
         return []
     
-    def format_response(self, response_text: str, recommendations: List[str] = None,
-                       questions: List[str] = None, requires_collaboration: bool = False,
-                       collaborating_roles: List[str] = None,
-                       evidence: Dict[str, Any] = None) -> AgentResponse:
-        """Helper method to format agent responses consistently"""
+    def format_response(
+        self,
+        response_text: str,
+        recommendations: List[str] = None,
+        questions: List[str] = None,
+        requires_collaboration: bool = False,
+        collaborating_roles: List[str] = None,
+        evidence: Dict[str, Any] = None
+    ) -> AgentResponse:
+        """
+        Format a standardized response from the agent.
+        
+        This method creates a consistent AgentResponse object with all standard fields.
+        All agents should use this method to ensure consistent response structure.
+        
+        Args:
+            response_text: The main response text from the agent
+            recommendations: Optional list of recommendations
+            questions: Optional list of questions to consider
+            requires_collaboration: Whether this response requires collaboration with other roles
+            collaborating_roles: List of role names that should be consulted
+            evidence: Optional dictionary of evidence supporting the response
+            
+        Returns:
+            AgentResponse object with standardized structure
+            
+        Raises:
+            ValueError: If response_text is empty or None
+        """
+        # Input validation - ensure response text is provided
+        if not response_text or not response_text.strip():
+            raise ValueError("response_text cannot be empty or None")
+        
+        # Normalize inputs - ensure lists are not None
+        if recommendations is None:
+            recommendations = []
+        if questions is None:
+            questions = []
+        if collaborating_roles is None:
+            collaborating_roles = []
+        if evidence is None:
+            evidence = {}
+        
+        # Validate that collaborating_roles is a list of strings
+        if not isinstance(collaborating_roles, list):
+            raise TypeError("collaborating_roles must be a list")
+        
+        # Create and return standardized response
         return AgentResponse(
             role=self.role,
-            response=response_text,
-            recommendations=recommendations or [],
-            questions=questions or [],
+            response=response_text.strip(),
+            recommendations=recommendations,
+            questions=questions,
             requires_collaboration=requires_collaboration,
-            collaborating_roles=collaborating_roles or [],
-            evidence=evidence or {}
+            collaborating_roles=collaborating_roles,
+            evidence=evidence
         )
     
     def get_cross_functional_awareness(self) -> Dict[str, str]:
