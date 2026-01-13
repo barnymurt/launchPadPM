@@ -46,4 +46,10 @@ try:
 except ImportError:
     pass
 
+try:
+    from .ux_ui_designer_agent import UXUIDesignerAgent
+    _agents.append('UXUIDesignerAgent')
+except ImportError:
+    pass
+
 __all__ = _agents

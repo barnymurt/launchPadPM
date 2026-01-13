@@ -46,6 +46,12 @@ try:
 except ImportError:
     DATA_METRICS_ANALYST_AVAILABLE = False
 
+try:
+    from agents.ux_ui_designer_agent import UXUIDesignerAgent
+    UX_UI_DESIGNER_AVAILABLE = True
+except ImportError:
+    UX_UI_DESIGNER_AVAILABLE = False
+
 
 def initialize_framework(settings: Optional[Settings] = None) -> None:
     """
@@ -111,6 +117,11 @@ def register_available_agents() -> None:
     if DATA_METRICS_ANALYST_AVAILABLE:
         data_agent = DataMetricsAnalystAgent()
         AgentRegistry.register_agent(data_agent)
+        registered_count += 1
+    
+    if UX_UI_DESIGNER_AVAILABLE:
+        ux_agent = UXUIDesignerAgent()
+        AgentRegistry.register_agent(ux_agent)
         registered_count += 1
     
     if registered_count > 0:
