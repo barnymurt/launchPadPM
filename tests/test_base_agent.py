@@ -30,7 +30,7 @@ class TestBaseAgent:
     
     def test_base_agent_initialization(self, agent_context):
         """Test BaseAgent initialization with context"""
-        agent = TestAgent(role="Test Role", name="Test", context=agent_context)
+        agent = ConcreteTestAgent(role="Test Role", name="Test", context=agent_context)
         assert agent.role == "Test Role"
         assert agent.name == "Test"
         assert agent.context == agent_context
