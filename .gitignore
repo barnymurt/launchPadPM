@@ -53,6 +53,9 @@ Thumbs.db
 .coverage
 htmlcov/
 
+# Notion configuration (may contain sensitive IDs)
+notion_config.json
+
 # Temporary files
 *.tmp
 *.temp

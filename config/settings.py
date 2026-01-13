@@ -38,6 +38,11 @@ class Settings:
     llm_provider: str = "openai"  # openai, anthropic, etc.
     api_key: Optional[str] = None
     
+    # Notion integration settings
+    notion_enabled: bool = False
+    notion_api_token: Optional[str] = None
+    notion_team_space_id: Optional[str] = None
+    
     # Paths
     agent_prompts_dir: str = "agent_prompts"
     knowledge_base_dir: str = "knowledge_base"
@@ -90,7 +95,10 @@ class Settings:
             "enable_collaboration": self.enable_collaboration,
             "enable_continuous_discovery": self.enable_continuous_discovery,
             "enable_opportunity_solution_trees": self.enable_opportunity_solution_trees,
-            "llm_provider": self.llm_provider
+            "llm_provider": self.llm_provider,
+            "notion_enabled": self.notion_enabled,
+            "notion_api_token": self.notion_api_token,
+            "notion_team_space_id": self.notion_team_space_id
         }
     
     def save_to_file(self, config_path: str = "config.json") -> None:
