@@ -70,8 +70,8 @@ class TestAgentRegistry:
     
     def test_list_roles(self, clean_registry):
         """Test listing all registered roles"""
-        agent1 = TestAgent(role="Role One", name="One")
-        agent2 = TestAgent(role="Role Two", name="Two")
+        agent1 = ConcreteTestAgent(role="Role One", name="One")
+        agent2 = ConcreteTestAgent(role="Role Two", name="Two")
         
         AgentRegistry.register_agent(agent1)
         AgentRegistry.register_agent(agent2)
