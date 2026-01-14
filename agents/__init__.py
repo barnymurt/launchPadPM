@@ -70,4 +70,10 @@ try:
 except ImportError:
     pass
 
+try:
+    from .frontend_developer_agent import FrontendDeveloperAgent
+    _agents.append('FrontendDeveloperAgent')
+except ImportError:
+    pass
+
 __all__ = _agents
