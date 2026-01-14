@@ -76,4 +76,10 @@ try:
 except ImportError:
     pass
 
+try:
+    from .user_researcher_agent import UserResearcherAgent
+    _agents.append('UserResearcherAgent')
+except ImportError:
+    pass
+
 __all__ = _agents

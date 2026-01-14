@@ -27,6 +27,7 @@ This project implements specialized AI agents based on Scrum methodology, Contin
 8. ⏳ **Product Marketing Executive** - Go-to-market, positioning, launch planning
 9. ✅ **DevOps Engineer** - Infrastructure, CI/CD pipelines, environment management, monitoring, security
 10. ✅ **Frontend Developer** - User interfaces, frontend architecture, design systems, performance, accessibility
+11. ✅ **User Researcher** - Empirical investigation, qualitative/quantitative research, cultural intelligence, insight generation
 
 ## 🚀 Quick Start
 
