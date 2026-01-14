@@ -11,7 +11,7 @@ from typing import List, Optional
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from integrations.notion_integration import NotionIntegration
+from integrations.notion_integration import NotionIntegration, extract_page_id_from_url
 
 
 def find_documentation_files(root_dir: Path) -> List[tuple]:
@@ -65,8 +65,8 @@ def sync_documentation(
         Created page ID if successful, None otherwise
     """
     try:
-        # Read file content
-        with open(file_path, 'r', encoding='utf-8') as f:
+        # Read file content with proper UTF-8 encoding and error handling
+        with open(file_path, 'r', encoding='utf-8', errors='replace') as f:
             content = f.read()
         
         # Extract title from first line or filename
@@ -84,7 +84,8 @@ def sync_documentation(
         return page_id
     
     except Exception as e:
-        print(f"[ERROR] Failed to sync {file_path}: {e}")
+        error_msg = str(e).encode('ascii', errors='replace').decode('ascii')
+        print(f"[ERROR] Failed to sync {file_path.name}: {error_msg}")
         return None
 
 
@@ -118,11 +119,19 @@ def main():
     # Get team space ID if not in config
     if not integration.team_space_id:
         team_space_id = os.getenv("NOTION_TEAM_SPACE_ID")
+        team_space_url = os.getenv("NOTION_TEAM_SPACE_URL")
+        
+        if team_space_url:
+            team_space_id = extract_page_id_from_url(team_space_url)
+            if team_space_id:
+                print(f"[INFO] Extracted page ID from URL: {team_space_id}")
+        
         if team_space_id:
             integration.team_space_id = team_space_id
         else:
-            print("[ERROR] NOTION_TEAM_SPACE_ID not found")
+            print("[ERROR] NOTION_TEAM_SPACE_ID or NOTION_TEAM_SPACE_URL not found")
             print("Set it as environment variable or in notion_config.json")
+            print("Example: NOTION_TEAM_SPACE_URL=https://www.notion.so/LaunchPadPM-2e89cb246f1f80a0a5b1f15433b0855c")
             return
     
     # Test connection

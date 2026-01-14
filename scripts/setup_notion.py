@@ -10,7 +10,7 @@ from pathlib import Path
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from integrations.notion_integration import NotionIntegration
+from integrations.notion_integration import NotionIntegration, extract_page_id_from_url
 
 
 def main():
@@ -28,19 +28,36 @@ def main():
             print("[ERROR] API token is required")
             return
     
-    # Get team space ID
+    # Get team space ID or URL
     team_space_id = os.getenv("NOTION_TEAM_SPACE_ID")
+    team_space_url = os.getenv("NOTION_TEAM_SPACE_URL")
+    
     if not team_space_id:
-        print("\nTo create the team workspace, you need to:")
-        print("1. Create a page in Notion (or use an existing page)")
-        print("2. Share the page with your Notion integration")
-        print("3. Copy the page ID from the page URL")
-        print("   (The ID is the 32-character string in the URL)")
-        print()
-        team_space_id = input("Enter your Notion Team Space Page ID: ").strip()
-        if not team_space_id:
-            print("[ERROR] Team space ID is required")
-            return
+        if team_space_url:
+            print(f"\n[INFO] Using workspace URL: {team_space_url}")
+            team_space_id = extract_page_id_from_url(team_space_url)
+            if team_space_id:
+                print(f"[INFO] Extracted page ID: {team_space_id}")
+        else:
+            print("\nTo create the team workspace, you need to:")
+            print("1. Create a page in Notion (or use an existing page)")
+            print("2. Share the page with your Notion integration")
+            print("3. Copy the page URL or ID from the page URL")
+            print("   Example URL: https://www.notion.so/LaunchPadPM-2e89cb246f1f80a0a5b1f15433b0855c")
+            print()
+            user_input = input("Enter your Notion Team Space URL or Page ID: ").strip()
+            if not user_input:
+                print("[ERROR] Team space URL or ID is required")
+                return
+            
+            # Try to extract ID from URL
+            team_space_id = extract_page_id_from_url(user_input)
+            if not team_space_id:
+                team_space_id = user_input  # Assume it's already an ID
+    
+    if not team_space_id:
+        print("[ERROR] Could not determine team space ID")
+        return
     
     # Initialize integration
     try:

@@ -2,6 +2,18 @@
 
 This guide explains how to set up and use the Notion integration for the Product Team workspace.
 
+## Quick Start
+
+**Your Notion Workspace:** [LaunchPadPM](https://www.notion.so/LaunchPadPM-2e89cb246f1f80a0a5b1f15433b0855c)
+
+To quickly verify your connection:
+
+```bash
+python scripts/verify_notion_connection.py
+```
+
+This will test your API connection and verify access to your workspace.
+
 ## Overview
 
 The Notion integration allows the team to:
@@ -9,6 +21,7 @@ The Notion integration allows the team to:
 - Sync all documentation automatically
 - Maintain databases for projects, executive summaries, decisions, and OKRs
 - Keep documentation organized and accessible
+- Bidirectional data sharing between Cursor and Notion
 
 ## Prerequisites
 
@@ -27,15 +40,19 @@ The Notion integration allows the team to:
 5. Copy the "Internal Integration Token" (starts with `secret_`)
 6. Keep this token secure - you'll need it for setup
 
-### Step 2: Create Team Space Page
+### Step 2: Share Your Workspace with Integration
 
-1. In Notion, create a new page (or use an existing page)
-2. Name it "Product Team Workspace" (or your preferred name)
-3. Click "Share" in the top-right
-4. Click "Add connections" and select your integration
-5. Copy the page ID from the URL:
-   - The URL looks like: `https://www.notion.so/Your-Page-Name-{32-char-id}`
-   - Copy the 32-character ID (remove any hyphens)
+**Your workspace is already created:** [LaunchPadPM](https://www.notion.so/LaunchPadPM-2e89cb246f1f80a0a5b1f15433b0855c)
+
+1. Open your Notion workspace: https://www.notion.so/LaunchPadPM-2e89cb246f1f80a0a5b1f15433b0855c
+2. Click "Share" in the top-right corner
+3. Click "Add connections" or "Invite"
+4. Select your Notion integration from the list
+5. Make sure the integration has "Can edit" permissions
+
+**Note:** The integration can automatically extract the page ID from the URL, so you can use either:
+- The full URL: `https://www.notion.so/LaunchPadPM-2e89cb246f1f80a0a5b1f15433b0855c`
+- Just the page ID: `2e89cb246f1f80a0a5b1f15433b0855c`
 
 ### Step 3: Install Dependencies
 
@@ -45,7 +62,21 @@ pip install -r requirements.txt
 
 This installs `notion-client` and other dependencies.
 
-### Step 4: Run Setup Script
+### Step 4: Verify Connection (Recommended)
+
+Before setting up the workspace, verify your connection works:
+
+```bash
+python scripts/verify_notion_connection.py
+```
+
+This script will:
+- Test your API connection
+- Verify workspace access
+- Check for existing databases
+- Test page creation capabilities
+
+### Step 5: Run Setup Script
 
 ```bash
 python scripts/setup_notion.py
@@ -53,7 +84,8 @@ python scripts/setup_notion.py
 
 The script will:
 - Ask for your Notion API token (or use `NOTION_API_TOKEN` env var)
-- Ask for your team space page ID (or use `NOTION_TEAM_SPACE_ID` env var)
+- Ask for your team space URL or page ID (or use `NOTION_TEAM_SPACE_URL`/`NOTION_TEAM_SPACE_ID` env vars)
+- Automatically extract page ID from URL if provided
 - Test the connection
 - Create the team workspace structure:
   - Projects database
@@ -64,21 +96,35 @@ The script will:
   - Documentation pages structure
 - Save configuration to `notion_config.json`
 
-### Step 5: Set Environment Variables (Optional)
+### Step 6: Set Environment Variables (Recommended)
 
 For convenience, set these environment variables:
 
 ```bash
 # Windows (PowerShell)
 $env:NOTION_API_TOKEN = "secret_your_token_here"
-$env:NOTION_TEAM_SPACE_ID = "your_page_id_here"
+$env:NOTION_TEAM_SPACE_URL = "https://www.notion.so/LaunchPadPM-2e89cb246f1f80a0a5b1f15433b0855c"
+# OR use the page ID directly:
+$env:NOTION_TEAM_SPACE_ID = "2e89cb246f1f80a0a5b1f15433b0855c"
 
 # Linux/Mac
 export NOTION_API_TOKEN="secret_your_token_here"
-export NOTION_TEAM_SPACE_ID="your_page_id_here"
+export NOTION_TEAM_SPACE_URL="https://www.notion.so/LaunchPadPM-2e89cb246f1f80a0a5b1f15433b0855c"
+# OR use the page ID directly:
+export NOTION_TEAM_SPACE_ID="2e89cb246f1f80a0a5b1f15433b0855c"
 ```
 
+**Tip:** You can use either the full URL or just the page ID. The integration will automatically extract the ID from URLs.
+
 ## Using the Integration
+
+### Verify Connection
+
+Always start by verifying your connection:
+
+```bash
+python scripts/verify_notion_connection.py
+```
 
 ### Sync Documentation
 
@@ -92,6 +138,22 @@ This script:
 - Scans the repository for documentation files
 - Syncs them to the Notion workspace
 - Organizes them by type (README, ADR, CHANGELOG, etc.)
+
+### Read Data from Notion (Bidirectional Sync)
+
+You can also read data from Notion databases:
+
+```python
+from integrations.notion_integration import NotionIntegration
+
+integration = NotionIntegration()
+integration.load_config()
+
+# Read projects from Notion
+projects = integration.sync_from_notion("projects", limit=50)
+for project in projects:
+    print(project.get("properties", {}).get("Project Name", {}))
+```
 
 ### Programmatic Usage
 
@@ -234,9 +296,28 @@ This file stores the IDs of created databases for easy reference.
 
 ### Connection Errors
 
-- **"Cannot connect to Notion API"**: Check your API token is correct
-- **"Page not found"**: Ensure the page is shared with your integration
-- **"Permission denied"**: Make sure the integration has access to the page
+- **"Cannot connect to Notion API"**: 
+  - Check your API token is correct and starts with `secret_`
+  - Verify the integration is active in [Notion Integrations](https://www.notion.so/my-integrations)
+  
+- **"Page not found"** or **"Cannot access workspace"**: 
+  - Go to your workspace: https://www.notion.so/LaunchPadPM-2e89cb246f1f80a0a5b1f15433b0855c
+  - Click "Share" → "Add connections" → Select your integration
+  - Ensure the integration has "Can edit" permissions
+  
+- **"Permission denied"**: 
+  - Make sure the integration has access to the page
+  - Check that the page is shared with the integration (not just your user account)
+
+### Quick Diagnostic
+
+Run the verification script for detailed diagnostics:
+
+```bash
+python scripts/verify_notion_connection.py
+```
+
+This will test each step of the connection and provide specific error messages.
 
 ### Database Creation Errors
 
@@ -262,9 +343,18 @@ This file stores the IDs of created databases for easy reference.
 3. **Integrate with agents**: Update agents to automatically create Notion pages when generating documentation
 4. **Add more databases**: Extend the integration to support additional databases as needed
 
+## Your Workspace
+
+**Workspace URL:** https://www.notion.so/LaunchPadPM-2e89cb246f1f80a0a5b1f15433b0855c
+
+**Page ID:** `2e89cb246f1f80a0a5b1f15433b0855c`
+
+You can use either the URL or the page ID in your configuration. The integration will automatically extract the page ID from URLs.
+
 ## Support
 
 For issues or questions:
 - Check the [Notion API Documentation](https://developers.notion.com/)
 - Review the integration code in `integrations/notion_integration.py`
 - Check the setup script in `scripts/setup_notion.py`
+- Run `python scripts/verify_notion_connection.py` for diagnostics

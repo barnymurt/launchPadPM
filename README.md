@@ -4,7 +4,7 @@ A modular, extensible framework for building and managing specialized AI agents 
 
 ## 🎯 Overview
 
-This project implements 8 specialized AI agents based on Scrum methodology, Continuous Discovery Habits, and Opportunity Solution Trees. Each agent embodies a specific role in a Scrum team with deep expertise in their domain.
+This project implements specialized AI agents based on Scrum methodology, Continuous Discovery Habits, and Opportunity Solution Trees. Each agent embodies a specific role in a Scrum team with deep expertise in their domain.
 
 ## 🏗️ Framework Features
 
@@ -25,6 +25,7 @@ This project implements 8 specialized AI agents based on Scrum methodology, Cont
 6. ⏳ **Data/Metrics Analyst** - Analytics, A/B testing, metrics
 7. ⏳ **UX/UI Designer** - User experience, design systems, accessibility
 8. ⏳ **Product Marketing Executive** - Go-to-market, positioning, launch planning
+9. ✅ **DevOps Engineer** - Infrastructure, CI/CD pipelines, environment management, monitoring, security
 
 ## 🚀 Quick Start
 

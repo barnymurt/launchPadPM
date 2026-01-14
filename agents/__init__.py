@@ -64,4 +64,10 @@ try:
 except ImportError:
     pass
 
+try:
+    from .devops_engineer_agent import DevOpsEngineerAgent
+    _agents.append('DevOpsEngineerAgent')
+except ImportError:
+    pass
+
 __all__ = _agents

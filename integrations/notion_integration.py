@@ -4,6 +4,7 @@ Handles connection to Notion.io and team workspace management.
 """
 
 import os
+import re
 from typing import Dict, List, Any, Optional
 from datetime import datetime
 from pathlib import Path
@@ -15,6 +16,41 @@ try:
 except ImportError:
     NOTION_AVAILABLE = False
     Client = None
+
+
+def extract_page_id_from_url(url: str) -> Optional[str]:
+    """
+    Extract Notion page ID from a Notion URL.
+    
+    Notion URLs can be in formats like:
+    - https://www.notion.so/Page-Name-2e89cb246f1f80a0a5b1f15433b0855c
+    - https://www.notion.so/2e89cb246f1f80a0a5b1f15433b0855c
+    - 2e89cb246f1f80a0a5b1f15433b0855c (already just the ID)
+    
+    Args:
+        url: Notion page URL or page ID
+        
+    Returns:
+        Page ID (32-character hex string) or None if not found
+    """
+    if not url:
+        return None
+    
+    # If it's already just a 32-character hex string (with or without hyphens)
+    clean_id = re.sub(r'[^a-f0-9]', '', url.lower())
+    if len(clean_id) == 32:
+        # Format as Notion expects: add hyphens
+        return f"{clean_id[:8]}-{clean_id[8:12]}-{clean_id[12:16]}-{clean_id[16:20]}-{clean_id[20:]}"
+    
+    # Try to extract from URL
+    # Pattern: 32 hex characters at the end (possibly with hyphens)
+    match = re.search(r'([a-f0-9]{8}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{4}-?[a-f0-9]{12})', url.lower())
+    if match:
+        page_id = match.group(1).replace('-', '')
+        if len(page_id) == 32:
+            return f"{page_id[:8]}-{page_id[8:12]}-{page_id[12:16]}-{page_id[16:20]}-{page_id[20:]}"
+    
+    return None
 
 
 class NotionClient:
@@ -57,20 +93,81 @@ class NotionClient:
         """
         try:
             # Try to list users to verify connection
-            self.client.users.me()
+            user = self.client.users.me()
             return True
         except Exception as e:
             print(f"[ERROR] Notion connection failed: {e}")
             return False
     
-    def create_page(self, parent_id: str, title: str, content: Optional[Dict] = None) -> Dict[str, Any]:
+    def get_user_info(self) -> Optional[Dict[str, Any]]:
+        """
+        Get current user information.
+        
+        Returns:
+            User information dict or None if failed
+        """
+        try:
+            return self.client.users.me()
+        except Exception as e:
+            print(f"[ERROR] Failed to get user info: {e}")
+            return None
+    
+    def get_page(self, page_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Retrieve a page by ID.
+        
+        Args:
+            page_id: Page ID (with or without hyphens)
+        
+        Returns:
+            Page object or None if not found
+        """
+        try:
+            # Normalize page ID (remove hyphens if present)
+            clean_id = page_id.replace('-', '')
+            formatted_id = f"{clean_id[:8]}-{clean_id[8:12]}-{clean_id[12:16]}-{clean_id[16:20]}-{clean_id[20:]}"
+            return self.client.pages.retrieve(page_id=formatted_id)
+        except Exception as e:
+            print(f"[ERROR] Failed to retrieve page: {e}")
+            return None
+    
+    def list_databases(self, page_id: Optional[str] = None) -> List[Dict[str, Any]]:
+        """
+        List databases accessible to the integration.
+        
+        Args:
+            page_id: Optional parent page ID to search within
+        
+        Returns:
+            List of database objects
+        """
+        try:
+            if page_id:
+                # Search for databases within a specific page
+                clean_id = page_id.replace('-', '')
+                formatted_id = f"{clean_id[:8]}-{clean_id[8:12]}-{clean_id[12:16]}-{clean_id[16:20]}-{clean_id[20:]}"
+                response = self.client.search(
+                    filter={"value": "database", "property": "object"},
+                    parent={"page_id": formatted_id}
+                )
+            else:
+                # Search all accessible databases
+                response = self.client.search(
+                    filter={"value": "database", "property": "object"}
+                )
+            return response.get("results", [])
+        except Exception as e:
+            print(f"[ERROR] Failed to list databases: {e}")
+            return []
+    
+    def create_page(self, parent_id: str, title: str, content: Optional[List[Dict]] = None) -> Dict[str, Any]:
         """
         Create a new page in Notion.
         
         Args:
             parent_id: ID of parent page/database
             title: Page title
-            content: Optional page content blocks
+            content: Optional list of page content blocks
         
         Returns:
             Created page object
@@ -87,8 +184,12 @@ class NotionClient:
             }
         }
         
+        # Normalize page ID
+        clean_id = parent_id.replace('-', '')
+        formatted_id = f"{clean_id[:8]}-{clean_id[8:12]}-{clean_id[12:16]}-{clean_id[16:20]}-{clean_id[20:]}"
+        
         page_data = {
-            "parent": {"page_id": parent_id},
+            "parent": {"type": "page_id", "page_id": formatted_id},
             "properties": page_properties
         }
         
@@ -114,8 +215,12 @@ class NotionClient:
         Returns:
             Created database object
         """
+        # Normalize page ID (remove hyphens if present, then format)
+        clean_id = parent_id.replace('-', '')
+        formatted_id = f"{clean_id[:8]}-{clean_id[8:12]}-{clean_id[12:16]}-{clean_id[16:20]}-{clean_id[20:]}"
+        
         database_data = {
-            "parent": {"page_id": parent_id},
+            "parent": {"type": "page_id", "page_id": formatted_id},
             "title": [
                 {
                     "text": {
@@ -202,17 +307,26 @@ class NotionIntegration:
     Handles creating team space structure and syncing documentation.
     """
     
-    def __init__(self, api_token: Optional[str] = None, team_space_id: Optional[str] = None):
+    def __init__(self, api_token: Optional[str] = None, team_space_id: Optional[str] = None, team_space_url: Optional[str] = None):
         """
         Initialize Notion integration.
         
         Args:
             api_token: Notion integration token
             team_space_id: Optional team space page ID (if already exists)
+            team_space_url: Optional Notion URL (will extract page ID from it)
         """
         self.client = NotionClient(api_token)
+        
+        # Extract page ID from URL if provided
+        if team_space_url and not team_space_id:
+            team_space_id = extract_page_id_from_url(team_space_url)
+            if team_space_id:
+                print(f"[INFO] Extracted page ID from URL: {team_space_id}")
+        
         self.team_space_id = team_space_id
         self.databases: Dict[str, str] = {}  # Maps database name to ID
+        self.doc_folders: Dict[str, str] = {}  # Maps doc type to folder ID
     
     def create_team_space(self, workspace_name: str = "Product Team Workspace") -> str:
         """
@@ -285,10 +399,17 @@ class NotionIntegration:
         }
         
         for page_name, doc_type in doc_pages.items():
-            self.client.create_page(
+            folder_page = self.client.create_page(
                 parent_id=doc_section["id"],
                 title=page_name
             )
+            # Cache folder ID for later use
+            self.doc_folders[doc_type] = folder_page["id"]
+            # Also cache by folder name for README and GOVERNANCE
+            if doc_type == "PROJECT_BRIEF":
+                self.doc_folders["README"] = folder_page["id"]
+            if doc_type == "ARCHITECTURE":
+                self.doc_folders["GOVERNANCE"] = folder_page["id"]
         
         print("[OK] Documentation structure created")
     
@@ -527,6 +648,81 @@ class NotionIntegration:
         self.databases["key_results"] = db["id"]
         print("[OK] Key Results database created")
     
+    def _find_documentation_folders(self):
+        """Find documentation folders by searching the workspace"""
+        if not self.team_space_id or self.doc_folders:
+            return  # Already have folders or no workspace
+        
+        try:
+            # Search for pages in the workspace
+            response = self.client.client.search(
+                filter={"value": "page", "property": "object"},
+                sort={"direction": "ascending", "timestamp": "last_edited_time"}
+            )
+            
+            # Map of folder names to doc types
+            folder_mapping = {
+                "Project Briefs": ["PROJECT_BRIEF", "README"],
+                "Architecture Docs": ["ARCHITECTURE", "GOVERNANCE"],
+                "ADRs (Architecture Decision Records)": ["ADR"],
+                "Changelogs": ["CHANGELOG"],
+                "User Stories": ["USER_STORY"],
+                "Bug Reports": ["BUG_REPORT"]
+            }
+            
+            # Find Documentation section first
+            doc_section_id = None
+            for page in response.get("results", []):
+                props = page.get("properties", {})
+                title_prop = props.get("title", {})
+                if title_prop.get("title"):
+                    title = title_prop["title"][0].get("plain_text", "")
+                    if "Documentation" in title:
+                        doc_section_id = page["id"]
+                        break
+            
+            if not doc_section_id:
+                return  # Documentation section not found
+            
+            # Find folders within Documentation section
+            children_response = self.client.client.blocks.children.list(block_id=doc_section_id)
+            for child in children_response.get("results", []):
+                if child.get("type") == "child_page":
+                    child_id = child.get("id")
+                    child_page = self.client.get_page(child_id)
+                    if child_page:
+                        props = child_page.get("properties", {})
+                        title_prop = props.get("title", {})
+                        if title_prop.get("title"):
+                            folder_name = title_prop["title"][0].get("plain_text", "")
+                            for doc_types in folder_mapping.get(folder_name, []):
+                                self.doc_folders[doc_types] = child_id
+        except Exception as e:
+            print(f"[WARNING] Could not find documentation folders: {e}")
+    
+    def _get_documentation_folder_id(self, doc_type: str) -> Optional[str]:
+        """
+        Get the folder ID for a specific documentation type.
+        Uses cached folder IDs from setup, or searches for them, or falls back to team space.
+        
+        Args:
+            doc_type: Type of documentation (PROJECT_BRIEF, ADR, CHANGELOG, etc.)
+        
+        Returns:
+            Folder page ID or team_space_id as fallback
+        """
+        # Try to find folders if not cached
+        if not self.doc_folders:
+            self._find_documentation_folders()
+        
+        # Return cached folder ID if available
+        folder_id = self.doc_folders.get(doc_type)
+        if folder_id:
+            return folder_id
+        
+        # Fallback to team space if folder not found
+        return self.team_space_id
+    
     def sync_documentation(
         self,
         doc_type: str,
@@ -535,7 +731,7 @@ class NotionIntegration:
         project_name: Optional[str] = None
     ) -> Optional[str]:
         """
-        Sync documentation to Notion.
+        Sync documentation to Notion, organized by type.
         
         Args:
             doc_type: Type of documentation (PROJECT_BRIEF, ADR, CHANGELOG, etc.)
@@ -551,24 +747,60 @@ class NotionIntegration:
             return None
         
         try:
-            # Find or create documentation section
-            # For now, create page directly in team space
-            # In production, you'd want to organize by doc_type
+            # Get the appropriate parent folder for this doc type
+            parent_id = self._get_documentation_folder_id(doc_type)
             
             # Convert markdown to Notion blocks
             blocks = self._markdown_to_notion_blocks(content)
             
+            # Add metadata block at the top (simplified - no annotations in callout)
+            metadata_blocks = [
+                {
+                    "object": "block",
+                    "type": "callout",
+                    "callout": {
+                        "rich_text": [
+                            {
+                                "type": "text",
+                                "text": {
+                                    "content": f"Document Type: {doc_type} | Synced from Cursor"
+                                }
+                            }
+                        ],
+                        "icon": {"emoji": "📄"}
+                    }
+                }
+            ]
+            
+            # Combine metadata with content
+            all_blocks = metadata_blocks + blocks
+            
+            # Notion API limit: max 100 blocks per page creation
+            # Create page with first 100 blocks, then append the rest
+            initial_blocks = all_blocks[:100]
+            remaining_blocks = all_blocks[100:]
+            
+            # Create page with initial blocks
             page = self.client.create_page(
-                parent_id=self.team_space_id,
+                parent_id=parent_id,
                 title=title,
-                content=blocks
+                content=initial_blocks
             )
             
-            print(f"[OK] Documentation synced to Notion: {title}")
+            # Append remaining blocks in chunks of 100
+            if remaining_blocks:
+                chunk_size = 100
+                for i in range(0, len(remaining_blocks), chunk_size):
+                    chunk = remaining_blocks[i:i + chunk_size]
+                    self.client.append_blocks(page["id"], chunk)
+            
+            print(f"[OK] Documentation synced to Notion: {title} ({doc_type})")
             return page["id"]
         
         except Exception as e:
             print(f"[ERROR] Failed to sync documentation: {e}")
+            import traceback
+            traceback.print_exc()
             return None
     
     def _markdown_to_notion_blocks(self, markdown: str) -> List[Dict]:
@@ -647,10 +879,11 @@ class NotionIntegration:
         return self.databases.get(database_name)
     
     def save_config(self, config_path: str = "notion_config.json"):
-        """Save Notion configuration (database IDs, etc.)"""
+        """Save Notion configuration (database IDs, folder IDs, etc.)"""
         config = {
             "team_space_id": self.team_space_id,
-            "databases": self.databases
+            "databases": self.databases,
+            "doc_folders": self.doc_folders
         }
         
         with open(config_path, 'w') as f:
@@ -664,8 +897,96 @@ class NotionIntegration:
         if config_file.exists():
             with open(config_file, 'r') as f:
                 config = json.load(f)
-                self.team_space_id = config.get("team_space_id")
+                team_space_id = config.get("team_space_id")
+                # Handle URL in config
+                if team_space_id and team_space_id.startswith("http"):
+                    team_space_id = extract_page_id_from_url(team_space_id)
+                self.team_space_id = team_space_id
                 self.databases = config.get("databases", {})
+                self.doc_folders = config.get("doc_folders", {})
                 print(f"[OK] Notion configuration loaded from {config_path}")
         else:
             print(f"[WARNING] Configuration file not found: {config_path}")
+    
+    def verify_workspace_access(self) -> bool:
+        """
+        Verify that the integration has access to the team workspace.
+        
+        Returns:
+            True if access is verified, False otherwise
+        """
+        if not self.team_space_id:
+            print("[ERROR] Team space ID not set")
+            return False
+        
+        page = self.client.get_page(self.team_space_id)
+        if page:
+            print(f"[OK] Successfully accessed workspace: {page.get('properties', {}).get('title', {}).get('title', [{}])[0].get('plain_text', 'Unknown')}")
+            return True
+        else:
+            print("[ERROR] Cannot access workspace. Make sure:")
+            print("  1. The page is shared with your Notion integration")
+            print("  2. The page ID is correct")
+            print("  3. Your integration has the necessary permissions")
+            return False
+    
+    def list_existing_databases(self) -> Dict[str, str]:
+        """
+        List all databases in the team workspace and match them by name.
+        
+        Returns:
+            Dictionary mapping database names to IDs
+        """
+        if not self.team_space_id:
+            return {}
+        
+        databases = self.client.list_databases(self.team_space_id)
+        db_map = {}
+        
+        for db in databases:
+            # Notion database titles are in title array
+            title_prop = db.get("title", [])
+            if title_prop:
+                db_name = title_prop[0].get("plain_text", "")
+                db_map[db_name] = db["id"]
+        
+        return db_map
+    
+    def get_database_by_name(self, database_name: str) -> Optional[str]:
+        """
+        Get database ID by name from existing databases.
+        
+        Args:
+            database_name: Name of the database to find
+        
+        Returns:
+            Database ID if found, None otherwise
+        """
+        existing_dbs = self.list_existing_databases()
+        return existing_dbs.get(database_name)
+    
+    def sync_from_notion(self, database_name: str, limit: int = 100) -> List[Dict[str, Any]]:
+        """
+        Read data from a Notion database (bidirectional sync).
+        
+        Args:
+            database_name: Name of the database to read from
+            limit: Maximum number of records to retrieve
+        
+        Returns:
+            List of database entries
+        """
+        database_id = self.get_database_id(database_name) or self.get_database_by_name(database_name)
+        if not database_id:
+            print(f"[ERROR] Database '{database_name}' not found")
+            return []
+        
+        try:
+            response = self.client.client.databases.query(
+                database_id=database_id,
+                page_size=min(limit, 100)  # Notion API limit is 100
+            )
+            return response.get("results", [])
+        except Exception as e:
+            print(f"[ERROR] Failed to read from database: {e}")
+            return []
