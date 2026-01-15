@@ -395,7 +395,8 @@ class NotionIntegration:
             "ADRs (Architecture Decision Records)": "ADR",
             "Changelogs": "CHANGELOG",
             "User Stories": "USER_STORY",
-            "Bug Reports": "BUG_REPORT"
+            "Bug Reports": "BUG_REPORT",
+            "Governance": "GOVERNANCE"
         }
         
         for page_name, doc_type in doc_pages.items():
@@ -409,6 +410,8 @@ class NotionIntegration:
             if doc_type == "PROJECT_BRIEF":
                 self.doc_folders["README"] = folder_page["id"]
             if doc_type == "ARCHITECTURE":
+                self.doc_folders["GOVERNANCE"] = folder_page["id"]
+            if doc_type == "GOVERNANCE":
                 self.doc_folders["GOVERNANCE"] = folder_page["id"]
         
         print("[OK] Documentation structure created")

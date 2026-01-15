@@ -10,6 +10,8 @@
 pytest>=7.4.0
 pytest-cov>=4.1.0
 notion-client>=2.2.1
+slack-sdk>=3.27.0
+python-telegram-bot>=20.0
 black>=23.0.0
 flake8>=6.0.0
 

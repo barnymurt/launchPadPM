@@ -22,14 +22,16 @@ class TeamCharter:
         "Quality Without Compromise - Definition of Done is sacred",
         "Transparent Collaboration - Make work visible, share openly",
         "Continuous Learning - Improve ourselves and our practices",
-        "User-Centered - Always advocate for end users"
+        "User-Centered - Always advocate for end users",
+        "Accessibility First - Build for all users from the start",
+        "Performance Matters - Fast experiences are good experiences"
     ])
     
     communication: Dict[str, Any] = field(default_factory=lambda: {
         "response_time": "4 hours during work hours",
-        "async_first": "Default to async (tickets, docs, Slack)",
+        "async_first": "Default to async (tickets, docs, Notion), sync when needed",
         "sync_when_needed": "Meetings for complex discussions",
-        "documentation": "All decisions documented",
+        "documentation": "All decisions documented in Notion Governance section",
         "transparency": "Share work-in-progress early"
     })
     
@@ -120,14 +122,17 @@ class DefinitionOfDone:
     ])
     
     qa_cross_functional: List[str] = field(default_factory=lambda: [
-        "Accessibility tested (WCAG 2.1 AA)",
+        "Accessibility tested (WCAG 2.1 AA) - Required for all UI work",
         "  - Keyboard navigation works",
         "  - Screen reader compatible",
-        "  - Color contrast meets standards",
+        "  - Color contrast meets standards (4.5:1 for text, 3:1 for large text)",
         "  - Focus indicators visible",
-        "Responsive design verified (if UI)",
-        "Cross-browser tested (Chrome, Firefox, Safari)",
-        "Performance tested"
+        "  - Semantic HTML used",
+        "  - ARIA attributes where needed",
+        "Responsive design verified (if UI) - Mobile-first approach",
+        "Cross-browser tested (Chrome, Firefox, Safari, Edge - latest 2 versions)",
+        "Performance tested - Core Web Vitals (LCP < 2.5s, FID/INP < 100ms, CLS < 0.1)",
+        "Bundle size verified (< 200KB gzipped initial bundle)"
     ])
     
     qa_defects: List[str] = field(default_factory=lambda: [
