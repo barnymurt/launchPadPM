@@ -110,4 +110,14 @@ class Settings:
 
 def load_settings(config_path: str = "config.json") -> Settings:
     """Convenience function to load settings"""
+    if config_path == "config.json":
+        app_env = os.getenv("APP_ENV")
+        if app_env:
+            env_path = Path("config") / f"config.{app_env}.json"
+            if env_path.exists():
+                config_path = str(env_path)
+        else:
+            default_path = Path("config") / "config.json"
+            if default_path.exists():
+                config_path = str(default_path)
     return Settings.load_from_file(config_path)

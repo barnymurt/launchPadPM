@@ -1,0 +1,28 @@
+{
+  "product_name": "Product (Live)",
+  "sprint_duration_days": 14,
+  "enable_collaboration": true,
+  "enable_continuous_discovery": true,
+  "enable_opportunity_solution_trees": true,
+  "llm_provider": "openai",
+  "agents": {
+    "product_owner": {
+      "enabled": true,
+      "model": "default",
+      "temperature": 0.7,
+      "max_tokens": 2000
+    },
+    "scrum_master": {
+      "enabled": true,
+      "model": "default",
+      "temperature": 0.7,
+      "max_tokens": 2000
+    },
+    "development_engineer": {
+      "enabled": true,
+      "model": "default",
+      "temperature": 0.7,
+      "max_tokens": 2000
+    }
+  }
+}

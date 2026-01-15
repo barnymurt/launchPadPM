@@ -29,6 +29,12 @@ except ImportError:
     DEVELOPMENT_ENGINEER_AVAILABLE = False
 
 try:
+    from agents.devops_engineer_agent import DevOpsEngineerAgent
+    DEVOPS_ENGINEER_AVAILABLE = True
+except ImportError:
+    DEVOPS_ENGINEER_AVAILABLE = False
+
+try:
     from agents.qa_engineer_agent import QAEngineerAgent
     QA_ENGINEER_AVAILABLE = True
 except ImportError:
@@ -63,6 +69,18 @@ try:
     HEAD_OF_PRODUCT_CEO_AVAILABLE = True
 except ImportError:
     HEAD_OF_PRODUCT_CEO_AVAILABLE = False
+
+try:
+    from agents.frontend_developer_agent import FrontendDeveloperAgent
+    FRONTEND_DEVELOPER_AVAILABLE = True
+except ImportError:
+    FRONTEND_DEVELOPER_AVAILABLE = False
+
+try:
+    from agents.user_researcher_agent import UserResearcherAgent
+    USER_RESEARCHER_AVAILABLE = True
+except ImportError:
+    USER_RESEARCHER_AVAILABLE = False
 
 
 def initialize_framework(settings: Optional[Settings] = None) -> None:
@@ -115,6 +133,11 @@ def register_available_agents() -> None:
         dev_agent = DevelopmentEngineerAgent()
         AgentRegistry.register_agent(dev_agent)
         registered_count += 1
+
+    if DEVOPS_ENGINEER_AVAILABLE:
+        devops_agent = DevOpsEngineerAgent()
+        AgentRegistry.register_agent(devops_agent)
+        registered_count += 1
     
     if QA_ENGINEER_AVAILABLE:
         qa_agent = QAEngineerAgent()
@@ -144,6 +167,16 @@ def register_available_agents() -> None:
     if HEAD_OF_PRODUCT_CEO_AVAILABLE:
         ceo_agent = HeadOfProductCEOAgent()
         AgentRegistry.register_agent(ceo_agent)
+        registered_count += 1
+
+    if FRONTEND_DEVELOPER_AVAILABLE:
+        frontend_agent = FrontendDeveloperAgent()
+        AgentRegistry.register_agent(frontend_agent)
+        registered_count += 1
+
+    if USER_RESEARCHER_AVAILABLE:
+        researcher_agent = UserResearcherAgent()
+        AgentRegistry.register_agent(researcher_agent)
         registered_count += 1
     
     if registered_count > 0:

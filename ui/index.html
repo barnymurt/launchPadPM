@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LaunchPadPM Agents</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: "Segoe UI", Arial, sans-serif;
+      }
+
+      body {
+        margin: 0;
+        padding: 24px;
+        background: #f5f6f8;
+        color: #1f2933;
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: 22px;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+
+      .panel {
+        background: #ffffff;
+        border: 1px solid #dde2e8;
+        border-radius: 8px;
+        padding: 16px;
+        min-height: 280px;
+        overflow: auto;
+      }
+
+      .panel h2 {
+        margin: 0 0 12px;
+        font-size: 16px;
+      }
+
+      .message {
+        padding: 10px 12px;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        background: #eef2f6;
+      }
+
+      .message strong {
+        display: block;
+        font-size: 12px;
+        color: #52616b;
+        margin-bottom: 4px;
+      }
+
+      .controls {
+        display: grid;
+        gap: 12px;
+      }
+
+      .agent-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .agent-button {
+        border: 1px solid #c2cbd6;
+        background: #ffffff;
+        border-radius: 6px;
+        padding: 8px 12px;
+        cursor: pointer;
+        font-size: 13px;
+      }
+
+      .agent-button.active {
+        border-color: #2f6fe4;
+        background: #e7effd;
+        color: #1b4fbf;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 90px;
+        resize: vertical;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #c2cbd6;
+        font-family: inherit;
+      }
+
+      .send-row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .send-row button {
+        padding: 10px 18px;
+        border: none;
+        border-radius: 6px;
+        background: #2f6fe4;
+        color: #ffffff;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      .secondary {
+        background: #eef2f6;
+        color: #1f2933;
+      }
+
+      .agent-button[disabled] {
+        cursor: not-allowed;
+        opacity: 0.5;
+      }
+
+      .badge {
+        display: inline-block;
+        margin-left: 6px;
+        padding: 2px 6px;
+        border-radius: 999px;
+        font-size: 11px;
+        background: #dfe6ef;
+        color: #46525d;
+      }
+
+      .badge.connected {
+        background: #d7f3df;
+        color: #1b6b33;
+      }
+
+      .modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.35);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+      }
+
+      .modal.open {
+        display: flex;
+      }
+
+      .modal-card {
+        background: #ffffff;
+        border-radius: 10px;
+        padding: 20px;
+        width: min(520px, 100%);
+        box-shadow: 0 18px 48px rgba(0, 0, 0, 0.2);
+      }
+
+      .modal-card h3 {
+        margin: 0 0 12px;
+        font-size: 18px;
+      }
+
+      .field {
+        display: grid;
+        gap: 6px;
+        margin-bottom: 12px;
+      }
+
+      .field input {
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #c2cbd6;
+        font-family: inherit;
+      }
+
+      .modal-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+      }
+
+      .status {
+        font-size: 12px;
+        color: #52616b;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>LaunchPadPM Agent Console</h1>
+
+    <div class="layout">
+      <div class="panel" id="userPanel">
+        <h2>User Messages</h2>
+      </div>
+      <div class="panel" id="agentPanel">
+        <h2>Agent Responses</h2>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="agent-buttons" id="agentButtons"></div>
+      <div class="agent-buttons" id="providerButtons"></div>
+
+      <textarea id="userInput" placeholder="Type your request..."></textarea>
+
+      <div class="send-row">
+        <button id="sendButton">Send</button>
+        <button id="restartButton" type="button">Restart Staging</button>
+        <button id="connectButton" class="secondary" type="button">
+          Connect AI Platforms
+        </button>
+        <span class="status" id="statusText">Select an agent to start.</span>
+      </div>
+    </div>
+
+    <div class="modal" id="connectModal">
+      <div class="modal-card">
+        <h3>Connect AI Platforms</h3>
+        <div class="field">
+          <label for="openaiKey">OpenAI API Key</label>
+          <input id="openaiKey" type="password" placeholder="sk-..." />
+        </div>
+        <div class="field">
+          <label for="anthropicKey">Claude (Anthropic) API Key</label>
+          <input id="anthropicKey" type="password" placeholder="sk-ant-..." />
+        </div>
+        <div class="field">
+          <label for="perplexityKey">Perplexity API Key</label>
+          <input id="perplexityKey" type="password" placeholder="pplx-..." />
+        </div>
+        <div class="modal-actions">
+          <button id="cancelConnect" class="secondary" type="button">Cancel</button>
+          <button id="saveConnect" type="button">Save Keys</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const agentButtons = document.getElementById("agentButtons");
+      const providerButtons = document.getElementById("providerButtons");
+      const userPanel = document.getElementById("userPanel");
+      const agentPanel = document.getElementById("agentPanel");
+      const userInput = document.getElementById("userInput");
+      const sendButton = document.getElementById("sendButton");
+      const restartButton = document.getElementById("restartButton");
+      const connectButton = document.getElementById("connectButton");
+      const statusText = document.getElementById("statusText");
+      const connectModal = document.getElementById("connectModal");
+      const cancelConnect = document.getElementById("cancelConnect");
+      const saveConnect = document.getElementById("saveConnect");
+      const openaiKey = document.getElementById("openaiKey");
+      const anthropicKey = document.getElementById("anthropicKey");
+      const perplexityKey = document.getElementById("perplexityKey");
+
+      let selectedAgent = "";
+      let selectedProvider = "";
+      let providerStatus = {
+        openai: false,
+        anthropic: false,
+        perplexity: false,
+      };
+
+      function addMessage(panel, label, text, webResults = []) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "message";
+        const title = document.createElement("strong");
+        title.textContent = label;
+        const body = document.createElement("div");
+        body.textContent = text;
+        wrapper.appendChild(title);
+        wrapper.appendChild(body);
+        if (webResults.length) {
+          const list = document.createElement("ul");
+          webResults.forEach((item) => {
+            const entry = document.createElement("li");
+            const link = document.createElement("a");
+            link.href = item.url || "#";
+            link.textContent = item.title || item.url || "Result";
+            link.target = "_blank";
+            link.rel = "noreferrer";
+            entry.appendChild(link);
+            if (item.snippet) {
+              const snippet = document.createElement("div");
+              snippet.textContent = item.snippet;
+              entry.appendChild(snippet);
+            }
+            list.appendChild(entry);
+          });
+          wrapper.appendChild(list);
+        }
+        panel.appendChild(wrapper);
+        panel.scrollTop = panel.scrollHeight;
+      }
+
+      function setActiveAgent(role) {
+        selectedAgent = role;
+        Array.from(agentButtons.children).forEach((button) => {
+          button.classList.toggle("active", button.dataset.role === role);
+        });
+        statusText.textContent = `Selected agent: ${role}`;
+      }
+
+      function setActiveProvider(provider) {
+        selectedProvider = provider;
+        Array.from(providerButtons.children).forEach((button) => {
+          button.classList.toggle("active", button.dataset.provider === provider);
+        });
+      }
+
+      async function loadAgents() {
+        const response = await fetch("/agents");
+        const data = await response.json();
+        agentButtons.innerHTML = "";
+        data.roles.forEach((role, index) => {
+          const button = document.createElement("button");
+          button.className = "agent-button";
+          button.dataset.role = role;
+          button.textContent = role.replaceAll("_", " ");
+          button.addEventListener("click", () => setActiveAgent(role));
+          agentButtons.appendChild(button);
+          if (index === 0) {
+            setActiveAgent(role);
+          }
+        });
+      }
+
+      function renderProviderButtons() {
+        const providers = ["openai", "anthropic", "perplexity"];
+        providerButtons.innerHTML = "";
+        providers.forEach((provider, index) => {
+          const button = document.createElement("button");
+          button.className = "agent-button";
+          button.dataset.provider = provider;
+          button.textContent = provider;
+          button.disabled = !providerStatus[provider];
+          const badge = document.createElement("span");
+          badge.className = `badge ${providerStatus[provider] ? "connected" : ""}`;
+          badge.textContent = providerStatus[provider] ? "connected" : "not connected";
+          button.appendChild(badge);
+          button.addEventListener("click", () => setActiveProvider(provider));
+          providerButtons.appendChild(button);
+          if (index === 0 && providerStatus[provider]) {
+            setActiveProvider(provider);
+          }
+        });
+        if (!providerStatus[selectedProvider]) {
+          const firstActive = providers.find((item) => providerStatus[item]);
+          if (firstActive) {
+            setActiveProvider(firstActive);
+          }
+        }
+      }
+
+      async function loadProviderStatus() {
+        const response = await fetch("/keys/status");
+        providerStatus = await response.json();
+        renderProviderButtons();
+      }
+
+      async function sendMessage() {
+        const message = userInput.value.trim();
+        if (!message || !selectedAgent || !selectedProvider) {
+          return;
+        }
+        addMessage(userPanel, "You", message);
+        userInput.value = "";
+        statusText.textContent = "Waiting for agent response...";
+
+        try {
+          const response = await fetch("/query", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              role: selectedAgent,
+              query: message,
+              provider: selectedProvider,
+              use_ai: true,
+              use_web: true,
+            }),
+          });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || "Request failed");
+          }
+
+          const data = await response.json();
+          const webResults = (data.evidence && data.evidence.web_results) || [];
+          addMessage(agentPanel, selectedAgent, data.response || "(no response)", webResults);
+          statusText.textContent = `Response from ${selectedAgent}`;
+        } catch (error) {
+          addMessage(agentPanel, "Error", String(error));
+          statusText.textContent = "Request failed";
+        }
+      }
+
+      sendButton.addEventListener("click", sendMessage);
+      restartButton.addEventListener("click", async () => {
+        statusText.textContent = "Restarting staging server...";
+        try {
+          const response = await fetch("/restart", { method: "POST" });
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || "Restart failed");
+          }
+          statusText.textContent = "Staging server restarting...";
+        } catch (error) {
+          statusText.textContent = "Restart failed.";
+          addMessage(agentPanel, "Error", String(error));
+        }
+      });
+      connectButton.addEventListener("click", () => {
+        connectModal.classList.add("open");
+      });
+      cancelConnect.addEventListener("click", () => {
+        connectModal.classList.remove("open");
+      });
+      saveConnect.addEventListener("click", async () => {
+        try {
+          const response = await fetch("/keys", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              openai: openaiKey.value,
+              anthropic: anthropicKey.value,
+              perplexity: perplexityKey.value,
+            }),
+          });
+          providerStatus = await response.json();
+          renderProviderButtons();
+          connectModal.classList.remove("open");
+          openaiKey.value = "";
+          anthropicKey.value = "";
+          perplexityKey.value = "";
+          statusText.textContent = "Keys saved for this session.";
+        } catch (error) {
+          statusText.textContent = "Failed to save keys.";
+          addMessage(agentPanel, "Error", String(error));
+        }
+      });
+      userInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          sendMessage();
+        }
+      });
+
+      loadAgents().catch(() => {
+        statusText.textContent = "Unable to load agents.";
+      });
+      loadProviderStatus().catch(() => {
+        statusText.textContent = "Unable to load providers.";
+      });
+    </script>
+  </body>
+</html>
