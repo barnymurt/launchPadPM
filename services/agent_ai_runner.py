@@ -3,11 +3,14 @@ AI-enabled agent runner with optional web search.
 """
 
 import os
+from dotenv import load_dotenv
 from typing import Any, Dict, List, Optional
 
 from agents.base_agent import AgentResponse, BaseAgent
-from integrations.ai_providers import call_anthropic, call_openai, call_perplexity
+from integrations.ai_providers import call_anthropic, call_minimax, call_openai, call_perplexity
 from integrations.web_search import search_duckduckgo
+
+load_dotenv()
 
 
 def _build_system_prompt(agent: BaseAgent, web_results: Optional[List[Dict[str, Any]]]) -> str:
@@ -36,23 +39,29 @@ def _build_user_prompt(agent: BaseAgent, query: str, web_results: Optional[List[
 def _select_provider(provider: Optional[str], session_keys: Optional[Dict[str, str]]) -> str:
     if provider:
         return provider
+    if session_keys and session_keys.get("minimax"):
+        return "minimax"
     if session_keys and session_keys.get("openai"):
         return "openai"
     if session_keys and session_keys.get("anthropic"):
         return "anthropic"
     if session_keys and session_keys.get("perplexity"):
         return "perplexity"
+    if os.getenv("MINIMAX_API_KEY"):
+        return "minimax"
     if os.getenv("OPENAI_API_KEY"):
         return "openai"
     if os.getenv("ANTHROPIC_API_KEY"):
         return "anthropic"
     if os.getenv("PERPLEXITY_API_KEY"):
         return "perplexity"
-    return os.getenv("DEFAULT_AI_PROVIDER", "openai")
+    return os.getenv("DEFAULT_AI_PROVIDER", "minimax")
 
 
 def _call_provider(provider: str, messages: List[dict], session_keys: Optional[Dict[str, str]]) -> str:
     provider_key = provider.lower()
+    if provider_key == "minimax":
+        return call_minimax(messages, api_key=(session_keys or {}).get("minimax"))
     if provider_key == "openai":
         return call_openai(messages, api_key=(session_keys or {}).get("openai"))
     if provider_key == "anthropic":

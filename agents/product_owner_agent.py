@@ -98,7 +98,7 @@ class ProductOwnerAgent(BaseAgent):
             }
         }
     
-    def process_query(self, query: str, **kwargs) -> AgentResponse:
+    def _hardcoded_process_query(self, query: str, **kwargs) -> AgentResponse:
         """
         Process a query from a Product Owner perspective.
         Focuses on value, priority, customer needs, and evidence-based decision making.

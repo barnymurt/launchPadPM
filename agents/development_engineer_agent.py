@@ -145,7 +145,7 @@ class DevelopmentEngineerAgent(BaseAgent):
             ]
         }
     
-    def process_query(self, query: str, **kwargs) -> AgentResponse:
+    def _hardcoded_process_query(self, query: str, **kwargs) -> AgentResponse:
         """
         Process a query from a Development Engineer perspective.
         Focuses on technical feasibility, implementation, and Sprint execution.

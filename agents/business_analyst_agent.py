@@ -106,7 +106,7 @@ class BusinessAnalystAgent(BaseAgent):
             }
         }
     
-    def process_query(self, query: str, **kwargs) -> AgentResponse:
+    def _hardcoded_process_query(self, query: str, **kwargs) -> AgentResponse:
         """
         Process a query from a Business Analyst perspective.
         Focuses on requirements, business context, and acceptance criteria.

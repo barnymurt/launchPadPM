@@ -95,7 +95,7 @@ class ProductMarketingExecutiveAgent(BaseAgent):
             ]
         }
     
-    def process_query(self, query: str, **kwargs) -> AgentResponse:
+    def _hardcoded_process_query(self, query: str, **kwargs) -> AgentResponse:
         """
         Process a query from a Product Marketing Executive perspective.
         Focuses on GTM strategy, positioning, messaging, and customer acquisition.

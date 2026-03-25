@@ -67,3 +67,17 @@ def call_perplexity(
     client = OpenAI(api_key=api_key, base_url="https://api.perplexity.ai")
     response = client.chat.completions.create(model=model_name, messages=messages, max_tokens=max_tokens)
     return response.choices[0].message.content or ""
+
+
+def call_minimax(
+    messages: List[dict],
+    model: Optional[str] = None,
+    max_tokens: int = 800,
+    api_key: Optional[str] = None,
+) -> str:
+    api_key = _require_key("MINIMAX_API_KEY", api_key)
+    base_url = os.getenv("MINIMAX_BASE_URL", "https://api.minimax.chat/v1")
+    model_name = model or os.getenv("MINIMAX_MODEL", "minimax-M2.7")
+    client = OpenAI(api_key=api_key, base_url=base_url)
+    response = client.chat.completions.create(model=model_name, messages=messages, max_tokens=max_tokens)
+    return response.choices[0].message.content or ""

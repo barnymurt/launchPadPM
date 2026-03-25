@@ -353,7 +353,7 @@ class FrontendDeveloperAgent(BaseAgent):
             "motto": "Build interfaces that users love, with code that developers don't hate. Delight is in the details - smooth animations, instant feedback, and experiences that just work."
         }
     
-    def process_query(self, query: str, **kwargs) -> AgentResponse:
+    def _hardcoded_process_query(self, query: str, **kwargs) -> AgentResponse:
         """
         Process a query from a Frontend Developer perspective.
         

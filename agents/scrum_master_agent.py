@@ -158,7 +158,7 @@ class ScrumMasterAgent(BaseAgent):
             }
         }
     
-    def process_query(self, query: str, **kwargs) -> AgentResponse:
+    def _hardcoded_process_query(self, query: str, **kwargs) -> AgentResponse:
         """
         Process a query from a Scrum Master perspective.
         Focuses on coaching, facilitation, impediment removal, and team effectiveness.

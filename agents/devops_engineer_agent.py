@@ -341,7 +341,7 @@ class DevOpsEngineerAgent(BaseAgent):
             "motto": "Make deploying to production boring. The best DevOps is invisible DevOps - infrastructure that just works, enabling developers to focus on building products."
         }
     
-    def process_query(self, query: str, **kwargs) -> AgentResponse:
+    def _hardcoded_process_query(self, query: str, **kwargs) -> AgentResponse:
         """
         Process a query from a DevOps Engineer perspective.
         

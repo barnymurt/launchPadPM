@@ -102,20 +102,39 @@ class BaseAgent(ABC):
         """
         pass
     
-    @abstractmethod
     def process_query(self, query: str, **kwargs) -> AgentResponse:
         """
         Process a query and return a response.
-        Must be implemented by each agent subclass.
-        
+
+        If use_ai=True is passed, delegates to the LLM via agent_ai_runner.
+        Otherwise, calls _hardcoded_process_query() for keyword-routed responses.
+
         Args:
             query: The user's question or request
             **kwargs: Additional context or parameters
-            
+                use_ai: bool = False - if True, use LLM instead of hardcoded responses
+                provider: str - AI provider to use (minimax, openai, anthropic, perplexity)
+                use_web: bool = False - if True, enable web search
+                context: dict - domain context to inject into LLM prompts
+                session_keys: dict - API keys for AI providers
+
         Returns:
             AgentResponse object with the agent's response
         """
-        pass
+        use_ai = kwargs.pop("use_ai", False)
+        if use_ai:
+            from services.agent_ai_runner import run_agent_ai
+            return run_agent_ai(self, query, **kwargs)
+        return self._hardcoded_process_query(query, **kwargs)
+
+    def _hardcoded_process_query(self, query: str, **kwargs) -> AgentResponse:
+        """
+        Hardcoded keyword-routed query processing.
+        Override this in subclasses instead of process_query.
+        """
+        raise NotImplementedError(  # type: ignore[return-value]
+            f"{self.__class__.__name__} must implement _hardcoded_process_query()"
+        )
     
     def identify_collaboration_needs(self, query: str) -> List[str]:
         """

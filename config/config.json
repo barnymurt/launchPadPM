@@ -4,7 +4,8 @@
   "enable_collaboration": true,
   "enable_continuous_discovery": true,
   "enable_opportunity_solution_trees": true,
-  "llm_provider": "openai",
+  "default_ai_provider": "minimax",
+  "enable_web_search": true,
   "agents": {
     "product_owner": {
       "enabled": true,

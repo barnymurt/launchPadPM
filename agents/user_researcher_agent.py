@@ -504,7 +504,7 @@ class UserResearcherAgent(BaseAgent):
             "motto": "Question assumptions, seek truth, honor context. Great products are built on evidence, not opinions. My job is to illuminate the path from 'we think' to 'we know.'"
         }
     
-    def process_query(self, query: str, **kwargs) -> AgentResponse:
+    def _hardcoded_process_query(self, query: str, **kwargs) -> AgentResponse:
         """
         Process a query from a User Researcher perspective.
         

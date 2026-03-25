@@ -151,7 +151,7 @@ class HeadOfProductCEOAgent(BaseAgent):
             ]
         }
     
-    def process_query(self, query: str, **kwargs) -> AgentResponse:
+    def _hardcoded_process_query(self, query: str, **kwargs) -> AgentResponse:
         """
         Process a query from a Head of Product/CEO perspective.
         Focuses on strategic oversight, portfolio management, and business outcomes.

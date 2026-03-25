@@ -118,7 +118,7 @@ class DataMetricsAnalystAgent(BaseAgent):
             ]
         }
     
-    def process_query(self, query: str, **kwargs) -> AgentResponse:
+    def _hardcoded_process_query(self, query: str, **kwargs) -> AgentResponse:
         """
         Process a query from a Data/Metrics Analyst perspective.
         Focuses on metrics, analytics, and evidence-based insights.
