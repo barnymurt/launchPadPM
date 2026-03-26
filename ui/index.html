@@ -444,13 +444,13 @@
         /* Agent Chat Layout - 2 Column */
         .agent-chat-layout {
             display: grid;
-            grid-template-columns: 300px 1fr;
+            grid-template-columns: 320px 1fr;
             gap: 12px;
             height: 100%;
             overflow: hidden;
         }
         #page-agent-chat .content {
-            padding: 0;
+            padding: 12px;
         }
         
         /* Left Panel - Agents & Skills */
@@ -473,13 +473,13 @@
             color: var(--text);
         }
         
-        /* Agent Chips Row - horizontal scrollable */
+        /* Agent Chips Row - wrap naturally */
         .agent-chips-row {
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
             padding: 0 12px 10px;
-            max-height: 80px;
+            max-height: 120px;
             overflow-y: auto;
         }
         .agent-chip {
@@ -506,10 +506,11 @@
             flex: 1;
             overflow-y: auto;
             padding: 0 8px 8px;
+            min-height: 0;
         }
         .skills-cards-grid {
-            display: grid;
-            grid-template-columns: 1fr;
+            display: flex;
+            flex-direction: column;
             gap: 8px;
         }
         .skill-card-new {
@@ -1087,9 +1088,7 @@
             
             <!-- Right: Chat + Context Banner -->
             <div class="agent-right-panel">
-                <div class="agent-chat-messages" id="agent-chat-messages">
-                    <div class="message system">💡 Select an agent and skills, then ask a question. The AI will use your selected skills to generate enhanced responses.</div>
-                </div>
+                <div class="agent-chat-messages" id="agent-chat-messages"></div>
                 <div class="agent-chat-input-area">
                     <textarea class="agent-chat-input" id="agent-chat-input" rows="2" placeholder="Ask a question or describe what you want to build..."></textarea>
                     <button class="btn btn-primary" onclick="sendAgentChat()">Send</button>
@@ -1110,30 +1109,6 @@
                     <div class="context-item-inline">
                         <span class="context-label">Skills Loaded:</span>
                         <span id="skills-count" class="context-value">23</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-                        <div class="context-item"><div class="context-dot off"></div> Multi-agent Collab.</div>
-                        <div class="context-item" style="font-size: 10px; color: var(--text-muted); padding-left: 12px;">Depth: 0 / 3</div>
-                    </div>
-                    <div class="context-section">
-                        <h4>Selected Agent</h4>
-                        <div class="context-item" id="selected-agent-info" style="font-size: 11px; color: var(--text-muted);">None selected</div>
-                    </div>
-                    <div class="context-section">
-                        <h4>Active Skill</h4>
-                        <div class="context-item" id="active-skill-info" style="font-size: 11px; color: var(--text-muted);">None selected</div>
-                    </div>
-                    <div class="context-section">
-                        <h4>Skills Available</h4>
-                        <div class="context-item"><div class="context-dot"></div> <span id="skills-count">23</span> skills loaded</div>
-                        <div class="context-item" style="font-size: 10px; color: var(--text-muted); padding-left: 12px;">Auto-injected into queries</div>
-                    </div>
-                    <div class="context-section">
-                        <h4>Session Activity</h4>
-                        <div class="context-item" id="session-activity" style="font-size: 10px; color: var(--text-muted);">No activity yet</div>
                     </div>
                 </div>
             </div>
@@ -1860,7 +1835,7 @@ function renderAgentSquads() {
     for (const [squad, agents] of Object.entries(agentSquads)) {
         const icon = squadIconMap[squad] || '👥';
         for (const agent of agents) {
-            html += `<div class="agent-chip" onclick="selectAgentChip('${agent}', '${squad}')">${icon} ${agent}</div>`;
+            html += `<div class="agent-chip" onclick="selectAgentChip('${agent}', '${squad}', this)">${icon} ${agent}</div>`;
         }
     }
     container.innerHTML = html;
@@ -1880,15 +1855,12 @@ const squadIconMap = {
     'Iteration': '🔄'
 };
 
-function selectAgentChip(agent, squad) {
+function selectAgentChip(agent, squad, element) {
     selectedAgentRole = agent;
     selectedSkills.clear();
     
     document.querySelectorAll('.agent-chip').forEach(c => c.classList.remove('active'));
-    
-    event.target.classList.add('active');
-    const squadId = squad.replace(/[^a-zA-Z]/g, '');
-    document.getElementById(`squad-${squadId}`).classList.add('expanded');
+    element.classList.add('active');
     
     document.getElementById('active-agent-info').textContent = agent;
     document.getElementById('selected-skills-count').textContent = '0';
