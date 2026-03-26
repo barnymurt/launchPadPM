@@ -82,6 +82,54 @@ try:
 except ImportError:
     USER_RESEARCHER_AVAILABLE = False
 
+try:
+    from agents.competitive_intelligence_analyst_agent import CompetitiveIntelligenceAnalystAgent
+    COMPETITIVE_INTELLIGENCE_ANALYST_AVAILABLE = True
+except ImportError:
+    COMPETITIVE_INTELLIGENCE_ANALYST_AVAILABLE = False
+
+try:
+    from agents.market_research_analyst_agent import MarketResearchAnalystAgent
+    MARKET_RESEARCH_ANALYST_AVAILABLE = True
+except ImportError:
+    MARKET_RESEARCH_ANALYST_AVAILABLE = False
+
+try:
+    from agents.opportunity_analyst_agent import OpportunityAnalystAgent
+    OPPORTUNITY_ANALYST_AVAILABLE = True
+except ImportError:
+    OPPORTUNITY_ANALYST_AVAILABLE = False
+
+try:
+    from agents.innovation_lead_agent import InnovationLeadAgent
+    INNOVATION_LEAD_AVAILABLE = True
+except ImportError:
+    INNOVATION_LEAD_AVAILABLE = False
+
+try:
+    from agents.content_strategist_agent import ContentStrategistAgent
+    CONTENT_STRATEGIST_AVAILABLE = True
+except ImportError:
+    CONTENT_STRATEGIST_AVAILABLE = False
+
+try:
+    from agents.growth_hacker_agent import GrowthHackerAgent
+    GROWTH_HACKER_AVAILABLE = True
+except ImportError:
+    GROWTH_HACKER_AVAILABLE = False
+
+try:
+    from agents.technical_researcher_agent import TechnicalResearcherAgent
+    TECHNICAL_RESEARCHER_AVAILABLE = True
+except ImportError:
+    TECHNICAL_RESEARCHER_AVAILABLE = False
+
+try:
+    from agents.agile_coach_agent import AgileCoachAgent
+    AGILE_COACH_AVAILABLE = True
+except ImportError:
+    AGILE_COACH_AVAILABLE = False
+
 
 def initialize_framework(settings: Optional[Settings] = None) -> None:
     """
@@ -177,6 +225,46 @@ def register_available_agents() -> None:
     if USER_RESEARCHER_AVAILABLE:
         researcher_agent = UserResearcherAgent()
         AgentRegistry.register_agent(researcher_agent)
+        registered_count += 1
+
+    if COMPETITIVE_INTELLIGENCE_ANALYST_AVAILABLE:
+        ci_agent = CompetitiveIntelligenceAnalystAgent()
+        AgentRegistry.register_agent(ci_agent)
+        registered_count += 1
+
+    if MARKET_RESEARCH_ANALYST_AVAILABLE:
+        mr_agent = MarketResearchAnalystAgent()
+        AgentRegistry.register_agent(mr_agent)
+        registered_count += 1
+
+    if OPPORTUNITY_ANALYST_AVAILABLE:
+        opp_agent = OpportunityAnalystAgent()
+        AgentRegistry.register_agent(opp_agent)
+        registered_count += 1
+
+    if INNOVATION_LEAD_AVAILABLE:
+        innov_agent = InnovationLeadAgent()
+        AgentRegistry.register_agent(innov_agent)
+        registered_count += 1
+
+    if CONTENT_STRATEGIST_AVAILABLE:
+        content_agent = ContentStrategistAgent()
+        AgentRegistry.register_agent(content_agent)
+        registered_count += 1
+
+    if GROWTH_HACKER_AVAILABLE:
+        growth_agent = GrowthHackerAgent()
+        AgentRegistry.register_agent(growth_agent)
+        registered_count += 1
+
+    if TECHNICAL_RESEARCHER_AVAILABLE:
+        tech_agent = TechnicalResearcherAgent()
+        AgentRegistry.register_agent(tech_agent)
+        registered_count += 1
+
+    if AGILE_COACH_AVAILABLE:
+        coach_agent = AgileCoachAgent()
+        AgentRegistry.register_agent(coach_agent)
         registered_count += 1
     
     if registered_count > 0:
