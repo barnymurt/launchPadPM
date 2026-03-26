@@ -441,192 +441,107 @@
             gap: 4px;
         }
 
-        /* Agent Chat */
-        .chat-layout {
+        /* Agent Chat Layout */
+        .agent-chat-layout {
             display: grid;
-            grid-template-columns: 300px 1fr 300px;
-            gap: 16px;
-            height: calc(100vh - var(--header-h) - 40px);
+            grid-template-columns: 1fr 320px;
+            gap: 0;
+            height: calc(100vh - var(--header-h) - 32px);
         }
-        .agents-panel {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            overflow: hidden;
-            display: none;
+        .agent-chat-main {
+            display: flex;
             flex-direction: column;
             height: 100%;
+            overflow: hidden;
+            border-right: 1px solid var(--border);
+            padding-right: 16px;
         }
-        .agents-panel.active { display: flex; }
-        .panel-header {
-            padding: 12px 16px;
+        .agent-chat-header {
+            padding: 12px 0;
             border-bottom: 1px solid var(--border);
-            font-size: 13px;
-            font-weight: 600;
             flex-shrink: 0;
         }
-        .agent-list {
-            flex: 1;
-            overflow-y: auto;
-            display: none;
-        }
-        .agent-list.active { display: flex; flex-direction: column; }
-        .agent-tabs {
-            display: flex;
-            border-bottom: 1px solid var(--border);
-        }
-        .agent-tab {
-            flex: 1;
-            padding: 8px;
-            text-align: center;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            color: var(--text-muted);
-            border-bottom: 2px solid transparent;
-            transition: all 0.15s;
-        }
-        .agent-tab.active {
-            color: var(--accent);
-            border-bottom-color: var(--accent);
-        }
-        .skill-category {
-            padding: 8px 14px 6px;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            background: var(--bg);
-            border-bottom: 1px solid var(--border);
-        }
-        .skill-item {
-            padding: 12px 16px;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            cursor: pointer;
-            border-bottom: 1px solid #f0f0f0;
-            transition: background 0.15s;
-        }
-        .skill-item:hover { background: #f8f9ff; }
-        .skill-item.selected { background: #eef2ff; border-left: 3px solid var(--accent); }
-        .skill-icon {
+        .agent-chat-header h2 {
             font-size: 18px;
-            margin-top: 2px;
-        }
-        .skill-info { flex: 1; min-width: 0; }
-        .skill-name { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
-        .skill-desc { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
-        .skills-panel {
-            display: none;
-            flex-direction: column;
-            height: 100%;
-            overflow: hidden;
-        }
-        .skills-panel.active { display: flex; }
-        .agents-panel.active { display: flex; }
-        .agent-list.hidden { display: none; }
-        .agent-list { display: none; }
-        .agent-list.active { display: flex; flex-direction: column; }
-
-        /* Skills page header */
-        .skills-header {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
-            background: var(--surface);
-        }
-        .skills-header h3 {
-            font-size: 14px;
             font-weight: 700;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
         }
-        .skills-header p {
-            font-size: 11px;
+        .agent-chat-header p {
+            font-size: 12px;
             color: var(--text-muted);
         }
 
-        /* Horizontal filter pills */
-        .skills-filters {
-            padding: 10px 16px;
+        /* Agent filter pills */
+        .agent-filters {
             display: flex;
-            flex-direction: column;
             gap: 8px;
-            border-bottom: 1px solid var(--border);
-            background: var(--bg);
-        }
-        .filter-row {
-            display: flex;
-            gap: 6px;
+            padding: 12px 0;
             flex-wrap: wrap;
-            align-items: center;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
         }
-        .filter-label {
-            font-size: 10px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            min-width: 50px;
-        }
-        .filter-pill {
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 500;
+        .agent-pill {
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
             cursor: pointer;
             border: 1px solid var(--border);
             background: var(--surface);
             color: var(--text);
             transition: all 0.15s;
         }
-        .filter-pill:hover { border-color: var(--accent); }
-        .filter-pill.active {
+        .agent-pill:hover { border-color: var(--accent); }
+        .agent-pill.active {
             background: var(--accent);
             color: white;
             border-color: var(--accent);
         }
-        .filter-count {
-            font-size: 9px;
-            opacity: 0.7;
-            margin-left: 2px;
-        }
 
-        /* Skill list items */
-        .skill-list {
-            flex: 1;
+        /* Skills scrollable area */
+        .skills-scroll-area {
+            height: 180px;
             overflow-y: auto;
-        }
-        .skill-list-item {
-            padding: 12px 16px;
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            border-bottom: 1px solid #f0f0f0;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-        .skill-list-item:hover { background: #f8f9ff; }
-        .skill-list-icon {
-            font-size: 18px;
-            margin-top: 2px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
             flex-shrink: 0;
         }
-        .skill-list-main { flex: 1; min-width: 0; }
-        .skill-list-name {
-            font-size: 12px;
-            font-weight: 700;
-            margin-bottom: 4px;
+        .skills-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 10px;
+        }
+        .skill-card-new {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .skill-card-new:hover {
+            border-color: var(--accent);
+            box-shadow: 0 2px 8px rgba(79,70,229,0.1);
+        }
+        .skill-card-new.selected {
+            border-color: var(--accent);
+            background: #f8f9ff;
+        }
+        .skill-card-header-new {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            margin-bottom: 6px;
         }
-        .skill-list-stage {
-            font-size: 9px;
-            padding: 2px 6px;
-            border-radius: 8px;
-            font-weight: 600;
-            text-transform: uppercase;
+        .skill-card-icon-new {
+            font-size: 16px;
         }
-        .skill-list-desc {
+        .skill-card-name-new {
+            font-size: 12px;
+            font-weight: 700;
+            flex: 1;
+        }
+        .skill-card-desc-new {
             font-size: 11px;
             color: var(--text-muted);
             line-height: 1.4;
@@ -634,16 +549,147 @@
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            margin-bottom: 8px;
+        }
+        .skill-use-btn {
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 600;
+            background: var(--accent);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .skill-use-btn:hover { background: var(--accent-hover); }
+
+        /* Chat messages */
+        .agent-chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 0;
+        }
+        .agent-message {
+            margin-bottom: 12px;
+            padding: 12px;
+            border-radius: 8px;
+        }
+        .agent-message.user {
+            background: var(--accent);
+            color: white;
+        }
+        .agent-message.ai {
+            background: var(--surface);
+            border: 1px solid var(--border);
+        }
+        .agent-message-header {
+            font-size: 10px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            opacity: 0.7;
+        }
+        .agent-message-content {
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .agent-message-content pre {
+            background: #1f2933;
+            color: #f3f4f6;
+            padding: 10px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 11px;
+            margin-top: 8px;
         }
 
-        /* Stage dot for skill cards */
-        .stage-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
+        /* Chat input area */
+        .agent-chat-input-area {
+            padding: 12px 0 0;
+            border-top: 1px solid var(--border);
             flex-shrink: 0;
-            display: inline-block;
         }
+        .agent-selected-info {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .agent-badge, .skill-badge {
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .agent-badge {
+            background: #eef2ff;
+            color: var(--accent);
+        }
+        .skill-badge {
+            background: #fef3c7;
+            color: #d97706;
+        }
+        .input-row {
+            display: flex;
+            gap: 8px;
+        }
+        .agent-chat-input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+        }
+        .agent-chat-input:focus { border-color: var(--accent); }
+
+        /* Context panel */
+        .agent-context-panel {
+            background: var(--surface);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+        .context-banner-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .context-banner-header h3 {
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .context-banner-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 16px;
+        }
+        .context-section {
+            margin-bottom: 16px;
+        }
+        .context-section h4 {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+        .context-item {
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+        .context-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #10b981;
+        }
+        .context-dot.off { background: #ef4444; }
         .no-skills-msg {
             text-align: center;
             padding: 40px 20px;
@@ -683,96 +729,6 @@
             flex-direction: column;
             overflow: hidden;
         }
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .message {
-            max-width: 85%;
-            padding: 10px 14px;
-            border-radius: 10px;
-            font-size: 13px;
-            line-height: 1.5;
-        }
-        .message.user {
-            background: var(--accent);
-            color: white;
-            align-self: flex-end;
-            border-bottom-right-radius: 3px;
-        }
-        .message.agent {
-            background: var(--bg);
-            align-self: flex-start;
-            border-bottom-left-radius: 3px;
-        }
-        .message.system {
-            background: #fef3c7;
-            align-self: center;
-            font-size: 11px;
-            color: #92400e;
-            text-align: center;
-            max-width: 100%;
-        }
-        .message-time {
-            font-size: 10px;
-            margin-top: 4px;
-            opacity: 0.7;
-        }
-        .chat-input-area {
-            padding: 12px 16px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            gap: 8px;
-        }
-        .chat-input {
-            flex: 1;
-            padding: 8px 12px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 13px;
-            resize: none;
-            font-family: inherit;
-        }
-        .chat-input:focus { outline: none; border-color: var(--accent); }
-        .context-panel {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-        .context-section {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
-        }
-        .context-section:last-child { border-bottom: none; }
-        .context-section h4 {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-        .context-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 0;
-            font-size: 12px;
-        }
-        .context-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #22c55e;
-        }
-        .context-dot.off { background: #d1d5db; }
-
         /* Velocity Chart */
         .velocity-chart {
             background: var(--surface);
@@ -1118,38 +1074,47 @@
 
     <!-- Agent Chat Page -->
     <div class="page" id="page-agent-chat">
-        <div class="content" style="padding: 16px;">
-            <div class="chat-layout">
-                <div class="agents-panel active" id="agents-panel">
-                    <div class="panel-header" style="padding:0;">
-                        <div class="agent-tabs">
-                            <div class="agent-tab active" data-tab="agents" onclick="switchAgentTab('agents')">Agents</div>
-                            <div class="agent-tab" data-tab="skills" onclick="switchAgentTab('skills')">Skills</div>
-                        </div>
-                    </div>
-                    <div class="agent-list" id="agent-list"></div>
-                    <div class="skills-panel" id="skills-list"></div>
+        <div class="agent-chat-layout">
+            <!-- Left: Main chat area -->
+            <div class="agent-chat-main">
+                <!-- Page header -->
+                <div class="agent-chat-header">
+                    <h2>🤖 Agentic Workflows</h2>
+                    <p>Craft AI-powered workflows with specialized agents</p>
                 </div>
-                <div class="chat-main">
-                    <div class="panel-header" style="border-bottom: 1px solid var(--border);">
-                        <span id="chat-agent-name">Select an agent</span>
-                        <span id="chat-agent-role" style="font-size: 11px; color: var(--text-muted); margin-left: 8px;"></span>
+                
+                <!-- Agent filter pills -->
+                <div class="agent-filters" id="agent-filters"></div>
+                
+                <!-- Skills cards -->
+                <div class="skills-scroll-area" id="skills-scroll-area">
+                    <div class="skills-cards-grid" id="skills-cards-grid"></div>
+                </div>
+                
+                <!-- Chat messages area -->
+                <div class="agent-chat-messages" id="agent-chat-messages">
+                    <div class="message system">💡 Select an agent and skill above, then describe what you want to build or ask a question.</div>
+                </div>
+                
+                <!-- Chat input -->
+                <div class="agent-chat-input-area">
+                    <div class="agent-selected-info" id="agent-selected-info">
+                        <span class="agent-badge" id="current-agent-badge">No agent selected</span>
+                        <span class="skill-badge" id="current-skill-badge">No skill selected</span>
                     </div>
-                    <div class="chat-messages" id="chat-messages">
-                        <div class="message system">💡 Ask your Scrum team anything — prioritization, requirements, architecture, metrics, design, research, GTM strategy.</div>
-                    </div>
-                    <div class="chat-input-area">
-                        <textarea class="chat-input" id="chat-input" rows="2" placeholder="Ask the Product Owner about prioritization..."></textarea>
-                        <button class="btn btn-primary" onclick="sendMessage()" style="align-self: flex-end;">Send</button>
+                    <div class="input-row">
+                        <textarea class="agent-chat-input" id="agent-chat-input" rows="2" placeholder="Describe what you want to build..."></textarea>
+                        <button class="btn btn-primary" onclick="sendAgentChat()">Send</button>
                     </div>
                 </div>
-                <div class="context-panel">
-                    <div class="panel-header">Context</div>
-                    <div class="context-section">
-                        <h4>Active Sprint</h4>
-                        <div class="context-item"><div class="context-dot"></div> Sprint 4 — 10 days</div>
-                        <div class="context-item"><div class="context-dot"></div> Goal: MVP delivery</div>
-                    </div>
+            </div>
+            
+            <!-- Right: Context banner -->
+            <div class="agent-context-panel">
+                <div class="context-banner-header">
+                    <h3>🎯 Crafting Agentic Workflows</h3>
+                </div>
+                <div class="context-banner-content" id="context-banner-content">
                     <div class="context-section">
                         <h4>AI Provider</h4>
                         <div class="context-item"><div class="context-dot" id="provider-status"></div> <span id="provider-name">MiniMax</span></div>
@@ -1165,13 +1130,17 @@
                         <div class="context-item" id="selected-agent-info" style="font-size: 11px; color: var(--text-muted);">None selected</div>
                     </div>
                     <div class="context-section">
+                        <h4>Active Skill</h4>
+                        <div class="context-item" id="active-skill-info" style="font-size: 11px; color: var(--text-muted);">None selected</div>
+                    </div>
+                    <div class="context-section">
                         <h4>Skills Available</h4>
                         <div class="context-item"><div class="context-dot"></div> <span id="skills-count">23</span> skills loaded</div>
                         <div class="context-item" style="font-size: 10px; color: var(--text-muted); padding-left: 12px;">Auto-injected into queries</div>
                     </div>
                     <div class="context-section">
-                        <h4>Last Response Skills</h4>
-                        <div class="context-item" id="skills-used-info" style="font-size: 10px; color: var(--text-muted);">None yet</div>
+                        <h4>Session Activity</h4>
+                        <div class="context-item" id="session-activity" style="font-size: 10px; color: var(--text-muted);">No activity yet</div>
                     </div>
                 </div>
             </div>
@@ -1537,7 +1506,6 @@ function init() {
     renderVelocity();
     setupNav();
     setupSettings();
-    setupChat();
     setupToggles();
 }
 
@@ -1546,7 +1514,6 @@ async function loadAgents() {
         const res = await fetch(`${API_BASE}/agents`);
         const data = await res.json();
         agents = data.roles;
-        renderAgentList();
         updateProviderStatus();
     } catch (e) {
         showToast('Failed to load agents — is server running?', true);
@@ -1696,35 +1663,6 @@ function renderNoSkills() {
     list.classList.add('active');
 }
 
-function switchAgentTab(tab) {
-    document.querySelectorAll('.agent-tab').forEach(t => t.classList.remove('active'));
-    document.querySelector(`.agent-tab[data-tab="${tab}"]`).classList.add('active');
-    document.getElementById('agents-panel').classList.add('active');
-    document.getElementById('agent-list').classList.toggle('active', tab === 'agents');
-    document.getElementById('skills-list').classList.toggle('active', tab === 'skills');
-    if (tab === 'skills') {
-        loadSkills();
-    }
-}
-
-function selectSkill(name, desc) {
-    showToast(`Skill: ${name} — query an agent to use this skill`);
-}
-
-function renderAgentList() {
-    const list = document.getElementById('agent-list');
-    list.innerHTML = agents.map((role, i) => {
-        const colors = ['#6366f1','#ec4899','#3b82f6','#10b981','#f59e0b','#8b5cf6','#06b6d4','#84cc16','#f97316','#14b8a6','#a855f7','#eab308'];
-        const color = colors[i % colors.length];
-        return `<div class="agent-item" data-role="${role}" onclick="selectAgent('${role}', this)">
-            <div class="agent-avatar" style="background:${color}">${role.split(' ').map(w=>w[0]).join('').slice(0,2)}</div>
-            <div class="agent-info">
-                <div class="agent-name">${role}</div>
-            </div>
-        </div>`;
-    }).join('');
-}
-
 function renderSprintBoard() {
     const board = document.getElementById('sprint-board');
     board.innerHTML = boardColumns.map(col => `
@@ -1845,8 +1783,163 @@ function setupNav() {
             document.getElementById(`page-${page}`).classList.add('active');
             const titles = { sprint:'Sprint Board', roadmap:'Feature Roadmap', team:'Team Board', ceremonies:'Scrum Ceremonies', 'agent-chat':'Agent Chat', velocity:'Velocity', analytics:'Analytics', connections:'Connections', settings:'Settings', pricing:'Pricing' };
             document.getElementById('page-title').textContent = titles[page] || page;
+            if (page === 'agent-chat') {
+                initAgentChat();
+            }
         });
     });
+}
+
+let currentAgentFilter = 'All';
+let currentSkillFilter = 'All';
+let selectedSkill = null;
+let selectedAgentRole = null;
+let agentChatMessages = [];
+
+function initAgentChat() {
+    renderAgentFilters();
+    renderSkillsCards();
+    loadSkillsForChat();
+    const input = document.getElementById('agent-chat-input');
+    input.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendAgentChat();
+        }
+    });
+}
+
+function renderAgentFilters() {
+    const allAgents = ['All', 'Product Manager', 'Senior Developer', 'Quality Assurance', 'User Experience Designer', 'Innovation Lead', 'Data Analyst'];
+    const container = document.getElementById('agent-filters');
+    container.innerHTML = allAgents.map(agent => {
+        const isActive = agent === currentAgentFilter;
+        return `<div class="agent-pill${isActive ? ' active' : ''}" onclick="setAgentFilter('${agent}')">${agent}</div>`;
+    }).join('');
+}
+
+function setAgentFilter(agent) {
+    currentAgentFilter = agent;
+    renderAgentFilters();
+    renderSkillsCards();
+}
+
+function renderSkillsCards() {
+    const container = document.getElementById('skills-cards-grid');
+    let skills = [];
+    
+    for (const [stage, info] of Object.entries(skillStagesData)) {
+        if (info.skills) {
+            const filtered = currentAgentFilter === 'All' 
+                ? info.skills 
+                : info.skills.filter(s => s.name.toLowerCase().includes(currentAgentFilter.toLowerCase()));
+            skills = skills.concat(filtered.map(s => ({...s, stage})));
+        }
+    }
+
+    if (!skills.length) {
+        container.innerHTML = '<div class="no-skills-msg">No skills match your filter.</div>';
+        return;
+    }
+
+    container.innerHTML = skills.slice(0, 12).map(skill => {
+        const icon = stageIconMap[skill.stage] || '📌';
+        const desc = cleanDesc(skill.description || '');
+        const isSelected = selectedSkill === skill.name;
+        return `
+        <div class="skill-card-new${isSelected ? ' selected' : ''}" onclick="selectSkillCard('${skill.name}', '${skill.stage}')">
+            <div class="skill-card-header-new">
+                <span class="skill-card-icon-new">${icon}</span>
+                <span class="skill-card-name-new">${skill.name.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</span>
+                <button class="skill-use-btn" onclick="event.stopPropagation(); useSkillCard('${skill.name}')">Use Skill</button>
+            </div>
+            <div class="skill-card-desc-new">${desc}</div>
+        </div>`;
+    }).join('');
+}
+
+function selectSkillCard(name, stage) {
+    selectedSkill = name;
+    renderSkillsCards();
+    document.getElementById('current-skill-badge').textContent = name.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    document.getElementById('active-skill-info').textContent = `${name.replace(/-/g, ' ')} (${stage})`;
+    showToast(`Skill selected: ${name}`);
+}
+
+function useSkillCard(name) {
+    selectedSkill = name;
+    document.getElementById('agent-chat-input').focus();
+    document.getElementById('current-skill-badge').textContent = name.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    showToast(`Using skill: ${name} — describe what you want to build`);
+}
+
+async function loadSkillsForChat() {
+    try {
+        const res = await fetch(`${API_BASE}/skills`);
+        const data = await res.json();
+        skillStagesData = data.stages || {};
+        document.getElementById('skills-count').textContent = data.count || 0;
+        renderSkillsCards();
+    } catch (e) {
+        console.error('Failed to load skills', e);
+    }
+}
+
+async function sendAgentChat() {
+    const input = document.getElementById('agent-chat-input');
+    const query = input.value.trim();
+    if (!query) return;
+
+    const skillInfo = selectedSkill ? `Use skill: ${selectedSkill}\n` : '';
+    agentChatMessages.push({ role: 'user', content: query });
+    
+    const messagesEl = document.getElementById('agent-chat-messages');
+    messagesEl.innerHTML += `
+        <div class="agent-message user">
+            <div class="agent-message-header">You</div>
+            <div class="agent-message-content">${escapeHtml(query)}</div>
+        </div>`;
+
+    input.value = '';
+    messagesEl.innerHTML += `
+        <div class="agent-message ai">
+            <div class="agent-message-header">AI Assistant</div>
+            <div class="agent-message-content"><div class="loading-dots"><span></span><span></span><span></span></div></div>
+        </div>`;
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+
+    try {
+        const res = await fetch(`${API_BASE}/orchestrate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: skillInfo + query, use_skills: true })
+        });
+        const data = await res.json();
+        const lastMsg = messagesEl.querySelector('.agent-message.ai:last-child');
+        if (lastMsg) {
+            lastMsg.querySelector('.agent-message-content').innerHTML = formatAIResponse(data.response || 'No response');
+        }
+        updateSessionActivity(query, data.response);
+    } catch (e) {
+        const lastMsg = messagesEl.querySelector('.agent-message.ai:last-child');
+        if (lastMsg) {
+            lastMsg.querySelector('.agent-message-content').innerHTML = 'Error: ' + e.message;
+        }
+    }
+}
+
+function formatAIResponse(text) {
+    if (!text) return '';
+    const escaped = escapeHtml(text);
+    return escaped.replace(/\n/g, '<br>').replace(/```(\w*)\n?([\s\S]*?)```/g, '<pre>$2</pre>');
+}
+
+function updateSessionActivity(query, response) {
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    document.getElementById('session-activity').innerHTML = `
+        <div style="margin-bottom:4px;">${time} — Query sent</div>
+        <div style="margin-bottom:4px;">${(response || '').length} chars received</div>
+    `;
 }
 
 function setupSettings() {
@@ -1860,67 +1953,6 @@ function setupSettings() {
             if (el) el.style.display = 'block';
         });
     });
-}
-
-function setupChat() {
-    const input = document.getElementById('chat-input');
-    input.addEventListener('keydown', e => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
-        }
-    });
-}
-
-function selectAgent(role, el) {
-    currentAgent = role;
-    document.querySelectorAll('.agent-item').forEach(a => a.classList.remove('active'));
-    el.classList.add('active');
-    document.getElementById('chat-agent-name').textContent = role;
-    document.getElementById('chat-agent-role').textContent = getAgentRole(role);
-    document.getElementById('selected-agent-info').textContent = role;
-}
-
-function getAgentRole(role) {
-    const roles = { 'Product Owner':'Maximize Value & Backlog', 'Scrum Master':'Team Effectiveness', 'Development Engineer':'Technical Delivery', 'DevOps Engineer':'Infrastructure & CI/CD', 'QA Engineer':'Quality & Testing', 'Business Analyst':'Requirements & Analysis', 'Data/Metrics Analyst':'Analytics & Metrics', 'UX/UI Designer':'User Experience', 'Product Marketing Executive':'GTM Strategy', 'Head of Product / CEO':'Strategic Direction', 'Frontend Developer':'UI Implementation', 'User Researcher':'Research & Insights' };
-    return roles[role] || '';
-}
-
-async function sendMessage() {
-    const input = document.getElementById('chat-input');
-    const query = input.value.trim();
-    if (!query) return;
-    if (!currentAgent) {
-        showToast('Please select an agent first', true);
-        return;
-    }
-    const messages = document.getElementById('chat-messages');
-    messages.innerHTML += `<div class="message user">${escapeHtml(query)}</div>`;
-    input.value = '';
-    messages.innerHTML += `<div class="message agent"><div class="loading-dots"><span></span><span></span><span></span></div></div>`;
-    messages.scrollTop = messages.scrollHeight;
-    try {
-        const res = await fetch(`${API_BASE}/query`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ role: currentAgent.toLowerCase().replace(/ /g,'_'), query, use_ai: true, use_web: false })
-        });
-        const data = await res.json();
-        document.querySelector('.loading-dots')?.parentElement?.remove();
-        messages.innerHTML += `<div class="message agent">${data.response || 'No response received.'}</div>`;
-        if (data.recommendations?.length) {
-            messages.innerHTML += `<div class="message agent" style="font-size:11px; color: var(--text-muted);"><strong>Recommendations:</strong><br>${data.recommendations.map(r=>'• '+r).join('<br>')}</div>`;
-        }
-        if (data.evidence?.skills_used?.length) {
-            const skillNames = data.evidence.skills_used.map(s => s.replace(/-/g, ' ')).join(', ');
-            messages.innerHTML += `<div class="message system" style="background:#d1fae5;color:#065f46;font-size:11px;">🧠 Skills applied: ${skillNames}</div>`;
-            document.getElementById('skills-used-info').textContent = skillNames;
-        }
-    } catch (e) {
-        document.querySelector('.loading-dots')?.parentElement?.remove();
-        messages.innerHTML += `<div class="message agent" style="color:#dc2626;">Error: ${e.message}</div>`;
-    }
-    messages.scrollTop = messages.scrollHeight;
 }
 
 async function updateProviderStatus() {
