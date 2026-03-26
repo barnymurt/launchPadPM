@@ -43,22 +43,22 @@ LIFECYCLE_STAGES = {
     "Strategy": {
         "order": 2,
         "description": "Define what to build and why. Score ideas, model business cases, challenge assumptions.",
-        "skills": ["feature-prioritization", "business-case-modeling", "devils-advocate", "saas-metrics-analysis"],
+        "skills": ["feature-prioritization", "business-case-modeling", "devils-advocate", "saas-metrics-analysis", "algorithmic-art", "canvas-design", "doc-coauthoring", "brand-guidelines"],
     },
     "Build": {
         "order": 3,
         "description": "Design and build the product. From frontend to backend, testing to infrastructure.",
-        "skills": ["frontend-design", "web-artifacts-builder", "mcp-builder", "webapp-testing"],
+        "skills": ["frontend-design", "web-artifacts-builder", "mcp-builder", "webapp-testing", "creator"],
     },
     "Launch": {
         "order": 4,
         "description": "Position, package, and go to market. Branding, messaging, and launch planning.",
-        "skills": ["brandguidelines", "theme-factory", "internalcomms", "docx", "pdf", "pptx"],
+        "skills": ["brand-guidelines", "theme-factory", "internal-comms", "docx", "pdf", "pptx", "quality-checklist"],
     },
     "Iteration": {
         "order": 5,
         "description": "Measure, learn, and improve. Metrics analysis, feedback synthesis, and roadmap updates.",
-        "skills": ["saas-metrics-analysis", "feedback-synthesis", "feature-prioritization"],
+        "skills": ["saas-metrics-analysis", "feedback-synthesis", "feature-prioritization", "validation-pack"],
     },
 }
 
