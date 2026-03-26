@@ -444,7 +444,7 @@
         /* Agent Chat Layout */
         .agent-chat-layout {
             display: grid;
-            grid-template-columns: 1fr 320px;
+            grid-template-columns: 1fr 300px;
             gap: 0;
             height: calc(100vh - var(--header-h) - 32px);
         }
@@ -471,19 +471,46 @@
             color: var(--text-muted);
         }
 
-        /* Agent filter pills */
-        .agent-filters {
-            display: flex;
-            gap: 8px;
-            padding: 12px 0;
-            flex-wrap: wrap;
-            border-bottom: 1px solid var(--border);
+        /* Agent Squads */
+        .agent-squads {
             flex-shrink: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            border-bottom: 1px solid var(--border);
         }
-        .agent-pill {
-            padding: 6px 14px;
-            border-radius: 16px;
-            font-size: 12px;
+        .squad-group {
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .squad-group:last-child { border-bottom: none; }
+        .squad-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            transition: background 0.15s;
+        }
+        .squad-header:hover { background: var(--bg); }
+        .squad-header.expanded { background: var(--bg); }
+        .squad-chevron {
+            font-size: 10px;
+            transition: transform 0.2s;
+        }
+        .squad-header.expanded .squad-chevron { transform: rotate(90deg); }
+        .squad-agents {
+            display: none;
+            padding: 4px 12px 8px;
+        }
+        .squad-group.expanded .squad-agents { display: flex; flex-wrap: wrap; gap: 6px; }
+        .agent-chip {
+            padding: 5px 12px;
+            border-radius: 14px;
+            font-size: 11px;
             font-weight: 600;
             cursor: pointer;
             border: 1px solid var(--border);
@@ -491,78 +518,112 @@
             color: var(--text);
             transition: all 0.15s;
         }
-        .agent-pill:hover { border-color: var(--accent); }
-        .agent-pill.active {
+        .agent-chip:hover { border-color: var(--accent); }
+        .agent-chip.active {
             background: var(--accent);
             color: white;
             border-color: var(--accent);
         }
 
-        /* Skills scrollable area */
-        .skills-scroll-area {
-            height: 180px;
-            overflow-y: auto;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border);
+        /* Skills Section */
+        .skills-section {
             flex-shrink: 0;
+            border-bottom: 1px solid var(--border);
+            max-height: 220px;
+            display: flex;
+            flex-direction: column;
+        }
+        .skills-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+        }
+        .skills-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .selected-count {
+            font-size: 10px;
+            color: var(--text-muted);
+            background: var(--bg);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        .skills-scroll-area {
+            flex: 1;
+            overflow-y: auto;
         }
         .skills-cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 8px;
+            padding-bottom: 8px;
         }
         .skill-card-new {
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 12px;
+            padding: 10px;
             cursor: pointer;
             transition: all 0.15s;
+            position: relative;
         }
         .skill-card-new:hover {
             border-color: var(--accent);
             box-shadow: 0 2px 8px rgba(79,70,229,0.1);
         }
         .skill-card-new.selected {
-            border-color: var(--accent);
-            background: #f8f9ff;
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+        .skill-card-new.selected::after {
+            content: '✓';
+            position: absolute;
+            bottom: 6px;
+            right: 8px;
+            width: 18px;
+            height: 18px;
+            background: #10b981;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
         }
         .skill-card-header-new {
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
         .skill-card-icon-new {
-            font-size: 16px;
+            font-size: 14px;
         }
         .skill-card-name-new {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             flex: 1;
         }
+        .skill-card-stage {
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
         .skill-card-desc-new {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-muted);
             line-height: 1.4;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            margin-bottom: 8px;
         }
-        .skill-use-btn {
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 10px;
-            font-weight: 600;
-            background: var(--accent);
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-        .skill-use-btn:hover { background: var(--accent-hover); }
 
         /* Chat messages */
         .agent-chat-messages {
@@ -602,31 +663,17 @@
             font-size: 11px;
             margin-top: 8px;
         }
+        .agent-message-content code {
+            background: #e5e7eb;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
 
         /* Chat input area */
         .agent-chat-input-area {
             padding: 12px 0 0;
-            border-top: 1px solid var(--border);
             flex-shrink: 0;
-        }
-        .agent-selected-info {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-        .agent-badge, .skill-badge {
-            font-size: 10px;
-            padding: 3px 8px;
-            border-radius: 8px;
-            font-weight: 600;
-        }
-        .agent-badge {
-            background: #eef2ff;
-            color: var(--accent);
-        }
-        .skill-badge {
-            background: #fef3c7;
-            color: #d97706;
         }
         .input-row {
             display: flex;
@@ -1080,30 +1127,32 @@
                 <!-- Page header -->
                 <div class="agent-chat-header">
                     <h2>🤖 Agentic Workflows</h2>
-                    <p>Craft AI-powered workflows with specialized agents</p>
+                    <p>Select an agent to see their skills, then pick skills to enhance your query</p>
                 </div>
                 
-                <!-- Agent filter pills -->
-                <div class="agent-filters" id="agent-filters"></div>
+                <!-- Squads with agents -->
+                <div class="agent-squads" id="agent-squads"></div>
                 
                 <!-- Skills cards -->
-                <div class="skills-scroll-area" id="skills-scroll-area">
-                    <div class="skills-cards-grid" id="skills-cards-grid"></div>
+                <div class="skills-section">
+                    <div class="skills-section-header">
+                        <span class="skills-title">Skills for <span id="skills-for-agent">Selected Agent</span></span>
+                        <span class="selected-count" id="selected-skills-count">0 selected</span>
+                    </div>
+                    <div class="skills-scroll-area" id="skills-scroll-area">
+                        <div class="skills-cards-grid" id="skills-cards-grid"></div>
+                    </div>
                 </div>
                 
                 <!-- Chat messages area -->
                 <div class="agent-chat-messages" id="agent-chat-messages">
-                    <div class="message system">💡 Select an agent and skill above, then describe what you want to build or ask a question.</div>
+                    <div class="message system">💡 Select an agent from a squad above, then click on skills to select them. Your query will use the selected skills to generate enhanced responses.</div>
                 </div>
                 
                 <!-- Chat input -->
                 <div class="agent-chat-input-area">
-                    <div class="agent-selected-info" id="agent-selected-info">
-                        <span class="agent-badge" id="current-agent-badge">No agent selected</span>
-                        <span class="skill-badge" id="current-skill-badge">No skill selected</span>
-                    </div>
                     <div class="input-row">
-                        <textarea class="agent-chat-input" id="agent-chat-input" rows="2" placeholder="Describe what you want to build..."></textarea>
+                        <textarea class="agent-chat-input" id="agent-chat-input" rows="2" placeholder="Ask a question or describe what you want to build..."></textarea>
                         <button class="btn btn-primary" onclick="sendAgentChat()">Send</button>
                     </div>
                 </div>
@@ -1112,16 +1161,38 @@
             <!-- Right: Context banner -->
             <div class="agent-context-panel">
                 <div class="context-banner-header">
-                    <h3>🎯 Crafting Agentic Workflows</h3>
+                    <h3>🎯 Session Context</h3>
                 </div>
                 <div class="context-banner-content" id="context-banner-content">
                     <div class="context-section">
+                        <h4>Active Agent</h4>
+                        <div class="context-item" id="active-agent-info" style="font-size: 11px; color: var(--text-muted);">None selected</div>
+                    </div>
+                    <div class="context-section">
+                        <h4>Selected Skills</h4>
+                        <div id="selected-skills-list" style="font-size: 11px; color: var(--text-muted);">None selected</div>
+                    </div>
+                    <div class="context-section">
                         <h4>AI Provider</h4>
                         <div class="context-item"><div class="context-dot" id="provider-status"></div> <span id="provider-name">MiniMax</span></div>
-                        <div class="context-item"><div class="context-dot off"></div> Web Search</div>
                     </div>
                     <div class="context-section">
                         <h4>Orchestration</h4>
+                        <div class="context-item"><div class="context-dot off"></div> Multi-agent Collab.</div>
+                        <div class="context-item" style="font-size: 10px; color: var(--text-muted); padding-left: 12px;">Depth: 0 / 3</div>
+                    </div>
+                    <div class="context-section">
+                        <h4>Skills Available</h4>
+                        <div class="context-item"><div class="context-dot"></div> <span id="skills-count">23</span> skills loaded</div>
+                    </div>
+                    <div class="context-section">
+                        <h4>Last Query</h4>
+                        <div class="context-item" id="last-query-info" style="font-size: 10px; color: var(--text-muted);">No queries yet</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
                         <div class="context-item"><div class="context-dot off"></div> Multi-agent Collab.</div>
                         <div class="context-item" style="font-size: 10px; color: var(--text-muted); padding-left: 12px;">Depth: 0 / 3</div>
                     </div>
@@ -1795,10 +1866,61 @@ let currentSkillFilter = 'All';
 let selectedSkill = null;
 let selectedAgentRole = null;
 let agentChatMessages = [];
+let selectedSkills = new Set();
+
+const agentSquads = {
+    'Discovery': ['Market Research Analyst', 'User Researcher', 'Opportunity Analyst'],
+    'Product': ['Product Manager', 'Head of Product', 'Business Analyst'],
+    'Design': ['UX Designer', 'UI Designer', 'Brand Designer'],
+    'Technical': ['Frontend Developer', 'Backend Developer', 'DevOps Engineer', 'Architect'],
+    'Data': ['Data Analyst', 'ML Engineer', 'Analytics Lead'],
+    'QA': ['QA Engineer', 'Test Automation Engineer', 'Performance Tester'],
+    'GTM/Launch': ['Product Marketing Manager', 'Growth Hacker', 'Content Strategist'],
+    'Security': ['Security Engineer', 'Compliance Officer', 'Privacy Specialist'],
+    'Infrastructure': ['Cloud Architect', 'Platform Engineer', 'Site Reliability Engineer'],
+    'Research': ['Technical Researcher', 'Competitive Intelligence Analyst', 'Innovation Lead'],
+    'Iteration': ['Scrum Master', 'Agile Coach', 'Continuous Improvement Lead']
+};
+
+const agentSkillMap = {
+    'Market Research Analyst': ['competitor-research', 'user-persona-creation', 'validation-pack'],
+    'User Researcher': ['user-journey-mapping', 'feedback-synthesis', 'requirements-elicitation'],
+    'Opportunity Analyst': ['business-case-modeling', 'feature-prioritization', 'validation-pack'],
+    'Product Manager': ['feature-prioritization', 'requirements-elicitation', 'feedback-synthesis', 'business-case-modeling'],
+    'Head of Product': ['business-case-modeling', 'feature-prioritization', 'strategy'],
+    'Business Analyst': ['requirements-elicitation', 'feedback-synthesis', 'quality-checklist'],
+    'UX Designer': ['user-journey-mapping', 'user-persona-creation', 'canvasdesign'],
+    'UI Designer': ['canvasdesign', 'frontend-design', 'brandguidelines'],
+    'Brand Designer': ['brandguidelines', 'theme-factory', 'internalcomms'],
+    'Frontend Developer': ['frontend-design', 'webapp-testing', 'mcp-builder'],
+    'Backend Developer': ['mcp-builder', 'saas-metrics-analysis', 'webapp-testing'],
+    'DevOps Engineer': ['mcp-builder', 'saas-metrics-analysis', 'webapp-testing'],
+    'Architect': ['business-case-modeling', 'mcp-builder', 'saas-metrics-analysis'],
+    'Data Analyst': ['saas-metrics-analysis', 'feedback-synthesis', 'competitor-research'],
+    'ML Engineer': ['saas-metrics-analysis', 'mcp-builder', 'validation-pack'],
+    'Analytics Lead': ['saas-metrics-analysis', 'feedback-synthesis', 'competitor-research'],
+    'QA Engineer': ['quality-checklist', 'webapp-testing', 'validation-pack'],
+    'Test Automation Engineer': ['webapp-testing', 'quality-checklist', 'mcp-builder'],
+    'Performance Tester': ['quality-checklist', 'saas-metrics-analysis', 'webapp-testing'],
+    'Product Marketing Manager': ['internalcomms', 'competitor-research', 'creator'],
+    'Growth Hacker': ['competitor-research', 'feedback-synthesis', 'validation-pack'],
+    'Content Strategist': ['internalcomms', 'creator', 'doc-coauthor'],
+    'Security Engineer': ['validation-pack', 'quality-checklist', 'mcp-builder'],
+    'Compliance Officer': ['validation-pack', 'quality-checklist', 'feedback-synthesis'],
+    'Privacy Specialist': ['validation-pack', 'feedback-synthesis', 'quality-checklist'],
+    'Cloud Architect': ['mcp-builder', 'saas-metrics-analysis', 'business-case-modeling'],
+    'Platform Engineer': ['mcp-builder', 'webapp-testing', 'saas-metrics-analysis'],
+    'Site Reliability Engineer': ['saas-metrics-analysis', 'webapp-testing', 'mcp-builder'],
+    'Technical Researcher': ['competitor-research', 'mcp-builder', 'validation-pack'],
+    'Competitive Intelligence Analyst': ['competitor-research', 'feedback-synthesis', 'business-case-modeling'],
+    'Innovation Lead': ['business-case-modeling', 'validation-pack', 'creator'],
+    'Scrum Master': ['feedback-synthesis', 'quality-checklist', 'feature-prioritization'],
+    'Agile Coach': ['feedback-synthesis', 'feature-prioritization', 'quality-checklist'],
+    'Continuous Improvement Lead': ['feedback-synthesis', 'quality-checklist', 'business-case-modeling']
+};
 
 function initAgentChat() {
-    renderAgentFilters();
-    renderSkillsCards();
+    renderAgentSquads();
     loadSkillsForChat();
     const input = document.getElementById('agent-chat-input');
     input.addEventListener('keydown', e => {
@@ -1809,68 +1931,125 @@ function initAgentChat() {
     });
 }
 
-function renderAgentFilters() {
-    const allAgents = ['All', 'Product Manager', 'Senior Developer', 'Quality Assurance', 'User Experience Designer', 'Innovation Lead', 'Data Analyst'];
-    const container = document.getElementById('agent-filters');
-    container.innerHTML = allAgents.map(agent => {
-        const isActive = agent === currentAgentFilter;
-        return `<div class="agent-pill${isActive ? ' active' : ''}" onclick="setAgentFilter('${agent}')">${agent}</div>`;
-    }).join('');
-}
-
-function setAgentFilter(agent) {
-    currentAgentFilter = agent;
-    renderAgentFilters();
-    renderSkillsCards();
-}
-
-function renderSkillsCards() {
-    const container = document.getElementById('skills-cards-grid');
-    let skills = [];
-    
-    for (const [stage, info] of Object.entries(skillStagesData)) {
-        if (info.skills) {
-            const filtered = currentAgentFilter === 'All' 
-                ? info.skills 
-                : info.skills.filter(s => s.name.toLowerCase().includes(currentAgentFilter.toLowerCase()));
-            skills = skills.concat(filtered.map(s => ({...s, stage})));
-        }
+function renderAgentSquads() {
+    const container = document.getElementById('agent-squads');
+    let html = '';
+    for (const [squad, agents] of Object.entries(agentSquads)) {
+        const icon = squadIconMap[squad] || '👥';
+        html += `
+        <div class="squad-group" id="squad-${squad.replace(/[^a-zA-Z]/g, '')}">
+            <div class="squad-header" onclick="toggleSquad('${squad}')">
+                <span class="squad-chevron">▶</span>
+                <span>${icon} ${squad}</span>
+            </div>
+            <div class="squad-agents">
+                ${agents.map(agent => `
+                    <div class="agent-chip" onclick="selectAgentChip('${agent}', '${squad}')">${agent}</div>
+                `).join('')}
+            </div>
+        </div>`;
     }
+    container.innerHTML = html;
+}
 
-    if (!skills.length) {
-        container.innerHTML = '<div class="no-skills-msg">No skills match your filter.</div>';
+const squadIconMap = {
+    'Discovery': '🔭',
+    'Product': '📦',
+    'Design': '🎨',
+    'Technical': '⚙️',
+    'Data': '📊',
+    'QA': '🧪',
+    'GTM/Launch': '🚀',
+    'Security': '🔒',
+    'Infrastructure': '☁️',
+    'Research': '🔬',
+    'Iteration': '🔄'
+};
+
+function toggleSquad(squad) {
+    const squadId = squad.replace(/[^a-zA-Z]/g, '');
+    const group = document.getElementById(`squad-${squadId}`);
+    group.classList.toggle('expanded');
+}
+
+function selectAgentChip(agent, squad) {
+    selectedAgentRole = agent;
+    selectedSkills.clear();
+    
+    document.querySelectorAll('.agent-chip').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.squad-group').forEach(g => g.classList.remove('expanded'));
+    
+    event.target.classList.add('active');
+    const squadId = squad.replace(/[^a-zA-Z]/g, '');
+    document.getElementById(`squad-${squadId}`).classList.add('expanded');
+    
+    document.getElementById('skills-for-agent').textContent = agent;
+    document.getElementById('active-agent-info').textContent = agent;
+    document.getElementById('selected-skills-count').textContent = '0 selected';
+    document.getElementById('selected-skills-list').textContent = 'None selected';
+    
+    renderSkillsCardsForAgent(agent);
+}
+
+function renderSkillsCardsForAgent(agent) {
+    const container = document.getElementById('skills-cards-grid');
+    const skillNames = agentSkillMap[agent] || [];
+    
+    if (skillNames.length === 0) {
+        container.innerHTML = '<div class="no-skills-msg">No skills mapped to this agent yet.</div>';
         return;
     }
-
-    container.innerHTML = skills.slice(0, 12).map(skill => {
+    
+    let skills = [];
+    for (const [stage, info] of Object.entries(skillStagesData)) {
+        if (info.skills) {
+            const matched = info.skills.filter(s => skillNames.includes(s.name));
+            skills = skills.concat(matched.map(s => ({...s, stage})));
+        }
+    }
+    
+    if (!skills.length) {
+        container.innerHTML = '<div class="no-skills-msg">No skills loaded for this agent.</div>';
+        return;
+    }
+    
+    const color = getStageColor(skills[0]?.stage || 'Discovery');
+    
+    container.innerHTML = skills.map(skill => {
         const icon = stageIconMap[skill.stage] || '📌';
         const desc = cleanDesc(skill.description || '');
-        const isSelected = selectedSkill === skill.name;
+        const isSelected = selectedSkills.has(skill.name);
         return `
-        <div class="skill-card-new${isSelected ? ' selected' : ''}" onclick="selectSkillCard('${skill.name}', '${skill.stage}')">
+        <div class="skill-card-new${isSelected ? ' selected' : ''}" onclick="toggleSkillSelection('${skill.name}', '${skill.stage}')">
             <div class="skill-card-header-new">
                 <span class="skill-card-icon-new">${icon}</span>
                 <span class="skill-card-name-new">${skill.name.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</span>
-                <button class="skill-use-btn" onclick="event.stopPropagation(); useSkillCard('${skill.name}')">Use Skill</button>
+                <span class="skill-card-stage" style="background:${color}20; color:${color}">${skill.stage}</span>
             </div>
             <div class="skill-card-desc-new">${desc}</div>
         </div>`;
     }).join('');
 }
 
-function selectSkillCard(name, stage) {
-    selectedSkill = name;
-    renderSkillsCards();
-    document.getElementById('current-skill-badge').textContent = name.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-    document.getElementById('active-skill-info').textContent = `${name.replace(/-/g, ' ')} (${stage})`;
-    showToast(`Skill selected: ${name}`);
-}
-
-function useSkillCard(name) {
-    selectedSkill = name;
-    document.getElementById('agent-chat-input').focus();
-    document.getElementById('current-skill-badge').textContent = name.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-    showToast(`Using skill: ${name} — describe what you want to build`);
+function toggleSkillSelection(skillName, stage) {
+    if (selectedSkills.has(skillName)) {
+        selectedSkills.delete(skillName);
+    } else {
+        selectedSkills.add(skillName);
+    }
+    
+    document.getElementById('selected-skills-count').textContent = `${selectedSkills.size} selected`;
+    
+    if (selectedSkills.size > 0) {
+        const skillList = Array.from(selectedSkills).map(s => s.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())).join(', ');
+        document.getElementById('selected-skills-list').innerHTML = selectedSkills.size <= 3 
+            ? skillList 
+            : `${selectedSkills.size} skills selected`;
+    } else {
+        document.getElementById('selected-skills-list').textContent = 'None selected';
+    }
+    
+    renderSkillsCardsForAgent(selectedAgentRole);
 }
 
 async function loadSkillsForChat() {
@@ -1879,7 +2058,6 @@ async function loadSkillsForChat() {
         const data = await res.json();
         skillStagesData = data.stages || {};
         document.getElementById('skills-count').textContent = data.count || 0;
-        renderSkillsCards();
     } catch (e) {
         console.error('Failed to load skills', e);
     }
@@ -1890,13 +2068,23 @@ async function sendAgentChat() {
     const query = input.value.trim();
     if (!query) return;
 
-    const skillInfo = selectedSkill ? `Use skill: ${selectedSkill}\n` : '';
-    agentChatMessages.push({ role: 'user', content: query });
-    
     const messagesEl = document.getElementById('agent-chat-messages');
+    
+    let skillsText = '';
+    if (selectedSkills.size > 0) {
+        skillsText = `\n\nSelected Skills to apply: ${Array.from(selectedSkills).join(', ')}. \nUse these skills to enhance your response with relevant frameworks, steps, or output formats.`;
+    }
+    
+    let agentText = '';
+    if (selectedAgentRole) {
+        agentText = `\n\nYou are acting as a ${selectedAgentRole}. `;
+    }
+    
+    const fullQuery = `${agentText}${skillsText}\n\nUser query: ${query}`;
+    
     messagesEl.innerHTML += `
         <div class="agent-message user">
-            <div class="agent-message-header">You</div>
+            <div class="agent-message-header">${selectedAgentRole || 'You'}</div>
             <div class="agent-message-content">${escapeHtml(query)}</div>
         </div>`;
 
@@ -1912,14 +2100,14 @@ async function sendAgentChat() {
         const res = await fetch(`${API_BASE}/orchestrate`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query: skillInfo + query, use_skills: true })
+            body: JSON.stringify({ query: fullQuery, use_skills: true, agent: selectedAgentRole })
         });
         const data = await res.json();
         const lastMsg = messagesEl.querySelector('.agent-message.ai:last-child');
         if (lastMsg) {
             lastMsg.querySelector('.agent-message-content').innerHTML = formatAIResponse(data.response || 'No response');
         }
-        updateSessionActivity(query, data.response);
+        document.getElementById('last-query-info').textContent = query.substring(0, 50) + (query.length > 50 ? '...' : '');
     } catch (e) {
         const lastMsg = messagesEl.querySelector('.agent-message.ai:last-child');
         if (lastMsg) {
@@ -1931,15 +2119,7 @@ async function sendAgentChat() {
 function formatAIResponse(text) {
     if (!text) return '';
     const escaped = escapeHtml(text);
-    return escaped.replace(/\n/g, '<br>').replace(/```(\w*)\n?([\s\S]*?)```/g, '<pre>$2</pre>');
-}
-
-function updateSessionActivity(query, response) {
-    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    document.getElementById('session-activity').innerHTML = `
-        <div style="margin-bottom:4px;">${time} — Query sent</div>
-        <div style="margin-bottom:4px;">${(response || '').length} chars received</div>
-    `;
+    return escaped.replace(/\n/g, '<br>').replace(/```(\w*)\n?([\s\S]*?)```/g, '<pre>$2</pre>').replace(/`([^`]+)`/g, '<code>$1</code>');
 }
 
 function setupSettings() {
