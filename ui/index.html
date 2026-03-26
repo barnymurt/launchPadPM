@@ -441,11 +441,11 @@
             gap: 4px;
         }
 
-        /* Agent Chat Layout - 3 Column */
+        /* Agent Chat Layout - 2 Column */
         .agent-chat-layout {
             display: grid;
-            grid-template-columns: 260px 1fr 220px;
-            gap: 10px;
+            grid-template-columns: 300px 1fr;
+            gap: 12px;
             height: 100%;
             overflow: hidden;
         }
@@ -473,44 +473,18 @@
             color: var(--text);
         }
         
-        /* Agent Squads - Compact vertical list */
-        .agent-squads-scroll {
-            flex: 1;
-            overflow-y: auto;
-            border-bottom: 1px solid var(--border);
-        }
-        .squad-group {
-            border-bottom: 1px solid #f0f0f0;
-        }
-        .squad-group:last-child { border-bottom: none; }
-        .squad-header {
+        /* Agent Chips Row - horizontal scrollable */
+        .agent-chips-row {
             display: flex;
-            align-items: center;
+            flex-wrap: wrap;
             gap: 6px;
-            padding: 6px 10px;
-            cursor: pointer;
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            transition: background 0.15s;
+            padding: 0 12px 10px;
+            max-height: 80px;
+            overflow-y: auto;
         }
-        .squad-header:hover { background: var(--bg); }
-        .squad-header.expanded { background: var(--bg); }
-        .squad-chevron {
-            font-size: 8px;
-            transition: transform 0.2s;
-        }
-        .squad-header.expanded .squad-chevron { transform: rotate(90deg); }
-        .squad-agents {
-            display: none;
-            padding: 4px 10px 6px;
-        }
-        .squad-group.expanded .squad-agents { display: flex; flex-wrap: wrap; gap: 4px; }
         .agent-chip {
-            padding: 4px 8px;
-            border-radius: 10px;
+            padding: 5px 10px;
+            border-radius: 12px;
             font-size: 10px;
             font-weight: 600;
             cursor: pointer;
@@ -518,6 +492,7 @@
             background: var(--surface);
             color: var(--text);
             transition: all 0.15s;
+            white-space: nowrap;
         }
         .agent-chip:hover { border-color: var(--accent); }
         .agent-chip.active {
@@ -528,20 +503,20 @@
         
         /* Skills Section in Left Panel */
         .skills-scroll-area {
-            height: 140px;
+            flex: 1;
             overflow-y: auto;
             padding: 0 8px 8px;
         }
         .skills-cards-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
         }
         .skill-card-new {
             background: var(--bg);
             border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 8px 10px;
+            border-radius: 8px;
+            padding: 10px 12px;
             cursor: pointer;
             transition: all 0.15s;
             position: relative;
@@ -556,46 +531,46 @@
         .skill-card-new.selected::after {
             content: '✓';
             position: absolute;
-            bottom: 4px;
-            right: 6px;
-            width: 14px;
-            height: 14px;
+            bottom: 6px;
+            right: 8px;
+            width: 16px;
+            height: 16px;
             background: #10b981;
             color: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 8px;
+            font-size: 9px;
             font-weight: 700;
         }
         .skill-card-header-new {
             display: flex;
             align-items: center;
             gap: 6px;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
         }
         .skill-card-icon-new {
             font-size: 12px;
         }
         .skill-card-name-new {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 700;
             flex: 1;
         }
         .skill-card-stage {
             font-size: 8px;
-            padding: 1px 4px;
+            padding: 2px 5px;
             border-radius: 4px;
             font-weight: 600;
             text-transform: uppercase;
         }
         .skill-card-desc-new {
-            font-size: 9px;
+            font-size: 10px;
             color: var(--text-muted);
-            line-height: 1.3;
+            line-height: 1.4;
             display: -webkit-box;
-            -webkit-line-clamp: 1;
+            -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -606,8 +581,8 @@
             text-align: center;
         }
 
-        /* Center - Chat Area */
-        .agent-chat-center {
+        /* Right Panel - Chat + Context */
+        .agent-right-panel {
             display: flex;
             flex-direction: column;
             height: 100%;
@@ -688,54 +663,28 @@
         }
         .agent-chat-input:focus { border-color: var(--accent); }
 
-        /* Right - Context Panel */
-        .agent-context-panel {
+        /* Context Banner - below chat */
+        .context-banner {
             display: flex;
-            flex-direction: column;
-            height: 100%;
-            overflow: hidden;
-            background: var(--surface);
-            border-radius: 8px;
-            border: 1px solid var(--border);
-        }
-        .context-banner-header {
-            padding: 10px 12px;
-            border-bottom: 1px solid var(--border);
+            gap: 16px;
+            padding: 8px 12px;
+            background: var(--bg);
+            border-top: 1px solid var(--border);
             flex-shrink: 0;
+            flex-wrap: wrap;
         }
-        .context-banner-header h3 {
-            font-size: 12px;
-            font-weight: 700;
-        }
-        .context-banner-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px 12px;
-        }
-        .context-section {
-            margin-bottom: 12px;
-        }
-        .context-section h4 {
-            font-size: 9px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-        .context-item {
-            font-size: 10px;
+        .context-item-inline {
             display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 3px;
+            gap: 4px;
+            font-size: 10px;
         }
-        .context-dot {
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            background: #10b981;
+        .context-label {
+            color: var(--text-muted);
+            font-weight: 600;
         }
-        .context-dot.off { background: #ef4444; }
+        .context-value {
+            color: var(--text);
+        }
         .no-skills-msg {
             text-align: center;
             padding: 40px 20px;
@@ -1126,52 +1075,41 @@
                 <div class="agent-left-header">
                     <h3>🤖 Agents</h3>
                 </div>
-                <div class="agent-squads-scroll" id="agent-squads"></div>
+                <div class="agent-chips-row" id="agent-chips-row"></div>
                 
                 <div class="agent-left-header" style="border-top: 1px solid var(--border); margin-top: 8px; padding-top: 8px;">
-                    <h3>🎯 Skills <span class="selected-count" id="selected-skills-count" style="font-size:10px;background:var(--bg);padding:2px 6px;border-radius:8px;font-weight:normal;">0</span></h3>
+                    <h3>🎯 Skills <span id="selected-skills-count" style="font-size:10px;background:var(--accent);color:white;padding:2px 6px;border-radius:8px;font-weight:normal;margin-left:6px;">0</span></h3>
                 </div>
                 <div class="skills-scroll-area" id="skills-scroll-area">
                     <div class="skills-cards-grid" id="skills-cards-grid"></div>
                 </div>
             </div>
             
-            <!-- Center: Chat -->
-            <div class="agent-chat-center">
+            <!-- Right: Chat + Context Banner -->
+            <div class="agent-right-panel">
                 <div class="agent-chat-messages" id="agent-chat-messages">
-                    <div class="message system">💡 Select an agent and skills from the left panel. Your query will use the selected skills to generate enhanced responses.</div>
+                    <div class="message system">💡 Select an agent and skills, then ask a question. The AI will use your selected skills to generate enhanced responses.</div>
                 </div>
                 <div class="agent-chat-input-area">
                     <textarea class="agent-chat-input" id="agent-chat-input" rows="2" placeholder="Ask a question or describe what you want to build..."></textarea>
                     <button class="btn btn-primary" onclick="sendAgentChat()">Send</button>
                 </div>
-            </div>
-            
-            <!-- Right: Context -->
-            <div class="agent-context-panel">
-                <div class="context-banner-header">
-                    <h3>🎯 Context</h3>
-                </div>
-                <div class="context-banner-content" id="context-banner-content">
-                    <div class="context-section">
-                        <h4>Active Agent</h4>
-                        <div id="active-agent-info" style="font-size: 11px; color: var(--text-muted);">None selected</div>
+                <div class="context-banner" id="context-banner">
+                    <div class="context-item-inline">
+                        <span class="context-label">Agent:</span>
+                        <span id="active-agent-info" class="context-value">None</span>
                     </div>
-                    <div class="context-section">
-                        <h4>Selected Skills</h4>
-                        <div id="selected-skills-list" style="font-size: 11px; color: var(--text-muted);">None selected</div>
+                    <div class="context-item-inline">
+                        <span class="context-label">Skills:</span>
+                        <span id="selected-skills-list" class="context-value">None selected</span>
                     </div>
-                    <div class="context-section">
-                        <h4>AI Provider</h4>
-                        <div class="context-item"><div class="context-dot" id="provider-status"></div> <span id="provider-name">MiniMax</span></div>
+                    <div class="context-item-inline">
+                        <span class="context-label">Provider:</span>
+                        <span id="provider-name" class="context-value">MiniMax</span>
                     </div>
-                    <div class="context-section">
-                        <h4>Skills Loaded</h4>
-                        <div class="context-item"><div class="context-dot"></div> <span id="skills-count">23</span></div>
-                    </div>
-                    <div class="context-section">
-                        <h4>Last Query</h4>
-                        <div id="last-query-info" style="font-size: 10px; color: var(--text-muted);">None yet</div>
+                    <div class="context-item-inline">
+                        <span class="context-label">Skills Loaded:</span>
+                        <span id="skills-count" class="context-value">23</span>
                     </div>
                 </div>
             </div>
@@ -1916,23 +1854,14 @@ function initAgentChat() {
 }
 
 function renderAgentSquads() {
-    const container = document.getElementById('agent-squads');
+    const container = document.getElementById('agent-chips-row');
     if (!container) return;
     let html = '';
     for (const [squad, agents] of Object.entries(agentSquads)) {
         const icon = squadIconMap[squad] || '👥';
-        html += `
-        <div class="squad-group" id="squad-${squad.replace(/[^a-zA-Z]/g, '')}">
-            <div class="squad-header" onclick="toggleSquad('${squad}')">
-                <span class="squad-chevron">▶</span>
-                <span>${icon} ${squad}</span>
-            </div>
-            <div class="squad-agents">
-                ${agents.map(agent => `
-                    <div class="agent-chip" onclick="selectAgentChip('${agent}', '${squad}')">${agent}</div>
-                `).join('')}
-            </div>
-        </div>`;
+        for (const agent of agents) {
+            html += `<div class="agent-chip" onclick="selectAgentChip('${agent}', '${squad}')">${icon} ${agent}</div>`;
+        }
     }
     container.innerHTML = html;
 }
@@ -1951,18 +1880,11 @@ const squadIconMap = {
     'Iteration': '🔄'
 };
 
-function toggleSquad(squad) {
-    const squadId = squad.replace(/[^a-zA-Z]/g, '');
-    const group = document.getElementById(`squad-${squadId}`);
-    group.classList.toggle('expanded');
-}
-
 function selectAgentChip(agent, squad) {
     selectedAgentRole = agent;
     selectedSkills.clear();
     
     document.querySelectorAll('.agent-chip').forEach(c => c.classList.remove('active'));
-    document.querySelectorAll('.squad-group').forEach(g => g.classList.remove('expanded'));
     
     event.target.classList.add('active');
     const squadId = squad.replace(/[^a-zA-Z]/g, '');
