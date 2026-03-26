@@ -1981,10 +1981,11 @@ async function sendAgentChat() {
     messagesEl.scrollTop = messagesEl.scrollHeight;
 
     try {
+        const role = selectedAgentRole ? selectedAgentRole.toLowerCase().replace(/ /g, '_').replace(/[^a-z_]/g, '') : 'product_owner';
         const res = await fetch(`${API_BASE}/orchestrate`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query: fullQuery, use_skills: true, agent: selectedAgentRole })
+            body: JSON.stringify({ role, query: fullQuery })
         });
         const data = await res.json();
         const lastMsg = messagesEl.querySelector('.agent-message.ai:last-child');
