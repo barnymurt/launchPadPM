@@ -32,13 +32,14 @@ class Orchestrator:
         role: str,
         query: str,
         context: Optional[Dict[str, Any]] = None,
+        skills: Optional[List[str]] = None,
         depth: int = 0,
     ) -> OrchestrationResult:
         agent = AgentRegistry.get_agent(role)
         if not agent:
             raise ValueError(f"Agent '{role}' not found")
 
-        primary_response = await self._run_agent(agent, query, context)
+        primary_response = await self._run_agent(agent, query, context, skills=skills)
         all_responses = [primary_response]
         current_depth = depth
 
@@ -49,7 +50,7 @@ class Orchestrator:
                 if collab_agent:
                     collab_tasks.append(
                         self._run_agent(
-                            collab_agent, query, context, parent_response=primary_response
+                            collab_agent, query, context, skills=skills, parent_response=primary_response
                         )
                     )
 
@@ -60,7 +61,7 @@ class Orchestrator:
             synthesis_query = self._build_synthesis_query(
                 query, primary_response, collab_responses
             )
-            primary_response = await self._run_agent(agent, synthesis_query, context)
+            primary_response = await self._run_agent(agent, synthesis_query, context, skills=skills)
 
         return OrchestrationResult(
             primary_response=primary_response,
@@ -73,6 +74,7 @@ class Orchestrator:
         agent: BaseAgent,
         query: str,
         context: Optional[Dict[str, Any]] = None,
+        skills: Optional[List[str]] = None,
         parent_response: Optional[AgentResponse] = None,
     ) -> AgentResponse:
         enriched_query = self._enrich_query(query, context, parent_response)
@@ -82,6 +84,7 @@ class Orchestrator:
             enriched_query,
             provider=self.provider,
             use_web=self.use_web,
+            specific_skills=skills,
         )
 
     def _enrich_query(

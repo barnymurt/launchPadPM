@@ -1954,21 +1954,11 @@ async function sendAgentChat() {
 
     const messagesEl = document.getElementById('agent-chat-messages');
     
-    let skillsText = '';
-    if (selectedSkills.size > 0) {
-        skillsText = `\n\nSelected Skills to apply: ${Array.from(selectedSkills).join(', ')}. \nUse these skills to enhance your response with relevant frameworks, steps, or output formats.`;
-    }
-    
-    let agentText = '';
-    if (selectedAgentRole) {
-        agentText = `\n\nYou are acting as a ${selectedAgentRole}. `;
-    }
-    
-    const fullQuery = `${agentText}${skillsText}\n\nUser query: ${query}`;
+    const selectedSkillsArray = Array.from(selectedSkills);
     
     messagesEl.innerHTML += `
         <div class="agent-message user">
-            <div class="agent-message-header">${selectedAgentRole || 'You'}</div>
+            <div class="agent-message-header">${selectedAgentRole || 'You'}${selectedSkillsArray.length > 0 ? ' (using ' + selectedSkillsArray.length + ' skills)' : ''}</div>
             <div class="agent-message-content">${escapeHtml(query)}</div>
         </div>`;
 
@@ -1985,7 +1975,12 @@ async function sendAgentChat() {
         const res = await fetch(`${API_BASE}/orchestrate`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ role, query: fullQuery })
+            body: JSON.stringify({ 
+                role, 
+                query, 
+                skills: selectedSkillsArray,
+                use_web: true 
+            })
         });
         const data = await res.json();
         const lastMsg = messagesEl.querySelector('.agent-message.ai:last-child');

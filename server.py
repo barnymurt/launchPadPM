@@ -183,9 +183,10 @@ def query_agent(payload: QueryRequest) -> Dict[str, Any]:
 class OrchestrateRequest(BaseModel):
     role: str
     query: str
-    use_web: bool = False
+    use_web: bool = True
     provider: Optional[str] = None
     context: Optional[Dict[str, Any]] = None
+    skills: Optional[List[str]] = None
 
 
 @app.post("/orchestrate")
@@ -199,6 +200,7 @@ async def orchestrate(payload: OrchestrateRequest) -> Dict[str, Any]:
             role=payload.role,
             query=payload.query,
             context=payload.context,
+            skills=payload.skills,
         )
         return {
             "response": result.primary_response.response,
