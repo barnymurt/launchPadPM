@@ -21,7 +21,7 @@ def _require_key(key_name: str, override_key: Optional[str] = None) -> str:
 def call_openai(
     messages: List[dict],
     model: Optional[str] = None,
-    max_tokens: int = 800,
+    max_tokens: int = 3000,
     api_key: Optional[str] = None,
 ) -> str:
     api_key = _require_key("OPENAI_API_KEY", api_key)
@@ -34,7 +34,7 @@ def call_openai(
 def call_anthropic(
     messages: List[dict],
     model: Optional[str] = None,
-    max_tokens: int = 800,
+    max_tokens: int = 3000,
     api_key: Optional[str] = None,
 ) -> str:
     api_key = _require_key("ANTHROPIC_API_KEY", api_key)
@@ -59,7 +59,7 @@ def call_anthropic(
 def call_perplexity(
     messages: List[dict],
     model: Optional[str] = None,
-    max_tokens: int = 800,
+    max_tokens: int = 3000,
     api_key: Optional[str] = None,
 ) -> str:
     api_key = _require_key("PERPLEXITY_API_KEY", api_key)
@@ -72,7 +72,7 @@ def call_perplexity(
 def call_minimax(
     messages: List[dict],
     model: Optional[str] = None,
-    max_tokens: int = 800,
+    max_tokens: int = 3000,
     api_key: Optional[str] = None,
 ) -> str:
     api_key = _require_key("MINIMAX_API_KEY", api_key)

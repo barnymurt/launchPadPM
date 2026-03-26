@@ -3,6 +3,7 @@ AI-enabled agent runner with optional web search and skill context injection.
 """
 
 import os
+import re
 from dotenv import load_dotenv
 from typing import Any, Dict, List, Optional
 
@@ -24,6 +25,8 @@ def _build_system_prompt(agent: BaseAgent, web_results: Optional[List[Dict[str, 
         f"You are the {agent.role} agent named {agent.name}.",
         "Use the provided role knowledge and Scrum practices to answer.",
         "Be concise and actionable.",
+        "IMPORTANT: Do NOT include any internal reasoning tags like <think> or  in your response.",
+        "Only output the final formatted answer.",
     ]
     if web_results:
         prompt.append("You have web search results available in the conversation context.")
@@ -119,7 +122,7 @@ def run_agent_ai(
     ]
 
     response_text = _call_provider(selected_provider, messages, session_keys)
-    response_text = response_text.replace("<think>", "").replace("</think>", "").strip()
+    response_text = re.sub(r"<think>[\s\S]*?</think>", "", response_text).strip()
     evidence: Dict[str, Any] = {
         "provider": selected_provider,
         "web_results": web_results,
