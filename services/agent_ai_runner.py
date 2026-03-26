@@ -101,13 +101,12 @@ def run_agent_ai(
     skill_names: List[str] = []
     if use_skills and SKILLS_AVAILABLE:
         if specific_skills:
-            from services.skill_loader import get_skill
+            from services.skill_loader import get_skill_context
             for skill_name in specific_skills:
-                skill = get_skill(skill_name)
-                if skill:
-                    skill_context += f"\n\n## {skill.name.replace('-', ' ').title()}\n{skill.description}\n"
-                    skill_context += f"Key steps: {', '.join(skill.workflow_steps[:5]) if skill.workflow_steps else 'See skill details'}\n"
-                    skill_names.append(skill.name)
+                ctx = get_skill_context(skill_name)
+                if ctx:
+                    skill_context += f"\n\n{ctx}\n"
+                    skill_names.append(skill_name)
         else:
             relevant_skills = get_relevant_skills(query, top_k=3)  # type: ignore
             if relevant_skills:
@@ -120,6 +119,7 @@ def run_agent_ai(
     ]
 
     response_text = _call_provider(selected_provider, messages, session_keys)
+    response_text = response_text.replace("<think>", "").replace("</think>", "").strip()
     evidence: Dict[str, Any] = {
         "provider": selected_provider,
         "web_results": web_results,
