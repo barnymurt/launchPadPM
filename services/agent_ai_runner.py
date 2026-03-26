@@ -1,5 +1,5 @@
 """
-AI-enabled agent runner with optional web search.
+AI-enabled agent runner with optional web search and skill context injection.
 """
 
 import os
@@ -11,6 +11,12 @@ from integrations.ai_providers import call_anthropic, call_minimax, call_openai,
 from integrations.web_search import search_duckduckgo
 
 load_dotenv()
+
+try:
+    from services.skill_loader import get_relevant_skills, format_skills_for_prompt
+    SKILLS_AVAILABLE = True
+except Exception:
+    SKILLS_AVAILABLE = False
 
 
 def _build_system_prompt(agent: BaseAgent, web_results: Optional[List[Dict[str, Any]]]) -> str:
@@ -24,7 +30,12 @@ def _build_system_prompt(agent: BaseAgent, web_results: Optional[List[Dict[str, 
     return "\n".join(prompt)
 
 
-def _build_user_prompt(agent: BaseAgent, query: str, web_results: Optional[List[Dict[str, Any]]]) -> str:
+def _build_user_prompt(
+    agent: BaseAgent,
+    query: str,
+    web_results: Optional[List[Dict[str, Any]]] = None,
+    skill_context: str = "",
+) -> str:
     payload = {
         "query": query,
         "role_knowledge": agent.role_knowledge,
@@ -33,6 +44,8 @@ def _build_user_prompt(agent: BaseAgent, query: str, web_results: Optional[List[
     }
     if web_results:
         payload["web_results"] = web_results
+    if skill_context:
+        payload["skill_context"] = skill_context
     return f"Context:\n{payload}\n\nAnswer the query."
 
 
@@ -78,19 +91,29 @@ def run_agent_ai(
     use_web: bool = False,
     max_results: int = 5,
     session_keys: Optional[Dict[str, str]] = None,
+    use_skills: bool = True,
 ) -> AgentResponse:
     selected_provider = _select_provider(provider, session_keys)
     web_results = search_duckduckgo(query, max_results=max_results) if use_web else []
 
+    skill_context = ""
+    skill_names: List[str] = []
+    if use_skills and SKILLS_AVAILABLE:
+        relevant_skills = get_relevant_skills(query, top_k=3)  # type: ignore
+        if relevant_skills:
+            skill_context = format_skills_for_prompt(relevant_skills)  # type: ignore
+            skill_names = [s.name for s in relevant_skills]
+
     messages = [
         {"role": "system", "content": _build_system_prompt(agent, web_results)},
-        {"role": "user", "content": _build_user_prompt(agent, query, web_results)},
+        {"role": "user", "content": _build_user_prompt(agent, query, web_results, skill_context)},
     ]
 
     response_text = _call_provider(selected_provider, messages, session_keys)
     evidence: Dict[str, Any] = {
         "provider": selected_provider,
         "web_results": web_results,
+        "skills_used": skill_names,
     }
 
     return agent.format_response(

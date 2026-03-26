@@ -7,6 +7,7 @@ from threading import Timer
 from typing import Any, Dict, List, Optional
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, RedirectResponse
 from pydantic import BaseModel
 
@@ -16,8 +17,22 @@ from main import initialize_framework
 from integrations.web_search import search_duckduckgo
 from services.agent_ai_runner import run_agent_ai
 
+try:
+    from services.orchestrator import Orchestrator
+    ORCHESTRATOR_AVAILABLE = True
+except Exception:
+    ORCHESTRATOR_AVAILABLE = False
+
 
 app = FastAPI(title="LaunchPadPM Local Server")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 _initialized = False
 _settings: Optional[Settings] = None
@@ -36,6 +51,7 @@ class KeyRequest(BaseModel):
     openai: Optional[str] = None
     anthropic: Optional[str] = None
     perplexity: Optional[str] = None
+    minimax: Optional[str] = None
 
 
 def _ensure_initialized() -> None:
@@ -93,6 +109,7 @@ def key_status() -> Dict[str, bool]:
         "openai": bool(_session_keys.get("openai") or os.getenv("OPENAI_API_KEY")),
         "anthropic": bool(_session_keys.get("anthropic") or os.getenv("ANTHROPIC_API_KEY")),
         "perplexity": bool(_session_keys.get("perplexity") or os.getenv("PERPLEXITY_API_KEY")),
+        "minimax": bool(_session_keys.get("minimax") or os.getenv("MINIMAX_API_KEY")),
     }
 
 
@@ -104,11 +121,14 @@ def set_keys(payload: KeyRequest) -> Dict[str, bool]:
         _session_keys["anthropic"] = payload.anthropic.strip()
     if payload.perplexity is not None:
         _session_keys["perplexity"] = payload.perplexity.strip()
+    if payload.minimax is not None:
+        _session_keys["minimax"] = payload.minimax.strip()
 
     return {
         "openai": bool(_session_keys.get("openai")),
         "anthropic": bool(_session_keys.get("anthropic")),
         "perplexity": bool(_session_keys.get("perplexity")),
+        "minimax": bool(_session_keys.get("minimax")),
     }
 
 
@@ -157,4 +177,89 @@ def query_agent(payload: QueryRequest) -> Dict[str, Any]:
         "requires_collaboration": response.requires_collaboration,
         "collaborating_roles": response.collaborating_roles or [],
         "evidence": response.evidence or {},
+    }
+
+
+class OrchestrateRequest(BaseModel):
+    role: str
+    query: str
+    use_web: bool = False
+    provider: Optional[str] = None
+    context: Optional[Dict[str, Any]] = None
+
+
+@app.post("/orchestrate")
+async def orchestrate(payload: OrchestrateRequest) -> Dict[str, Any]:
+    _ensure_initialized()
+    if not ORCHESTRATOR_AVAILABLE:
+        raise HTTPException(status_code=503, detail="Orchestrator not available")
+    orchestrator = Orchestrator(provider=payload.provider, use_web=payload.use_web)  # type: ignore
+    try:
+        result = await orchestrator.query(
+            role=payload.role,
+            query=payload.query,
+            context=payload.context,
+        )
+        return {
+            "response": result.primary_response.response,
+            "recommendations": result.primary_response.recommendations or [],
+            "questions": result.primary_response.questions or [],
+            "requires_collaboration": result.primary_response.requires_collaboration,
+            "collaborating_roles": result.primary_response.collaborating_roles or [],
+            "depth_used": result.depth_used,
+            "all_responses": [
+                {
+                    "role": r.role,
+                    "response": r.response,
+                }
+                for r in result.all_responses
+            ],
+            "evidence": result.primary_response.evidence or {},
+        }
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+try:
+    from services.skill_loader import (
+        get_all_skills,
+        get_skills_by_stage,
+        get_relevant_skills,
+    )
+    SKILLS_AVAILABLE_SERVER = True
+except Exception:
+    SKILLS_AVAILABLE_SERVER = False
+
+
+@app.get("/skills")
+def list_skills() -> Dict[str, Any]:
+    """Return all skills organized by lifecycle stage."""
+    if not SKILLS_AVAILABLE_SERVER:
+        return {"stages": {}, "count": 0}
+    return {
+        "stages": get_skills_by_stage(),
+        "count": len(get_all_skills()),
+    }
+
+
+@app.get("/skills/search")
+def search_skills(q: str = "") -> Dict[str, Any]:
+    """Search skills by keyword and return top matches."""
+    if not SKILLS_AVAILABLE_SERVER or not q:
+        return {"skills": [], "query": q}
+    relevant = get_relevant_skills(q, top_k=5)
+    return {
+        "skills": [
+            {
+                "name": s.name,
+                "description": s.description,
+                "skill_type": s.skill_type,
+                "lifecycle_stage": s.lifecycle_stage,
+                "outputs": s.outputs,
+                "triggers": s.triggers[:5],
+                "workflow_steps": s.workflow_steps[:4],
+            }
+            for s in relevant
+        ],
+        "query": q,
     }

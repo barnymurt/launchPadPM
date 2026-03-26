@@ -1,457 +1,1973 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LaunchPadPM Agents</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgentPad — Scrum Team AI Agents</title>
     <style>
-      :root {
-        color-scheme: light;
-        font-family: "Segoe UI", Arial, sans-serif;
-      }
+        :root {
+            --bg: #f5f7fa;
+            --surface: #ffffff;
+            --border: #dde2e8;
+            --text: #1f2933;
+            --text-muted: #6b7280;
+            --accent: #4f46e5;
+            --accent-hover: #4338ca;
+            --sidebar-w: 240px;
+            --header-h: 52px;
+            --col-backlog: #f3f4f6;
+            --col-discovery: #fef3c7;
+            --col-scoping: #dbeafe;
+            --col-building: #d1fae5;
+            --col-hardening: #fce7f3;
+            --col-staging: #e9d5ff;
+            --col-uat: #fed7aa;
+            --col-done: #a7f3d0;
+            --col-live: #bfdbfe;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+        }
 
-      body {
-        margin: 0;
-        padding: 24px;
-        background: #f5f6f8;
-        color: #1f2933;
-      }
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            flex-shrink: 0;
+        }
+        .sidebar-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .sidebar-logo {
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        .sidebar-title {
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .sidebar-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+        .nav-section {
+            margin-bottom: 16px;
+        }
+        .nav-section-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            padding: 4px 8px;
+            margin-bottom: 2px;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--text);
+            transition: background 0.15s;
+        }
+        .nav-item:hover { background: var(--bg); }
+        .nav-item.active { background: #eef2ff; color: var(--accent); font-weight: 600; }
+        .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+        .nav-badge {
+            margin-left: auto;
+            background: var(--accent);
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
 
-      h1 {
-        margin: 0 0 12px;
-        font-size: 22px;
-      }
+        /* Main */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .header {
+            height: var(--header-h);
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 12px;
+        }
+        .header-title {
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .header-actions {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn {
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s;
+        }
+        .btn:hover { background: var(--bg); }
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        .btn-primary:hover { background: var(--accent-hover); }
+        .content {
+            flex: 1;
+            overflow: auto;
+            padding: 20px;
+        }
 
-      .layout {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
-        margin-bottom: 16px;
-      }
+        /* Sprint Board */
+        .board-wrapper {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 16px;
+            min-height: 100%;
+        }
+        .board-col {
+            min-width: 220px;
+            max-width: 220px;
+            background: var(--bg);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+        }
+        .board-col-header {
+            padding: 10px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 3px solid;
+            border-radius: 8px 8px 0 0;
+        }
+        .board-col-header .count {
+            background: rgba(0,0,0,0.1);
+            padding: 1px 6px;
+            border-radius: 10px;
+            font-size: 11px;
+        }
+        .col-backlog .board-col-header { background: var(--col-backlog); border-color: #9ca3af; }
+        .col-discovery .board-col-header { background: var(--col-discovery); border-color: #f59e0b; }
+        .col-scoping .board-col-header { background: var(--col-scoping); border-color: #3b82f6; }
+        .col-building .board-col-header { background: var(--col-building); border-color: #10b981; }
+        .col-hardening .board-col-header { background: var(--col-hardening); border-color: #ec4899; }
+        .col-staging .board-col-header { background: var(--col-staging); border-color: #a855f7; }
+        .col-uat .board-col-header { background: var(--col-uat); border-color: #f97316; }
+        .col-done .board-col-header { background: var(--col-done); border-color: #22c55e; }
+        .col-live .board-col-header { background: var(--col-live); border-color: #3b82f6; }
 
-      .panel {
-        background: #ffffff;
-        border: 1px solid #dde2e8;
-        border-radius: 8px;
-        padding: 16px;
-        min-height: 280px;
-        overflow: auto;
-      }
+        .board-col-body {
+            padding: 8px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-height: 200px;
+        }
+        .task-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px;
+            cursor: pointer;
+            transition: box-shadow 0.15s;
+        }
+        .task-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .task-card-title {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+        .task-card-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        .task-owner {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .owner-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            color: white;
+            font-weight: 600;
+        }
+        .owner-pm { background: #6366f1; }
+        .owner-design { background: #ec4899; }
+        .owner-backend { background: #3b82f6; }
+        .owner-frontend { background: #10b981; }
+        .owner-qa { background: #f59e0b; }
+        .owner-devops { background: #8b5cf6; }
+        .priority-badge {
+            font-size: 10px;
+            padding: 1px 5px;
+            border-radius: 4px;
+        }
+        .priority-high { background: #fee2e2; color: #dc2626; }
+        .priority-medium { background: #fef3c7; color: #d97706; }
+        .priority-low { background: #d1fae5; color: #059669; }
+        .task-progress {
+            height: 3px;
+            background: var(--border);
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        .task-progress-bar {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
 
-      .panel h2 {
-        margin: 0 0 12px;
-        font-size: 16px;
-      }
+        /* Team Board */
+        .team-board {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 16px;
+        }
+        .team-col {
+            min-width: 180px;
+            background: var(--bg);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .team-col-header {
+            padding: 10px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            border-bottom: 2px solid;
+        }
+        .team-pm { border-color: #6366f1; background: #eef2ff; }
+        .team-design { border-color: #ec4899; background: #fdf2f8; }
+        .team-backend { border-color: #3b82f6; background: #eff6ff; }
+        .team-frontend { border-color: #10b981; background: #ecfdf5; }
+        .team-qa { border-color: #f59e0b; background: #fffbeb; }
+        .team-devops { border-color: #8b5cf6; background: #f5f3ff; }
+        .team-col-body {
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-height: 150px;
+        }
 
-      .message {
-        padding: 10px 12px;
-        border-radius: 6px;
-        margin-bottom: 10px;
-        background: #eef2f6;
-      }
+        /* Roadmap View */
+        .roadmap-container {
+            background: var(--surface);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .roadmap-header {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            gap: 12px;
+        }
+        .roadmap-header h2 {
+            font-size: 15px;
+            font-weight: 600;
+        }
+        .roadmap-timeline {
+            display: grid;
+            grid-template-columns: 200px repeat(12, 1fr);
+            border-bottom: 1px solid var(--border);
+        }
+        .roadmap-corner {
+            background: var(--bg);
+            padding: 8px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-right: 1px solid var(--border);
+        }
+        .roadmap-month {
+            text-align: center;
+            padding: 8px 4px;
+            font-size: 11px;
+            color: var(--text-muted);
+            border-right: 1px solid var(--border);
+        }
+        .roadmap-month:last-child { border-right: none; }
+        .roadmap-row {
+            display: grid;
+            grid-template-columns: 200px repeat(12, 1fr);
+            border-bottom: 1px solid var(--border);
+            min-height: 44px;
+        }
+        .roadmap-row:last-child { border-bottom: none; }
+        .roadmap-epic {
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            border-right: 1px solid var(--border);
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .roadmap-cells {
+            display: contents;
+        }
+        .roadmap-cell {
+            border-right: 1px solid #f0f0f0;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .roadmap-cell:last-child { border-right: none; }
+        .roadmap-bar {
+            position: absolute;
+            left: 4px;
+            right: 4px;
+            height: 24px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding: 0 6px;
+            font-size: 10px;
+            font-weight: 600;
+            color: white;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        .bar-discovery { background: #f59e0b; }
+        .bar-building { background: #10b981; }
+        .bar-hardening { background: #ec4899; }
+        .bar-staging { background: #a855f7; }
+        .bar-uat { background: #f97316; }
+        .bar-done { background: #22c55e; }
 
-      .message strong {
-        display: block;
-        font-size: 12px;
-        color: #52616b;
-        margin-bottom: 4px;
-      }
+        /* Scrum Ceremonies */
+        .ceremonies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .ceremony-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+        }
+        .ceremony-card h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .ceremony-card p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .ceremony-info {
+            display: flex;
+            gap: 16px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        .ceremony-info span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
 
-      .controls {
-        display: grid;
-        gap: 12px;
-      }
+        /* Agent Chat */
+        .chat-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr 300px;
+            gap: 16px;
+            height: calc(100vh - var(--header-h) - 40px);
+        }
+        .agents-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+        .agents-panel.active { display: flex; }
+        .panel-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        .agent-list {
+            flex: 1;
+            overflow-y: auto;
+            display: none;
+        }
+        .agent-list.active { display: flex; flex-direction: column; }
+        .agent-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+        }
+        .agent-tab {
+            flex: 1;
+            padding: 8px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-muted);
+            border-bottom: 2px solid transparent;
+            transition: all 0.15s;
+        }
+        .agent-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        .skill-category {
+            padding: 8px 14px 6px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+        }
+        .skill-item {
+            padding: 12px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.15s;
+        }
+        .skill-item:hover { background: #f8f9ff; }
+        .skill-item.selected { background: #eef2ff; border-left: 3px solid var(--accent); }
+        .skill-icon {
+            font-size: 18px;
+            margin-top: 2px;
+        }
+        .skill-info { flex: 1; min-width: 0; }
+        .skill-name { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+        .skill-desc { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+        .skills-panel {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+        .skills-panel.active { display: flex; }
+        .agents-panel.active { display: flex; }
+        .agent-list.hidden { display: none; }
+        .agent-list { display: none; }
+        .agent-list.active { display: flex; flex-direction: column; }
 
-      .agent-buttons {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
+        /* Skills page header */
+        .skills-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+        }
+        .skills-header h3 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        .skills-header p {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
 
-      .agent-button {
-        border: 1px solid #c2cbd6;
-        background: #ffffff;
-        border-radius: 6px;
-        padding: 8px 12px;
-        cursor: pointer;
-        font-size: 13px;
-      }
+        /* Horizontal filter pills */
+        .skills-filters {
+            padding: 10px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg);
+        }
+        .filter-row {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .filter-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            min-width: 50px;
+        }
+        .filter-pill {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            transition: all 0.15s;
+        }
+        .filter-pill:hover { border-color: var(--accent); }
+        .filter-pill.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        .filter-count {
+            font-size: 9px;
+            opacity: 0.7;
+            margin-left: 2px;
+        }
 
-      .agent-button.active {
-        border-color: #2f6fe4;
-        background: #e7effd;
-        color: #1b4fbf;
-      }
+        /* Skill list items */
+        .skill-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+        .skill-list-item {
+            padding: 12px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .skill-list-item:hover { background: #f8f9ff; }
+        .skill-list-icon {
+            font-size: 18px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+        .skill-list-main { flex: 1; min-width: 0; }
+        .skill-list-name {
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .skill-list-stage {
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .skill-list-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
 
-      textarea {
-        width: 100%;
-        min-height: 90px;
-        resize: vertical;
-        padding: 10px;
-        border-radius: 6px;
-        border: 1px solid #c2cbd6;
-        font-family: inherit;
-      }
+        /* Stage dot for skill cards */
+        .stage-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: inline-block;
+        }
+        .no-skills-msg {
+            text-align: center;
+            padding: 40px 20px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .agent-item {
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.15s;
+        }
+        .agent-item:hover { background: var(--bg); }
+        .agent-item.active { background: #eef2ff; }
+        .agent-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: white;
+        }
+        .agent-info { flex: 1; }
+        .agent-name { font-size: 12px; font-weight: 600; }
+        .agent-role { font-size: 10px; color: var(--text-muted); }
+        .chat-main {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .message {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .message.user {
+            background: var(--accent);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 3px;
+        }
+        .message.agent {
+            background: var(--bg);
+            align-self: flex-start;
+            border-bottom-left-radius: 3px;
+        }
+        .message.system {
+            background: #fef3c7;
+            align-self: center;
+            font-size: 11px;
+            color: #92400e;
+            text-align: center;
+            max-width: 100%;
+        }
+        .message-time {
+            font-size: 10px;
+            margin-top: 4px;
+            opacity: 0.7;
+        }
+        .chat-input-area {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 8px;
+        }
+        .chat-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            resize: none;
+            font-family: inherit;
+        }
+        .chat-input:focus { outline: none; border-color: var(--accent); }
+        .context-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .context-section {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .context-section:last-child { border-bottom: none; }
+        .context-section h4 {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .context-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 0;
+            font-size: 12px;
+        }
+        .context-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+        }
+        .context-dot.off { background: #d1d5db; }
 
-      .send-row {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-      }
+        /* Velocity Chart */
+        .velocity-chart {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .velocity-chart h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        .velocity-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            height: 120px;
+        }
+        .velocity-bar-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .velocity-bar {
+            width: 100%;
+            max-width: 60px;
+            background: var(--accent);
+            border-radius: 4px 4px 0 0;
+            transition: height 0.3s;
+        }
+        .velocity-label {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        .velocity-value {
+            font-size: 12px;
+            font-weight: 600;
+        }
 
-      .send-row button {
-        padding: 10px 18px;
-        border: none;
-        border-radius: 6px;
-        background: #2f6fe4;
-        color: #ffffff;
-        cursor: pointer;
-        font-size: 14px;
-      }
+        /* Settings */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 20px;
+            max-width: 900px;
+        }
+        .settings-nav {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .settings-nav-item {
+            padding: 10px 16px;
+            font-size: 13px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
+        }
+        .settings-nav-item:last-child { border-bottom: none; }
+        .settings-nav-item:hover { background: var(--bg); }
+        .settings-nav-item.active { background: #eef2ff; color: var(--accent); font-weight: 600; }
+        .settings-content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .settings-section {
+            margin-bottom: 24px;
+        }
+        .settings-section:last-child { margin-bottom: 0; }
+        .settings-section h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .setting-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .setting-row:last-child { border-bottom: none; }
+        .setting-info { flex: 1; }
+        .setting-label { font-size: 13px; font-weight: 500; }
+        .setting-desc { font-size: 11px; color: var(--text-muted); }
+        .toggle {
+            width: 40px;
+            height: 22px;
+            background: #d1d5db;
+            border-radius: 11px;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.2s;
+        }
+        .toggle.on { background: var(--accent); }
+        .toggle::after {
+            content: '';
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: left 0.2s;
+        }
+        .toggle.on::after { left: 20px; }
+        .input-field {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        .input-field:focus { outline: none; border-color: var(--accent); }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-badge.connected { background: #d1fae5; color: #065f46; }
+        .status-badge.disconnected { background: #fee2e2; color: #991b1b; }
 
-      .secondary {
-        background: #eef2f6;
-        color: #1f2933;
-      }
+        /* Pricing */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+        .pricing-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+        .pricing-card.featured {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent);
+        }
+        .pricing-card h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .pricing-card .price {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .pricing-card .price span {
+            font-size: 13px;
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+        .pricing-card .credits {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+        .pricing-features {
+            text-align: left;
+            margin-bottom: 16px;
+        }
+        .pricing-feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+            font-size: 12px;
+        }
+        .pricing-feature .check { color: #22c55e; }
 
-      .agent-button[disabled] {
-        cursor: not-allowed;
-        opacity: 0.5;
-      }
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--text);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+        .toast.error { background: #dc2626; }
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
 
-      .badge {
-        display: inline-block;
-        margin-left: 6px;
-        padding: 2px 6px;
-        border-radius: 999px;
-        font-size: 11px;
-        background: #dfe6ef;
-        color: #46525d;
-      }
+        /* Loading */
+        .loading-dots {
+            display: inline-flex;
+            gap: 4px;
+            align-items: center;
+        }
+        .loading-dots span {
+            width: 6px;
+            height: 6px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            animation: dotPulse 1.4s infinite;
+        }
+        .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes dotPulse {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1.2); opacity: 1; }
+        }
 
-      .badge.connected {
-        background: #d7f3df;
-        color: #1b6b33;
-      }
-
-      .modal {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.35);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        padding: 24px;
-      }
-
-      .modal.open {
-        display: flex;
-      }
-
-      .modal-card {
-        background: #ffffff;
-        border-radius: 10px;
-        padding: 20px;
-        width: min(520px, 100%);
-        box-shadow: 0 18px 48px rgba(0, 0, 0, 0.2);
-      }
-
-      .modal-card h3 {
-        margin: 0 0 12px;
-        font-size: 18px;
-      }
-
-      .field {
-        display: grid;
-        gap: 6px;
-        margin-bottom: 12px;
-      }
-
-      .field input {
-        padding: 10px;
-        border-radius: 6px;
-        border: 1px solid #c2cbd6;
-        font-family: inherit;
-      }
-
-      .modal-actions {
-        display: flex;
-        gap: 10px;
-        justify-content: flex-end;
-      }
-
-      .status {
-        font-size: 12px;
-        color: #52616b;
-      }
+        .page { display: none; height: 100%; }
+        .page.active { display: flex; flex-direction: column; }
+        .page.active .content { flex: 1; overflow: auto; }
     </style>
-  </head>
-  <body>
-    <h1>LaunchPadPM Agent Console</h1>
+</head>
+<body>
 
-    <div class="layout">
-      <div class="panel" id="userPanel">
-        <h2>User Messages</h2>
-      </div>
-      <div class="panel" id="agentPanel">
-        <h2>Agent Responses</h2>
-      </div>
+<!-- Sidebar -->
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-logo">AP</div>
+        <div>
+            <div class="sidebar-title">AgentPad</div>
+            <div class="sidebar-subtitle">Scrum Team AI</div>
+        </div>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="nav-section">
+            <div class="nav-section-title">Workspace</div>
+            <div class="nav-item active" data-page="sprint-board">
+                <span class="nav-icon">📋</span> Sprint Board
+            </div>
+            <div class="nav-item" data-page="roadmap">
+                <span class="nav-icon">🗺️</span> Roadmap
+            </div>
+            <div class="nav-item" data-page="team">
+                <span class="nav-icon">👥</span> Team
+            </div>
+            <div class="nav-item" data-page="ceremonies">
+                <span class="nav-icon">🔄</span> Ceremonies
+            </div>
+            <div class="nav-item" data-page="agent-chat">
+                <span class="nav-icon">🤖</span> Agent Chat
+                <span class="nav-badge">12</span>
+            </div>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-title">Insights</div>
+            <div class="nav-item" data-page="velocity">
+                <span class="nav-icon">📊</span> Velocity
+            </div>
+            <div class="nav-item" data-page="analytics">
+                <span class="nav-icon">📈</span> Analytics
+            </div>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-title">Configure</div>
+            <div class="nav-item" data-page="connections">
+                <span class="nav-icon">🔗</span> Connections
+            </div>
+            <div class="nav-item" data-page="settings">
+                <span class="nav-icon">⚙️</span> Settings
+            </div>
+            <div class="nav-item" data-page="pricing">
+                <span class="nav-icon">💳</span> Pricing
+            </div>
+        </div>
+    </nav>
+    <div style="padding: 12px; border-top: 1px solid var(--border);">
+        <div class="nav-item" style="font-size: 12px; color: var(--text-muted);">
+            <span class="nav-icon">ℹ️</span> v1.0.0
+        </div>
+    </div>
+</aside>
+
+<!-- Main -->
+<main class="main">
+    <header class="header">
+        <div class="header-title" id="page-title">Sprint Board</div>
+        <div class="header-actions">
+            <span id="sprint-info" style="font-size: 12px; color: var(--text-muted);">Sprint 4 — 10 days remaining</span>
+            <button class="btn" onclick="showToast('Filters applied')">🔍 Filters</button>
+            <button class="btn btn-primary" onclick="createTask()">+ Create Epic</button>
+        </div>
+    </header>
+
+    <!-- Sprint Board Page -->
+    <div class="page active" id="page-sprint-board">
+        <div class="content">
+            <div class="board-wrapper" id="sprint-board"></div>
+        </div>
     </div>
 
-    <div class="controls">
-      <div class="agent-buttons" id="agentButtons"></div>
-      <div class="agent-buttons" id="providerButtons"></div>
-
-      <textarea id="userInput" placeholder="Type your request..."></textarea>
-
-      <div class="send-row">
-        <button id="sendButton">Send</button>
-        <button id="restartButton" type="button">Restart Staging</button>
-        <button id="connectButton" class="secondary" type="button">
-          Connect AI Platforms
-        </button>
-        <span class="status" id="statusText">Select an agent to start.</span>
-      </div>
+    <!-- Roadmap Page -->
+    <div class="page" id="page-roadmap">
+        <div class="content">
+            <div class="velocity-chart" style="margin-bottom: 16px;">
+                <h3>📊 Sprint Velocity</h3>
+                <div class="velocity-bars" id="velocity-bars"></div>
+            </div>
+            <div class="roadmap-container">
+                <div class="roadmap-header">
+                    <h2>User Story Feature Roadmap</h2>
+                    <button class="btn" style="margin-left: auto;" onclick="showToast('Roadmap updated')">Edit Roadmap</button>
+                </div>
+                <div class="roadmap-timeline">
+                    <div class="roadmap-corner">Epic / Feature</div>
+                    <div class="roadmap-month">Jan</div><div class="roadmap-month">Feb</div><div class="roadmap-month">Mar</div>
+                    <div class="roadmap-month">Apr</div><div class="roadmap-month">May</div><div class="roadmap-month">Jun</div>
+                    <div class="roadmap-month">Jul</div><div class="roadmap-month">Aug</div><div class="roadmap-month">Sep</div>
+                    <div class="roadmap-month">Oct</div><div class="roadmap-month">Nov</div><div class="roadmap-month">Dec</div>
+                </div>
+                <div id="roadmap-rows"></div>
+            </div>
+        </div>
     </div>
 
-    <div class="modal" id="connectModal">
-      <div class="modal-card">
-        <h3>Connect AI Platforms</h3>
-        <div class="field">
-          <label for="openaiKey">OpenAI API Key</label>
-          <input id="openaiKey" type="password" placeholder="sk-..." />
+    <!-- Team Page -->
+    <div class="page" id="page-team">
+        <div class="content">
+            <div class="team-board" id="team-board"></div>
         </div>
-        <div class="field">
-          <label for="anthropicKey">Claude (Anthropic) API Key</label>
-          <input id="anthropicKey" type="password" placeholder="sk-ant-..." />
-        </div>
-        <div class="field">
-          <label for="perplexityKey">Perplexity API Key</label>
-          <input id="perplexityKey" type="password" placeholder="pplx-..." />
-        </div>
-        <div class="modal-actions">
-          <button id="cancelConnect" class="secondary" type="button">Cancel</button>
-          <button id="saveConnect" type="button">Save Keys</button>
-        </div>
-      </div>
     </div>
 
-    <script>
-      const agentButtons = document.getElementById("agentButtons");
-      const providerButtons = document.getElementById("providerButtons");
-      const userPanel = document.getElementById("userPanel");
-      const agentPanel = document.getElementById("agentPanel");
-      const userInput = document.getElementById("userInput");
-      const sendButton = document.getElementById("sendButton");
-      const restartButton = document.getElementById("restartButton");
-      const connectButton = document.getElementById("connectButton");
-      const statusText = document.getElementById("statusText");
-      const connectModal = document.getElementById("connectModal");
-      const cancelConnect = document.getElementById("cancelConnect");
-      const saveConnect = document.getElementById("saveConnect");
-      const openaiKey = document.getElementById("openaiKey");
-      const anthropicKey = document.getElementById("anthropicKey");
-      const perplexityKey = document.getElementById("perplexityKey");
+    <!-- Ceremonies Page -->
+    <div class="page" id="page-ceremonies">
+        <div class="content">
+            <div class="ceremonies-grid" id="ceremonies-grid"></div>
+        </div>
+    </div>
 
-      let selectedAgent = "";
-      let selectedProvider = "";
-      let providerStatus = {
-        openai: false,
-        anthropic: false,
-        perplexity: false,
-      };
+    <!-- Agent Chat Page -->
+    <div class="page" id="page-agent-chat">
+        <div class="content" style="padding: 16px;">
+            <div class="chat-layout">
+                <div class="agents-panel active" id="agents-panel">
+                    <div class="panel-header" style="padding:0;">
+                        <div class="agent-tabs">
+                            <div class="agent-tab active" data-tab="agents" onclick="switchAgentTab('agents')">Agents</div>
+                            <div class="agent-tab" data-tab="skills" onclick="switchAgentTab('skills')">Skills</div>
+                        </div>
+                    </div>
+                    <div class="agent-list" id="agent-list"></div>
+                    <div class="skills-panel" id="skills-list"></div>
+                </div>
+                <div class="chat-main">
+                    <div class="panel-header" style="border-bottom: 1px solid var(--border);">
+                        <span id="chat-agent-name">Select an agent</span>
+                        <span id="chat-agent-role" style="font-size: 11px; color: var(--text-muted); margin-left: 8px;"></span>
+                    </div>
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="message system">💡 Ask your Scrum team anything — prioritization, requirements, architecture, metrics, design, research, GTM strategy.</div>
+                    </div>
+                    <div class="chat-input-area">
+                        <textarea class="chat-input" id="chat-input" rows="2" placeholder="Ask the Product Owner about prioritization..."></textarea>
+                        <button class="btn btn-primary" onclick="sendMessage()" style="align-self: flex-end;">Send</button>
+                    </div>
+                </div>
+                <div class="context-panel">
+                    <div class="panel-header">Context</div>
+                    <div class="context-section">
+                        <h4>Active Sprint</h4>
+                        <div class="context-item"><div class="context-dot"></div> Sprint 4 — 10 days</div>
+                        <div class="context-item"><div class="context-dot"></div> Goal: MVP delivery</div>
+                    </div>
+                    <div class="context-section">
+                        <h4>AI Provider</h4>
+                        <div class="context-item"><div class="context-dot" id="provider-status"></div> <span id="provider-name">MiniMax</span></div>
+                        <div class="context-item"><div class="context-dot off"></div> Web Search</div>
+                    </div>
+                    <div class="context-section">
+                        <h4>Orchestration</h4>
+                        <div class="context-item"><div class="context-dot off"></div> Multi-agent Collab.</div>
+                        <div class="context-item" style="font-size: 10px; color: var(--text-muted); padding-left: 12px;">Depth: 0 / 3</div>
+                    </div>
+                    <div class="context-section">
+                        <h4>Selected Agent</h4>
+                        <div class="context-item" id="selected-agent-info" style="font-size: 11px; color: var(--text-muted);">None selected</div>
+                    </div>
+                    <div class="context-section">
+                        <h4>Skills Available</h4>
+                        <div class="context-item"><div class="context-dot"></div> <span id="skills-count">23</span> skills loaded</div>
+                        <div class="context-item" style="font-size: 10px; color: var(--text-muted); padding-left: 12px;">Auto-injected into queries</div>
+                    </div>
+                    <div class="context-section">
+                        <h4>Last Response Skills</h4>
+                        <div class="context-item" id="skills-used-info" style="font-size: 10px; color: var(--text-muted);">None yet</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-      function addMessage(panel, label, text, webResults = []) {
-        const wrapper = document.createElement("div");
-        wrapper.className = "message";
-        const title = document.createElement("strong");
-        title.textContent = label;
-        const body = document.createElement("div");
-        body.textContent = text;
-        wrapper.appendChild(title);
-        wrapper.appendChild(body);
-        if (webResults.length) {
-          const list = document.createElement("ul");
-          webResults.forEach((item) => {
-            const entry = document.createElement("li");
-            const link = document.createElement("a");
-            link.href = item.url || "#";
-            link.textContent = item.title || item.url || "Result";
-            link.target = "_blank";
-            link.rel = "noreferrer";
-            entry.appendChild(link);
-            if (item.snippet) {
-              const snippet = document.createElement("div");
-              snippet.textContent = item.snippet;
-              entry.appendChild(snippet);
+    <!-- Velocity Page -->
+    <div class="page" id="page-velocity">
+        <div class="content">
+            <div class="velocity-chart" style="margin-bottom: 16px;">
+                <h3>📊 Sprint Velocity (Story Points)</h3>
+                <div class="velocity-bars" id="velocity-bars-full"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+                <div class="ceremony-card">
+                    <h3>Average Velocity</h3>
+                    <div class="price" style="font-size: 36px;">24.5</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">story points / sprint</div>
+                </div>
+                <div class="ceremony-card">
+                    <h3>Sprint Goal Completion</h3>
+                    <div class="price" style="font-size: 36px;">87%</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">last 6 sprints</div>
+                </div>
+                <div class="ceremony-card">
+                    <h3>Team Capacity</h3>
+                    <div class="price" style="font-size: 36px;">92%</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">average utilization</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Page -->
+    <div class="page" id="page-analytics">
+        <div class="content">
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px;">
+                <div class="ceremony-card">
+                    <h3>Features Delivered</h3>
+                    <div class="price" style="font-size: 28px;">47</div>
+                </div>
+                <div class="ceremony-card">
+                    <h3>Active Sprints</h3>
+                    <div class="price" style="font-size: 28px;">4</div>
+                </div>
+                <div class="ceremony-card">
+                    <h3>Team Members</h3>
+                    <div class="price" style="font-size: 28px;">6</div>
+                </div>
+                <div class="ceremony-card">
+                    <h3>AI Queries</h3>
+                    <div class="price" style="font-size: 28px;">128</div>
+                </div>
+            </div>
+            <div class="ceremony-card">
+                <h3>📈 Activity Over Time</h3>
+                <p style="margin-top: 8px;">Feature delivery and sprint activity chart would render here.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Connections Page -->
+    <div class="page" id="page-connections">
+        <div class="content">
+            <div style="max-width: 700px;">
+                <h2 style="font-size: 16px; margin-bottom: 16px;">Connections & Integrations</h2>
+                <div style="display: grid; gap: 12px;">
+                    <div class="ceremony-card" style="display: flex; align-items: center; gap: 16px;">
+                        <span style="font-size: 28px;">🤖</span>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; font-size: 13px;">AI Provider</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">MiniMax (default) — OpenAI, Anthropic, Perplexity also available</div>
+                        </div>
+                        <span class="status-badge connected"><span style="width:6px;height:6px;border-radius:50%;background:#22c55e;display:inline-block;"></span> Connected</span>
+                    </div>
+                    <div class="ceremony-card" style="display: flex; align-items: center; gap: 16px;">
+                        <span style="font-size: 28px;">🔍</span>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; font-size: 13px;">Web Search (DuckDuckGo)</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">Enables agents to search for real-time context</div>
+                        </div>
+                        <span class="status-badge disconnected"><span style="width:6px;height:6px;border-radius:50%;background:#dc2626;display:inline-block;"></span> Off</span>
+                    </div>
+                    <div class="ceremony-card" style="display: flex; align-items: center; gap: 16px;">
+                        <span style="font-size: 28px;">📊</span>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; font-size: 13px;">Notion Workspace</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">Sync product docs and specs to Notion</div>
+                        </div>
+                        <button class="btn">Connect</button>
+                    </div>
+                    <div class="ceremony-card" style="display: flex; align-items: center; gap: 16px;">
+                        <span style="font-size: 28px;">💬</span>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; font-size: 13px;">Slack</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">Post sprint updates and notifications</div>
+                        </div>
+                        <button class="btn">Connect</button>
+                    </div>
+                    <div class="ceremony-card" style="display: flex; align-items: center; gap: 16px;">
+                        <span style="font-size: 28px;">📱</span>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; font-size: 13px;">Telegram</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">Bot notifications and team updates</div>
+                        </div>
+                        <button class="btn">Connect</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Page -->
+    <div class="page" id="page-settings">
+        <div class="content">
+            <div class="settings-grid">
+                <div class="settings-nav">
+                    <div class="settings-nav-item active" data-settings="general">General</div>
+                    <div class="settings-nav-item" data-settings="agents">Agents</div>
+                    <div class="settings-nav-item" data-settings="providers">AI Providers</div>
+                    <div class="settings-nav-item" data-settings="orchestration">Orchestration</div>
+                    <div class="settings-nav-item" data-settings="product">Product</div>
+                </div>
+                <div class="settings-content" id="settings-panel-general">
+                    <div class="settings-section">
+                        <h3>General</h3>
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <div class="setting-label">Product Name</div>
+                                <div class="setting-desc">Used in agent context and documentation</div>
+                            </div>
+                            <input class="input-field" style="width: 200px;" value="AgentPad" id="setting-product-name">
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <div class="setting-label">Sprint Duration</div>
+                                <div class="setting-desc">Number of days per sprint</div>
+                            </div>
+                            <input class="input-field" style="width: 80px;" value="14" type="number" id="setting-sprint-days">
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <div class="setting-label">Continuous Discovery</div>
+                                <div class="setting-desc">Enable weekly customer interview habits in agents</div>
+                            </div>
+                            <div class="toggle on" id="toggle-discovery"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-content" id="settings-panel-agents" style="display: none;">
+                    <div class="settings-section">
+                        <h3>AI Agents</h3>
+                        <div id="agent-toggles"></div>
+                    </div>
+                </div>
+                <div class="settings-content" id="settings-panel-providers" style="display: none;">
+                    <div class="settings-section">
+                        <h3>AI Providers</h3>
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <div class="setting-label">Default Provider</div>
+                                <div class="setting-desc">Which AI provider to use by default</div>
+                            </div>
+                            <select class="input-field" style="width: 160px;" id="provider-select">
+                                <option value="minimax">MiniMax</option>
+                                <option value="openai">OpenAI</option>
+                                <option value="anthropic">Anthropic</option>
+                                <option value="perplexity">Perplexity</option>
+                            </select>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <div class="setting-label">MiniMax API Key</div>
+                                <div class="setting-desc">API key for MiniMax provider</div>
+                            </div>
+                            <input class="input-field" style="width: 200px;" type="password" placeholder="sk-..." id="api-key-minimax">
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <div class="setting-label">Max Collaboration Depth</div>
+                                <div class="setting-desc">Max depth for multi-agent orchestration chain</div>
+                            </div>
+                            <input class="input-field" style="width: 80px;" value="3" type="number" min="1" max="5" id="max-depth">
+                        </div>
+                        <button class="btn btn-primary" style="margin-top: 12px;" onclick="saveProviderSettings()">Save Provider Settings</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pricing Page -->
+    <div class="page" id="page-pricing">
+        <div class="content">
+            <h2 style="font-size: 18px; text-align: center; margin-bottom: 24px;">Choose Your Plan</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>Free</h3>
+                    <div class="price">$0<span>/mo</span></div>
+                    <div class="credits">20 credits / month</div>
+                    <div class="pricing-features">
+                        <div class="pricing-feature"><span class="check">✓</span> Sprint Board</div>
+                        <div class="pricing-feature"><span class="check">✓</span> 1 Active Project</div>
+                        <div class="pricing-feature"><span class="check">✓</span> AI Agent Chat</div>
+                        <div class="pricing-feature"><span class="check">✓</span> 3 AI Providers</div>
+                        <div class="pricing-feature" style="color: var(--text-muted);"><span>✗</span> Multi-agent Orchestration</div>
+                        <div class="pricing-feature" style="color: var(--text-muted);"><span>✗</span> Web Search</div>
+                    </div>
+                    <button class="btn" style="width: 100%;">Current Plan</button>
+                </div>
+                <div class="pricing-card">
+                    <h3>Starter</h3>
+                    <div class="price">$29<span>/mo</span></div>
+                    <div class="credits">200 credits / month</div>
+                    <div class="pricing-features">
+                        <div class="pricing-feature"><span class="check">✓</span> All Free features</div>
+                        <div class="pricing-feature"><span class="check">✓</span> 5 Active Projects</div>
+                        <div class="pricing-feature"><span class="check">✓</span> Multi-agent Orchestration</div>
+                        <div class="pricing-feature"><span class="check">✓</span> Web Search</div>
+                        <div class="pricing-feature"><span class="check">✓</span> Notion + Slack</div>
+                        <div class="pricing-feature"><span class="check">✓</span> Priority Support</div>
+                    </div>
+                    <button class="btn" style="width: 100%;">Upgrade</button>
+                </div>
+                <div class="pricing-card featured">
+                    <h3>Growth</h3>
+                    <div class="price" style="color: var(--accent);">$79<span>/mo</span></div>
+                    <div class="credits">1,000 credits / month</div>
+                    <div class="pricing-features">
+                        <div class="pricing-feature"><span class="check">✓</span> All Starter features</div>
+                        <div class="pricing-feature"><span class="check">✓</span> Unlimited Projects</div>
+                        <div class="pricing-feature"><span class="check">✓</span> API Access</div>
+                        <div class="pricing-feature"><span class="check">✓</span> Custom Skills</div>
+                        <div class="pricing-feature"><span class="check">✓</span> Team Seats (3)</div>
+                        <div class="pricing-feature"><span class="check">✓</span> Dedicated Support</div>
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%;">Upgrade</button>
+                </div>
+                <div class="pricing-card">
+                    <h3>Scale</h3>
+                    <div class="price">$199<span>/mo</span></div>
+                    <div class="credits">5,000 credits / month</div>
+                    <div class="pricing-features">
+                        <div class="pricing-feature"><span class="check">✓</span> All Growth features</div>
+                        <div class="pricing-feature"><span class="check">✓</span> Unlimited Team Seats</div>
+                        <div class="pricing-feature"><span class="check">✓</span> White-label</div>
+                        <div class="pricing-feature"><span class="check">✓</span> Custom Integrations</div>
+                        <div class="pricing-feature"><span class="check">✓</span> SLA Guarantee</div>
+                        <div class="pricing-feature"><span class="check">✓</span> Enterprise Onboarding</div>
+                    </div>
+                    <button class="btn" style="width: 100%;">Contact Sales</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+const API_BASE = 'http://localhost:3001';
+let agents = [];
+let currentAgent = null;
+let chatHistory = {};
+
+// Sprint data
+const sprintData = {
+    backlog: [
+        { id: 1, title: 'MCP Gateway v2 Spec', owner: 'pm', priority: 'high', progress: 0 },
+        { id: 2, title: 'User Dashboard Redesign', owner: 'design', priority: 'medium', progress: 0 },
+        { id: 3, title: 'API Rate Limiting', owner: 'backend', priority: 'high', progress: 0 },
+        { id: 4, title: 'Dark Mode Support', owner: 'frontend', priority: 'low', progress: 0 },
+        { id: 5, title: 'E2E Test Coverage', owner: 'qa', priority: 'medium', progress: 0 },
+    ],
+    discovery: [
+        { id: 6, title: 'AI Agent Memory Layer', owner: 'pm', priority: 'high', progress: 30 },
+        { id: 7, title: 'Multi-tenant Architecture', owner: 'backend', priority: 'medium', progress: 20 },
+    ],
+    scoping: [
+        { id: 8, title: 'Webhook Integration', owner: 'devops', priority: 'medium', progress: 50 },
+    ],
+    building: [
+        { id: 9, title: 'User Story Feature Roadmap', owner: 'pm', priority: 'high', progress: 75 },
+        { id: 10, title: 'Agent Chat Interface', owner: 'frontend', priority: 'high', progress: 80 },
+        { id: 11, title: 'Scrum Ceremonies View', owner: 'design', priority: 'medium', progress: 60 },
+    ],
+    hardening: [
+        { id: 12, title: 'Security Audit Fixes', owner: 'qa', priority: 'high', progress: 40 },
+    ],
+    staging: [
+        { id: 13, title: 'Performance Optimization', owner: 'devops', priority: 'medium', progress: 85 },
+    ],
+    uat: [
+        { id: 14, title: 'Notion Integration', owner: 'pm', priority: 'medium', progress: 90 },
+    ],
+    done: [
+        { id: 15, title: 'Sprint Board MVP', owner: 'pm', priority: 'high', progress: 100 },
+        { id: 16, title: 'Agent Registry', owner: 'backend', priority: 'high', progress: 100 },
+        { id: 17, title: 'CI/CD Pipeline', owner: 'devops', priority: 'high', progress: 100 },
+    ],
+    live: [
+        { id: 18, title: 'LaunchPadPM v1.0', owner: 'pm', priority: 'high', progress: 100 },
+    ]
+};
+
+// Roadmap data
+const roadmapData = [
+    { epic: 'Core Framework', phases: [{s:1,e:4,c:'bar-discovery'},{s:5,e:7,c:'bar-building'}] },
+    { epic: 'Agent Chat', phases: [{s:3,e:5,c:'bar-discovery'},{s:6,e:8,c:'bar-building'}] },
+    { epic: 'Orchestration', phases: [{s:6,e:9,c:'bar-building'},{s:10,e:12,c:'bar-staging'}] },
+    { epic: 'Integrations', phases: [{s:8,e:12,c:'bar-building'}] },
+];
+
+// Team data
+const teamData = {
+    pm: [
+        { id: 9, title: 'User Story Feature Roadmap', priority: 'high', progress: 75 },
+        { id: 10, title: 'Agent Chat Interface', priority: 'high', progress: 80 },
+        { id: 14, title: 'Notion Integration', priority: 'medium', progress: 90 },
+    ],
+    design: [
+        { id: 11, title: 'Scrum Ceremonies View', priority: 'medium', progress: 60 },
+        { id: 2, title: 'User Dashboard Redesign', priority: 'medium', progress: 0 },
+    ],
+    backend: [
+        { id: 3, title: 'API Rate Limiting', priority: 'high', progress: 0 },
+        { id: 7, title: 'Multi-tenant Architecture', priority: 'medium', progress: 20 },
+        { id: 16, title: 'Agent Registry', priority: 'high', progress: 100 },
+    ],
+    frontend: [
+        { id: 10, title: 'Agent Chat Interface', priority: 'high', progress: 80 },
+        { id: 4, title: 'Dark Mode Support', priority: 'low', progress: 0 },
+    ],
+    qa: [
+        { id: 5, title: 'E2E Test Coverage', priority: 'medium', progress: 0 },
+        { id: 12, title: 'Security Audit Fixes', priority: 'high', progress: 40 },
+    ],
+    devops: [
+        { id: 8, title: 'Webhook Integration', priority: 'medium', progress: 50 },
+        { id: 13, title: 'Performance Optimization', priority: 'medium', progress: 85 },
+        { id: 17, title: 'CI/CD Pipeline', priority: 'high', progress: 100 },
+    ],
+};
+
+// Owner config
+const ownerConfig = {
+    pm: { cls: 'owner-pm', label: 'PM' },
+    design: { cls: 'owner-design', label: 'Design' },
+    backend: { cls: 'owner-backend', label: 'BE' },
+    frontend: { cls: 'owner-frontend', label: 'FE' },
+    qa: { cls: 'owner-qa', label: 'QA' },
+    devops: { cls: 'owner-devops', label: 'DevOps' },
+};
+
+// Sprint board columns
+const boardColumns = ['backlog','discovery','scoping','building','hardening','staging','uat','done','live'];
+const boardLabels = { backlog:'Backlog', discovery:'Discovery', scoping:'Scoping', building:'Building', hardening:'Hardening', staging:'Staging', uat:'UAT', done:'Done', live:'Live' };
+
+function init() {
+    loadAgents();
+    renderSprintBoard();
+    renderRoadmap();
+    renderTeamBoard();
+    renderCeremonies();
+    renderVelocity();
+    setupNav();
+    setupSettings();
+    setupChat();
+    setupToggles();
+}
+
+async function loadAgents() {
+    try {
+        const res = await fetch(`${API_BASE}/agents`);
+        const data = await res.json();
+        agents = data.roles;
+        renderAgentList();
+        updateProviderStatus();
+    } catch (e) {
+        showToast('Failed to load agents — is server running?', true);
+    }
+}
+
+let skillStagesData = {};
+let currentStage = 'All';
+let currentType = 'All';
+
+async function loadSkills() {
+    try {
+        const res = await fetch(`${API_BASE}/skills`);
+        const data = await res.json();
+        skillStagesData = data.stages || {};
+        document.getElementById('skills-count').textContent = data.count || 0;
+        renderSkillsPage();
+    } catch (e) {
+        console.error('Failed to load skills', e);
+        showToast('Failed to load skills: ' + e.message, true);
+    }
+}
+
+const stageIconMap = {
+    'All': '📋',
+    'Discovery': '🔭',
+    'Strategy': '🎯',
+    'Build': '🔧',
+    'Launch': '🚀',
+    'Iteration': '🔄',
+};
+
+const stageColorMap = {
+    'Discovery': '#6366f1',
+    'Strategy': '#f59e0b',
+    'Build': '#10b981',
+    'Launch': '#ec4899',
+    'Iteration': '#06b6d4',
+};
+
+function getStageColor(stage) {
+    return stageColorMap[stage] || '#6b7280';
+}
+
+function renderSkillsPage() {
+    const stages = ['All', ...Object.keys(skillStagesData)];
+    const totalCount = Object.values(skillStagesData).reduce((sum, s) => sum + (s.skills?.length || 0), 0);
+    
+    const stagePillsHtml = stages.map(s => {
+        const count = s === 'All' ? totalCount : (skillStagesData[s]?.skills?.length || 0);
+        const isActive = s === currentStage;
+        return `<div class="filter-pill${isActive ? ' active' : ''}" onclick="setStageFilter('${s}')">${s} <span class="filter-count">${count}</span></div>`;
+    }).join('');
+
+    const typePills = ['All', 'Prompt', 'Workflow', 'Framework', 'Checklist'];
+    const typePillsHtml = typePills.map(t => {
+        const isActive = t === currentType;
+        return `<div class="filter-pill${isActive ? ' active' : ''}" onclick="setTypeFilter('${t}')">${t}</div>`;
+    }).join('');
+
+    const skillsHtml = renderSkillsList();
+
+    const list = document.getElementById('skills-list');
+    list.innerHTML = `
+        <div class="skills-header">
+            <h3>Skills</h3>
+            <p>Skill Library · ${totalCount} skills across ${Object.keys(skillStagesData).length} lifecycle stages</p>
+        </div>
+        <div class="skills-filters">
+            <div class="filter-row">
+                <span class="filter-label">Stages</span>
+                ${stagePillsHtml}
+            </div>
+            <div class="filter-row">
+                <span class="filter-label">Type</span>
+                ${typePillsHtml}
+            </div>
+        </div>
+        <div class="skill-list">${skillsHtml}</div>
+    `;
+    list.classList.add('active');
+}
+
+function setStageFilter(stage) {
+    currentStage = stage;
+    renderSkillsPage();
+}
+
+function setTypeFilter(type) {
+    currentType = type;
+    renderSkillsPage();
+}
+
+function renderSkillsList() {
+    let skills = [];
+    
+    if (currentStage === 'All') {
+        for (const [stage, info] of Object.entries(skillStagesData)) {
+            if (info.skills) {
+                skills = skills.concat(info.skills.map(s => ({...s, stage})));
             }
-            list.appendChild(entry);
-          });
-          wrapper.appendChild(list);
         }
-        panel.appendChild(wrapper);
-        panel.scrollTop = panel.scrollHeight;
-      }
+    } else {
+        const stageInfo = skillStagesData[currentStage];
+        if (stageInfo?.skills) {
+            skills = stageInfo.skills.map(s => ({...s, stage: currentStage}));
+        }
+    }
 
-      function setActiveAgent(role) {
-        selectedAgent = role;
-        Array.from(agentButtons.children).forEach((button) => {
-          button.classList.toggle("active", button.dataset.role === role);
+    if (currentType !== 'All') {
+        skills = skills.filter(s => {
+            const name = s.name.toLowerCase();
+            if (currentType === 'Prompt') return name.includes('prompt') || name.includes('quest');
+            if (currentType === 'Workflow') return name.includes('workflow') || name.includes('sprint') || name.includes('planning');
+            if (currentType === 'Framework') return name.includes('framework') || name.includes('model') || name.includes('canvas');
+            if (currentType === 'Checklist') return name.includes('checklist') || name.includes('quality');
+            return true;
         });
-        statusText.textContent = `Selected agent: ${role}`;
-      }
+    }
 
-      function setActiveProvider(provider) {
-        selectedProvider = provider;
-        Array.from(providerButtons.children).forEach((button) => {
-          button.classList.toggle("active", button.dataset.provider === provider);
+    if (!skills.length) {
+        return '<div class="no-skills-msg">No skills match your filters.</div>';
+    }
+
+    return skills.map(skill => {
+        const icon = stageIconMap[skill.stage] || '📌';
+        const color = getStageColor(skill.stage);
+        const desc = cleanDesc(skill.description || '');
+        
+        return `
+        <div class="skill-list-item" onclick="selectSkill('${skill.name}', '${desc}')">
+            <div class="skill-list-icon">${icon}</div>
+            <div class="skill-list-main">
+                <div class="skill-list-name">
+                    ${skill.name.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+                    <span class="skill-list-stage" style="background:${color}20; color:${color}">${skill.stage}</span>
+                </div>
+                <div class="skill-list-desc">${desc}</div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function renderNoSkills() {
+    const list = document.getElementById('skills-list');
+    list.innerHTML = '<div class="no-skills-msg">No skills loaded.<br><br>Query an agent to use skills automatically.</div>';
+    list.classList.add('active');
+}
+
+function switchAgentTab(tab) {
+    document.querySelectorAll('.agent-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(`.agent-tab[data-tab="${tab}"]`).classList.add('active');
+    document.getElementById('agents-panel').classList.add('active');
+    document.getElementById('agent-list').classList.toggle('active', tab === 'agents');
+    document.getElementById('skills-list').classList.toggle('active', tab === 'skills');
+    if (tab === 'skills') {
+        loadSkills();
+    }
+}
+
+function selectSkill(name, desc) {
+    showToast(`Skill: ${name} — query an agent to use this skill`);
+}
+
+function renderAgentList() {
+    const list = document.getElementById('agent-list');
+    list.innerHTML = agents.map((role, i) => {
+        const colors = ['#6366f1','#ec4899','#3b82f6','#10b981','#f59e0b','#8b5cf6','#06b6d4','#84cc16','#f97316','#14b8a6','#a855f7','#eab308'];
+        const color = colors[i % colors.length];
+        return `<div class="agent-item" data-role="${role}" onclick="selectAgent('${role}', this)">
+            <div class="agent-avatar" style="background:${color}">${role.split(' ').map(w=>w[0]).join('').slice(0,2)}</div>
+            <div class="agent-info">
+                <div class="agent-name">${role}</div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function renderSprintBoard() {
+    const board = document.getElementById('sprint-board');
+    board.innerHTML = boardColumns.map(col => `
+        <div class="board-col col-${col}">
+            <div class="board-col-header">
+                <span>${boardLabels[col]}</span>
+                <span class="count">${(sprintData[col]||[]).length}</span>
+            </div>
+            <div class="board-col-body">
+                ${(sprintData[col]||[]).map(t => renderTaskCard(t)).join('')}
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderTaskCard(task) {
+    const oc = ownerConfig[task.owner] || { cls: 'owner-pm', label: '??' };
+    return `<div class="task-card" onclick="showToast('Task: ${task.title}')">
+        <div class="task-card-title">${task.title}</div>
+        <div class="task-card-meta">
+            <div class="task-owner">
+                <div class="owner-dot ${oc.cls}">${oc.label}</div>
+            </div>
+            <span class="priority-badge priority-${task.priority}">${task.priority}</span>
+        </div>
+        ${task.progress > 0 ? `<div class="task-progress"><div class="task-progress-bar" style="width:${task.progress}%"></div></div>` : ''}
+    </div>`;
+}
+
+function renderRoadmap() {
+    const container = document.getElementById('roadmap-rows');
+    container.innerHTML = roadmapData.map(row => {
+        const cells = Array.from({length:12}, (_,i) => {
+            const phase = row.phases.find(p => i+1 >= p.s && i+1 <= p.e);
+            return `<div class="roadmap-cell">${phase ? `<div class="roadmap-bar ${phase.c}"></div>` : ''}</div>`;
+        }).join('');
+        return `<div class="roadmap-row">
+            <div class="roadmap-epic">📌 ${row.epic}</div>
+            ${cells}
+        </div>`;
+    }).join('');
+}
+
+function renderTeamBoard() {
+    const board = document.getElementById('team-board');
+    const teams = ['pm','design','backend','frontend','qa','devops'];
+    const teamNames = { pm:'Product Manager', design:'Design', backend:'Backend', frontend:'Frontend', qa:'QA', devops:'DevOps' };
+    board.innerHTML = teams.map(t => `
+        <div class="team-col">
+            <div class="team-col-header team-${t}">${teamNames[t]}</div>
+            <div class="team-col-body">
+                ${(teamData[t]||[]).map(task => renderTaskCard(task)).join('')}
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderCeremonies() {
+    const ceremonies = [
+        { icon: '📋', name: 'Sprint Planning', desc: 'Define sprint goal and commit to deliverables. All team members participate.', cadence: 'Bi-weekly', duration: '2 hours', participants: 'Full Team' },
+        { icon: '📞', name: 'Daily Standup', desc: 'Daily sync on progress, blockers, and today\'s plan. Keep it to 15 minutes max.', cadence: 'Daily', duration: '15 min', participants: 'Full Team' },
+        { icon: '🔍', name: 'Sprint Review', desc: 'Demonstrate completed work to stakeholders. Gather feedback on deliverables.', cadence: 'Bi-weekly', duration: '1 hour', participants: 'Team + Stakeholders' },
+        { icon: '🔧', name: 'Sprint Retrospective', desc: 'Reflect on what went well, what didn\'t, and how to improve. Continuous improvement.', cadence: 'Bi-weekly', duration: '1 hour', participants: 'Full Team' },
+        { icon: '📝', name: 'Backlog Refinement', desc: 'Groom upcoming stories. Clarify requirements, estimate effort, prioritize backlog.', cadence: 'Weekly', duration: '1 hour', participants: 'PM + Dev + Design' },
+        { icon: '🎯', name: 'Sprint Goal Review', desc: 'Mid-sprint check on progress toward sprint goal. Adjust if needed.', cadence: 'Mid-sprint', duration: '30 min', participants: 'Full Team' },
+    ];
+    document.getElementById('ceremonies-grid').innerHTML = ceremonies.map(c => `
+        <div class="ceremony-card">
+            <h3>${c.icon} ${c.name}</h3>
+            <p>${c.desc}</p>
+            <div class="ceremony-info">
+                <span>🔄 ${c.cadence}</span>
+                <span>⏱ ${c.duration}</span>
+                <span>👥 ${c.participants}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderVelocity() {
+    const sprints = [
+        { label: 'S1', value: 18 },
+        { label: 'S2', value: 22 },
+        { label: 'S3', value: 27 },
+        { label: 'S4', value: 31 },
+    ];
+    const avg = 24.5;
+    const max = Math.max(...sprints.map(s => s.value), avg);
+    const bars = document.getElementById('velocity-bars');
+    if (bars) {
+        bars.innerHTML = sprints.map(s => `
+            <div class="velocity-bar-col">
+                <div class="velocity-value">${s.value}</div>
+                <div class="velocity-bar" style="height:${(s.value/max)*100}px"></div>
+                <div class="velocity-label">${s.label}</div>
+            </div>
+        `).join('');
+    }
+    const barsFull = document.getElementById('velocity-bars-full');
+    if (barsFull) {
+        barsFull.innerHTML = sprints.map(s => `
+            <div class="velocity-bar-col">
+                <div class="velocity-value">${s.value}</div>
+                <div class="velocity-bar" style="height:${(s.value/max)*100}px"></div>
+                <div class="velocity-label">${s.label}</div>
+            </div>
+        `).join('');
+    }
+}
+
+function setupNav() {
+    document.querySelectorAll('.nav-item[data-page]').forEach(item => {
+        item.addEventListener('click', () => {
+            const page = item.dataset.page;
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            item.classList.add('active');
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(`page-${page}`).classList.add('active');
+            const titles = { sprint:'Sprint Board', roadmap:'Feature Roadmap', team:'Team Board', ceremonies:'Scrum Ceremonies', 'agent-chat':'Agent Chat', velocity:'Velocity', analytics:'Analytics', connections:'Connections', settings:'Settings', pricing:'Pricing' };
+            document.getElementById('page-title').textContent = titles[page] || page;
         });
-      }
+    });
+}
 
-      async function loadAgents() {
-        const response = await fetch("/agents");
-        const data = await response.json();
-        agentButtons.innerHTML = "";
-        data.roles.forEach((role, index) => {
-          const button = document.createElement("button");
-          button.className = "agent-button";
-          button.dataset.role = role;
-          button.textContent = role.replaceAll("_", " ");
-          button.addEventListener("click", () => setActiveAgent(role));
-          agentButtons.appendChild(button);
-          if (index === 0) {
-            setActiveAgent(role);
-          }
+function setupSettings() {
+    document.querySelectorAll('.settings-nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+            document.querySelectorAll('.settings-nav-item').forEach(n => n.classList.remove('active'));
+            item.classList.add('active');
+            const panel = item.dataset.settings;
+            document.querySelectorAll('.settings-content').forEach(p => p.style.display = 'none');
+            const el = document.getElementById(`settings-panel-${panel}`);
+            if (el) el.style.display = 'block';
         });
-      }
+    });
+}
 
-      function renderProviderButtons() {
-        const providers = ["openai", "anthropic", "perplexity"];
-        providerButtons.innerHTML = "";
-        providers.forEach((provider, index) => {
-          const button = document.createElement("button");
-          button.className = "agent-button";
-          button.dataset.provider = provider;
-          button.textContent = provider;
-          button.disabled = !providerStatus[provider];
-          const badge = document.createElement("span");
-          badge.className = `badge ${providerStatus[provider] ? "connected" : ""}`;
-          badge.textContent = providerStatus[provider] ? "connected" : "not connected";
-          button.appendChild(badge);
-          button.addEventListener("click", () => setActiveProvider(provider));
-          providerButtons.appendChild(button);
-          if (index === 0 && providerStatus[provider]) {
-            setActiveProvider(provider);
-          }
+function setupChat() {
+    const input = document.getElementById('chat-input');
+    input.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+}
+
+function selectAgent(role, el) {
+    currentAgent = role;
+    document.querySelectorAll('.agent-item').forEach(a => a.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('chat-agent-name').textContent = role;
+    document.getElementById('chat-agent-role').textContent = getAgentRole(role);
+    document.getElementById('selected-agent-info').textContent = role;
+}
+
+function getAgentRole(role) {
+    const roles = { 'Product Owner':'Maximize Value & Backlog', 'Scrum Master':'Team Effectiveness', 'Development Engineer':'Technical Delivery', 'DevOps Engineer':'Infrastructure & CI/CD', 'QA Engineer':'Quality & Testing', 'Business Analyst':'Requirements & Analysis', 'Data/Metrics Analyst':'Analytics & Metrics', 'UX/UI Designer':'User Experience', 'Product Marketing Executive':'GTM Strategy', 'Head of Product / CEO':'Strategic Direction', 'Frontend Developer':'UI Implementation', 'User Researcher':'Research & Insights' };
+    return roles[role] || '';
+}
+
+async function sendMessage() {
+    const input = document.getElementById('chat-input');
+    const query = input.value.trim();
+    if (!query) return;
+    if (!currentAgent) {
+        showToast('Please select an agent first', true);
+        return;
+    }
+    const messages = document.getElementById('chat-messages');
+    messages.innerHTML += `<div class="message user">${escapeHtml(query)}</div>`;
+    input.value = '';
+    messages.innerHTML += `<div class="message agent"><div class="loading-dots"><span></span><span></span><span></span></div></div>`;
+    messages.scrollTop = messages.scrollHeight;
+    try {
+        const res = await fetch(`${API_BASE}/query`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ role: currentAgent.toLowerCase().replace(/ /g,'_'), query, use_ai: true, use_web: false })
         });
-        if (!providerStatus[selectedProvider]) {
-          const firstActive = providers.find((item) => providerStatus[item]);
-          if (firstActive) {
-            setActiveProvider(firstActive);
-          }
+        const data = await res.json();
+        document.querySelector('.loading-dots')?.parentElement?.remove();
+        messages.innerHTML += `<div class="message agent">${data.response || 'No response received.'}</div>`;
+        if (data.recommendations?.length) {
+            messages.innerHTML += `<div class="message agent" style="font-size:11px; color: var(--text-muted);"><strong>Recommendations:</strong><br>${data.recommendations.map(r=>'• '+r).join('<br>')}</div>`;
         }
-      }
-
-      async function loadProviderStatus() {
-        const response = await fetch("/keys/status");
-        providerStatus = await response.json();
-        renderProviderButtons();
-      }
-
-      async function sendMessage() {
-        const message = userInput.value.trim();
-        if (!message || !selectedAgent || !selectedProvider) {
-          return;
+        if (data.evidence?.skills_used?.length) {
+            const skillNames = data.evidence.skills_used.map(s => s.replace(/-/g, ' ')).join(', ');
+            messages.innerHTML += `<div class="message system" style="background:#d1fae5;color:#065f46;font-size:11px;">🧠 Skills applied: ${skillNames}</div>`;
+            document.getElementById('skills-used-info').textContent = skillNames;
         }
-        addMessage(userPanel, "You", message);
-        userInput.value = "";
-        statusText.textContent = "Waiting for agent response...";
+    } catch (e) {
+        document.querySelector('.loading-dots')?.parentElement?.remove();
+        messages.innerHTML += `<div class="message agent" style="color:#dc2626;">Error: ${e.message}</div>`;
+    }
+    messages.scrollTop = messages.scrollHeight;
+}
 
-        try {
-          const response = await fetch("/query", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              role: selectedAgent,
-              query: message,
-              provider: selectedProvider,
-              use_ai: true,
-              use_web: true,
-            }),
-          });
+async function updateProviderStatus() {
+    try {
+        const res = await fetch(`${API_BASE}/keys/status`);
+        const data = await res.json();
+        const name = data.minimax ? 'MiniMax' : data.openai ? 'OpenAI' : data.anthropic ? 'Anthropic' : 'None';
+        document.getElementById('provider-name').textContent = name;
+        document.getElementById('provider-status').className = 'context-dot' + (data.minimax || data.openai || data.anthropic ? '' : ' off');
+    } catch (e) {}
+}
 
-          if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(errorText || "Request failed");
-          }
+function saveProviderSettings() {
+    showToast('Provider settings saved');
+}
 
-          const data = await response.json();
-          const webResults = (data.evidence && data.evidence.web_results) || [];
-          addMessage(agentPanel, selectedAgent, data.response || "(no response)", webResults);
-          statusText.textContent = `Response from ${selectedAgent}`;
-        } catch (error) {
-          addMessage(agentPanel, "Error", String(error));
-          statusText.textContent = "Request failed";
-        }
-      }
+function setupToggles() {
+    document.querySelectorAll('.toggle').forEach(t => {
+        t.addEventListener('click', () => {
+            t.classList.toggle('on');
+        });
+    });
+}
 
-      sendButton.addEventListener("click", sendMessage);
-      restartButton.addEventListener("click", async () => {
-        statusText.textContent = "Restarting staging server...";
-        try {
-          const response = await fetch("/restart", { method: "POST" });
-          if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(errorText || "Restart failed");
-          }
-          statusText.textContent = "Staging server restarting...";
-        } catch (error) {
-          statusText.textContent = "Restart failed.";
-          addMessage(agentPanel, "Error", String(error));
-        }
-      });
-      connectButton.addEventListener("click", () => {
-        connectModal.classList.add("open");
-      });
-      cancelConnect.addEventListener("click", () => {
-        connectModal.classList.remove("open");
-      });
-      saveConnect.addEventListener("click", async () => {
-        try {
-          const response = await fetch("/keys", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              openai: openaiKey.value,
-              anthropic: anthropicKey.value,
-              perplexity: perplexityKey.value,
-            }),
-          });
-          providerStatus = await response.json();
-          renderProviderButtons();
-          connectModal.classList.remove("open");
-          openaiKey.value = "";
-          anthropicKey.value = "";
-          perplexityKey.value = "";
-          statusText.textContent = "Keys saved for this session.";
-        } catch (error) {
-          statusText.textContent = "Failed to save keys.";
-          addMessage(agentPanel, "Error", String(error));
-        }
-      });
-      userInput.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" && !event.shiftKey) {
-          event.preventDefault();
-          sendMessage();
-        }
-      });
+function createTask() {
+    showToast('Create Epic dialog — coming soon');
+}
 
-      loadAgents().catch(() => {
-        statusText.textContent = "Unable to load agents.";
-      });
-      loadProviderStatus().catch(() => {
-        statusText.textContent = "Unable to load providers.";
-      });
-    </script>
-  </body>
+function showToast(msg, isError = false) {
+    const existing = document.querySelector('.toast');
+    if (existing) existing.remove();
+    const toast = document.createElement('div');
+    toast.className = 'toast' + (isError ? ' error' : '');
+    toast.textContent = msg;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+}
+
+function escapeHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function cleanDesc(str) {
+    return str.replace(/[*_#`~]/g, '').replace(/\s+/g, ' ').trim();
+}
+
+init();
+</script>
+</body>
 </html>
