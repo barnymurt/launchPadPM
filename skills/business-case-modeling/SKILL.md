@@ -1,6 +1,11 @@
 ---
 name: business-case-modeling
 description: Build revenue projections, unit economics, and financial viability models for SaaS and digital products. Use when the user asks to model revenue, calculate unit economics (LTV, CAC, payback period), estimate market size (TAM/SAM/SOM), build a business case for a feature or product, project MRR/ARR growth, or evaluate whether a SaaS idea is financially viable. Covers revenue modeling, cost structure, unit economics, market sizing, and scenario analysis.
+lifecycle: discovery
+category: product
+outputSummary: Business case with financial projections and ROI analysis
+relatedAfter: roadmap-planning,pricing-strategy
+nextSteps: Use insights for roadmap-planning and stakeholder alignment
 ---
 
 # Business Case Modeling
@@ -120,6 +125,11 @@ Expected length: 2,000-4,000 words depending on model complexity.
 - [ ] Market sizing uses both top-down and bottom-up approaches
 - [ ] SaaS-specific metrics used (MRR, ARR, churn rate, NRR, not just "revenue")
 - [ ] Honest assessment — model acknowledges when data is thin or viability is questionable
+
+## Quality Rubric
+
+For detailed quality standards and "What Good Looks Like" criteria, see [QUALITY.md](QUALITY.md).
+
 
 ## References
 

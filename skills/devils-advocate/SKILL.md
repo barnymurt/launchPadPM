@@ -1,6 +1,11 @@
 ---
 name: devils-advocate
 description: Systematically challenge product assumptions, test value propositions, and model customer objections for SaaS and digital products. Use when the user needs their idea stress-tested, wants to know why customers might NOT buy, needs assumptions identified and challenged, wants their value proposition evaluated, or asks for objection modeling. Also use when a product spec or idea brief seems overly optimistic or lacks critical scrutiny. Combines assumption challenging, value proposition testing, and customer objection modeling into one structured adversarial analysis.
+lifecycle: discovery
+category: product
+outputSummary: Critical analysis identifying risks and weaknesses in your approach
+relatedAfter: feature-prioritization,roadmap-planning
+nextSteps: Address identified risks in your planning and execution
 ---
 
 # Devil's Advocate
@@ -108,6 +113,11 @@ Expected length: 1,500-3,000 words. Tone: direct, constructive, specific.
 - [ ] Every challenge includes a recommended validation test
 - [ ] Tone is constructive — challenges the idea to make it stronger, not to kill it
 - [ ] SaaS-specific concerns addressed (churn, switching costs, platform risk, unit economics)
+
+## Quality Rubric
+
+For detailed quality standards and "What Good Looks Like" criteria, see [QUALITY.md](QUALITY.md).
+
 
 ## References
 

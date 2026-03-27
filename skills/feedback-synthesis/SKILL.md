@@ -1,6 +1,11 @@
 ---
 name: feedback-synthesis
 description: Synthesize user feedback from multiple sources into structured, actionable insights for SaaS product teams. Use when the user asks to analyze feedback, synthesize user research, make sense of survey results, interpret NPS comments, analyze support tickets, understand what users are saying, or asks "what are my users telling me?" Covers thematic analysis, source weighting, signal vs noise filtering, sentiment analysis, impact mapping, and prioritized recommendations.
+lifecycle: discovery
+category: research
+outputSummary: Synthesized user feedback themes with actionable insights
+relatedAfter: user-persona-creation,feature-prioritization
+nextSteps: Create actionable insights for product improvements
 ---
 
 # Feedback Synthesis
@@ -101,6 +106,11 @@ Expected length: 2,000-4,000 words depending on the number of sources and themes
 - [ ] Confidence levels assigned to every recommendation (High/Medium/Low)
 - [ ] Gaps in feedback coverage are identified
 - [ ] SaaS-specific context maintained throughout (churn, activation, expansion, NPS)
+
+## Quality Rubric
+
+For detailed quality standards and "What Good Looks Like" criteria, see [QUALITY.md](QUALITY.md).
+
 
 ## References
 
