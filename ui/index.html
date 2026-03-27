@@ -645,6 +645,92 @@
             border-radius: 2px;
             font-size: 10px;
         }
+        .agent-message-content h2 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+            margin: 12px 0 8px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid var(--accent);
+        }
+        .agent-message-content h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            margin: 10px 0 6px;
+        }
+        .agent-message-content h4 {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text);
+            margin: 8px 0 4px;
+        }
+        .agent-message-content p {
+            margin: 6px 0;
+        }
+        .agent-message-content ul, .agent-message-content ol {
+            margin: 6px 0;
+            padding-left: 20px;
+        }
+        .agent-message-content li {
+            margin: 3px 0;
+            list-style: disc;
+        }
+        .agent-message-content li.ordered {
+            list-style: decimal;
+        }
+        .agent-message-content strong {
+            font-weight: 700;
+            color: var(--text);
+        }
+        .agent-message-content em {
+            font-style: italic;
+        }
+        .agent-message-content hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 12px 0;
+        }
+        .agent-message-content .code-block {
+            background: #1f2933;
+            color: #f3f4f6;
+            padding: 10px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 10px;
+            margin: 8px 0;
+        }
+        .agent-message-content .inline-code {
+            background: #e5e7eb;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-family: monospace;
+        }
+        .agent-message-content .table-wrapper {
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .agent-message-content table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+            background: var(--surface);
+        }
+        .agent-message-content th {
+            background: var(--accent);
+            color: white;
+            padding: 8px 10px;
+            text-align: left;
+            font-weight: 700;
+        }
+        .agent-message-content td {
+            padding: 6px 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        .agent-message-content tr:nth-child(even) {
+            background: var(--bg);
+        }
         .agent-chat-input-area {
             padding: 8px 10px;
             border-top: 1px solid var(--border);
@@ -1998,8 +2084,63 @@ async function sendAgentChat() {
 
 function formatAIResponse(text) {
     if (!text) return '';
-    const escaped = escapeHtml(text);
-    return escaped.replace(/\n/g, '<br>').replace(/```(\w*)\n?([\s\S]*?)```/g, '<pre>$2</pre>').replace(/`([^`]+)`/g, '<code>$1</code>');
+    
+    let html = text;
+    
+    // Escape HTML first (but preserve markdown syntax)
+    const escapeHtml = (str) => str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    
+    // Code blocks (```...```)
+    html = html.replace(/```(\w*)\n?([\s\S]*?)```/g, '<pre class="code-block"><code>$2</code></pre>');
+    
+    // Inline code (`...`)
+    html = html.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+    
+    // Headers (### Header 3)
+    html = html.replace(/^### (.+)$/gm, '<h4>$1</h4>');
+    // Headers (## Header 2)
+    html = html.replace(/^## (.+)$/gm, '<h3>$1</h3>');
+    // Headers (# Header 1)
+    html = html.replace(/^# (.+)$/gm, '<h2>$1</h2>');
+    
+    // Bold (**text**)
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    
+    // Italic (*text*)
+    html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+    
+    // Unordered lists (- item)
+    html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+    html = html.replace(/(<li>.*<\/li>)\n(?=<li>)/g, '$1');
+    html = html.replace(/(<li>.*<\/li>)(?!\n<li>)/g, '<ul>$1</ul>');
+    
+    // Ordered lists (1. item)
+    html = html.replace(/^\d+\. (.+)$/gm, '<li class="ordered">$1</li>');
+    
+    // Tables - match pipe-separated rows
+    const tableRegex = /(\|.+\|)\n(\|[-:| ]+\|)\n((?:\|.+\|\n?)+)/g;
+    html = html.replace(tableRegex, (match, headerRow, separatorRow, bodyRows) => {
+        const headers = headerRow.split('|').filter(h => h.trim()).map(h => `<th>${h.trim()}</th>`).join('');
+        const rows = bodyRows.trim().split('\n').map(row => {
+            const cells = row.split('|').filter(c => c.trim() !== '').map(c => `<td>${c.trim()}</td>`).join('');
+            return `<tr>${cells}</tr>`;
+        }).join('');
+        return `<div class="table-wrapper"><table><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table></div>`;
+    });
+    
+    // Horizontal rules (---)
+    html = html.replace(/^---$/gm, '<hr>');
+    
+    // Paragraphs - wrap standalone lines
+    html = html.replace(/^(?!<[huplo]|<li|<td|<th|<pre|<div)(.+)$/gm, '<p>$1</p>');
+    
+    // Clean up empty paragraphs
+    html = html.replace(/<p><\/p>/g, '');
+    
+    // Line breaks within paragraphs
+    html = html.replace(/([^>\n])\n([^<\n])/g, '$1<br>$2');
+    
+    return html;
 }
 
 function setupSettings() {
