@@ -503,6 +503,53 @@
             border-color: var(--accent);
         }
         
+        .squad-header {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-muted);
+            padding: 8px 8px 4px 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .squad-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 8px 0;
+        }
+        
+        .agent-squad-tabs {
+            display: flex;
+            gap: 2px;
+            padding: 8px 8px 0;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+        
+        .squad-tab {
+            padding: 4px 8px;
+            border-radius: 6px 6px 0 0;
+            font-size: 9px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            border-bottom: none;
+            background: var(--bg);
+            color: var(--text-muted);
+            transition: all 0.15s;
+        }
+        
+        .squad-tab:hover {
+            background: var(--surface);
+            color: var(--text);
+        }
+        
+        .squad-tab.active {
+            background: var(--surface);
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+        
         /* Skills Section in Left Panel */
         .skills-scroll-area {
             flex: 1;
@@ -1167,6 +1214,9 @@
                 <div class="agent-left-header">
                     <h3>🤖 Agents</h3>
                 </div>
+                <!-- Lifecycle Stage Tabs -->
+                <div class="agent-squad-tabs" id="agent-squad-tabs"></div>
+                <!-- Agents for selected tab -->
                 <div class="agent-chips-row" id="agent-chips-row"></div>
                 
                 <div class="agent-left-header" style="border-top: 1px solid var(--border); margin-top: 8px; padding-top: 8px;">
@@ -1995,17 +2045,68 @@ let agentChatMessages = [];
 let selectedSkills = new Set();
 
 const agentSquads = {
-    'Discovery': ['Market Research Analyst', 'User Researcher', 'Opportunity Analyst'],
-    'Product': ['Product Manager', 'Head of Product', 'Business Analyst', 'Product Owner'],
-    'Design': ['UX Designer', 'UI Designer', 'Brand Designer'],
-    'Technical': ['Frontend Developer', 'Backend Developer', 'DevOps Engineer', 'Architect', 'Database Expert', 'API Expert', 'Mobile Expert'],
-    'Data': ['Data Analyst', 'ML Engineer', 'Analytics Lead'],
-    'QA': ['QA Engineer', 'Test Automation Engineer', 'Performance Tester'],
-    'GTM/Launch': ['Product Marketing Manager', 'Growth Hacker', 'Content Strategist'],
-    'Security': ['Security Engineer', 'Security Architect', 'Compliance Officer', 'Privacy Specialist'],
-    'Infrastructure': ['Cloud Architect', 'Cloud Infrastructure Expert', 'Platform Engineer', 'Site Reliability Engineer'],
-    'Research': ['Technical Researcher', 'Competitive Intelligence Analyst', 'Innovation Lead'],
-    'Iteration': ['Scrum Master', 'Agile Coach', 'Delivery Manager']
+    // Lifecycle Stage: Discovery
+    '🔭 Discovery': [
+        'Market Research Analyst',
+        'User Researcher', 
+        'Opportunity Analyst',
+        'Competitive Intelligence Analyst',
+        'Technical Researcher'
+    ],
+    // Lifecycle Stage: Strategy
+    '🎯 Strategy': [
+        'Product Manager',
+        'Head of Product',
+        'Business Analyst',
+        'Product Owner',
+        'Innovation Lead',
+        'Analytics Lead'
+    ],
+    // Lifecycle Stage: Build
+    '🔧 Build': [
+        'UX Designer',
+        'UI Designer',
+        'Brand Designer',
+        'Frontend Developer',
+        'Backend Developer',
+        'Architect',
+        'Database Expert',
+        'API Expert',
+        'Mobile Expert',
+        'Data Analyst',
+        'ML Engineer'
+    ],
+    // Lifecycle Stage: Launch
+    '🚀 Launch': [
+        'Product Marketing Manager',
+        'Growth Hacker',
+        'Content Strategist',
+        'DevOps Engineer',
+        'Cloud Architect',
+        'Cloud Infrastructure Expert',
+        'Release Manager'
+    ],
+    // Lifecycle Stage: Iteration
+    '🔄 Iteration': [
+        'Scrum Master',
+        'Agile Coach',
+        'Delivery Manager',
+        'QA Engineer',
+        'Test Automation Engineer',
+        'Performance Tester'
+    ],
+    // Cross-cutting
+    '🔒 Security': [
+        'Security Engineer',
+        'Security Architect',
+        'Compliance Officer',
+        'Privacy Specialist'
+    ],
+    '☁️ Infrastructure': [
+        'Platform Engineer',
+        'Site Reliability Engineer',
+        'Cloud Infrastructure Expert'
+    ]
 };
 
 const agentSkillMap = {
@@ -2075,7 +2176,10 @@ const agentSkillMap = {
     'Head of Product (CEO)': ['product-vision', 'roadmap-planning', 'business-case-modeling', 'feature-prioritization', 'saas-metrics-analysis', 'kpi-tracking', 'product-okrs', 'stakeholder-analysis', 'devils-advocate', 'competitive-intelligence']
 };
 
+let selectedSquadTab = '🔭 Discovery';
+
 function initAgentChat() {
+    renderSquadTabs();
     renderAgentSquads();
     loadSkillsForChat();
     const input = document.getElementById('agent-chat-input');
@@ -2087,31 +2191,42 @@ function initAgentChat() {
     });
 }
 
+function renderSquadTabs() {
+    const tabsContainer = document.getElementById('agent-squad-tabs');
+    if (!tabsContainer) return;
+    let html = '';
+    for (const squad of Object.keys(agentSquads)) {
+        const isActive = squad === selectedSquadTab;
+        html += `<div class="squad-tab ${isActive ? 'active' : ''}" onclick="selectSquadTab('${squad}')">${squad}</div>`;
+    }
+    tabsContainer.innerHTML = html;
+}
+
+function selectSquadTab(squad) {
+    selectedSquadTab = squad;
+    renderSquadTabs();
+    renderAgentSquads();
+}
+
 function renderAgentSquads() {
     const container = document.getElementById('agent-chips-row');
     if (!container) return;
+    const agents = agentSquads[selectedSquadTab] || [];
     let html = '';
-    for (const [squad, agents] of Object.entries(agentSquads)) {
-        const icon = squadIconMap[squad] || '👥';
-        for (const agent of agents) {
-            html += `<div class="agent-chip" onclick="selectAgentChip('${agent}', '${squad}', this)">${icon} ${agent}</div>`;
-        }
+    for (const agent of agents) {
+        html += `<div class="agent-chip" onclick="selectAgentChip('${agent}', '${selectedSquadTab}', this)">${agent}</div>`;
     }
     container.innerHTML = html;
 }
 
 const squadIconMap = {
-    'Discovery': '🔭',
-    'Product': '📦',
-    'Design': '🎨',
-    'Technical': '⚙️',
-    'Data': '📊',
-    'QA': '🧪',
-    'GTM/Launch': '🚀',
-    'Security': '🔒',
-    'Infrastructure': '☁️',
-    'Research': '🔬',
-    'Iteration': '🔄'
+    '🔭 Discovery': '🔭',
+    '🎯 Strategy': '🎯',
+    '🔧 Build': '🔧',
+    '🚀 Launch': '🚀',
+    '🔄 Iteration': '🔄',
+    '🔒 Security': '🔒',
+    '☁️ Infrastructure': '☁️'
 };
 
 function selectAgentChip(agent, squad, element) {

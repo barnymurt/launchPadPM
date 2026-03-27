@@ -194,17 +194,18 @@
     },
     "business-case-modeling": {
       "name": "business-case-modeling",
-      "total_invocations": 1,
-      "successful_invocations": 1,
+      "total_invocations": 3,
+      "successful_invocations": 3,
       "failed_invocations": 0,
       "total_duration_ms": 0,
       "avg_duration_ms": 0,
-      "last_used": "2026-03-27T12:28:33.657358",
+      "last_used": "2026-03-27T17:54:57.432668",
       "invocations_by_day": {
-        "2026-03-27": 1
+        "2026-03-27": 3
       },
       "invocations_by_agent": {
-        "Test Agent": 1
+        "Test Agent": 2,
+        "Product Owner": 1
       },
       "errors": []
     },
@@ -242,17 +243,18 @@
     },
     "ci-cd-pipeline": {
       "name": "ci-cd-pipeline",
-      "total_invocations": 1,
-      "successful_invocations": 1,
+      "total_invocations": 2,
+      "successful_invocations": 2,
       "failed_invocations": 0,
       "total_duration_ms": 0,
       "avg_duration_ms": 0,
-      "last_used": "2026-03-27T12:28:43.915989",
+      "last_used": "2026-03-27T17:58:50.060382",
       "invocations_by_day": {
-        "2026-03-27": 1
+        "2026-03-27": 2
       },
       "invocations_by_agent": {
-        "Test Agent": 1
+        "Test Agent": 1,
+        "Development Engineer": 1
       },
       "errors": []
     },
@@ -402,17 +404,18 @@
     },
     "mcp-builder": {
       "name": "mcp-builder",
-      "total_invocations": 1,
-      "successful_invocations": 1,
+      "total_invocations": 2,
+      "successful_invocations": 2,
       "failed_invocations": 0,
       "total_duration_ms": 0,
       "avg_duration_ms": 0,
-      "last_used": "2026-03-27T12:30:10.814187",
+      "last_used": "2026-03-27T17:57:37.370942",
       "invocations_by_day": {
-        "2026-03-27": 1
+        "2026-03-27": 2
       },
       "invocations_by_agent": {
-        "Test Agent": 1
+        "Test Agent": 1,
+        "Development Engineer": 1
       },
       "errors": []
     },
@@ -466,17 +469,18 @@
     },
     "webapp-testing": {
       "name": "webapp-testing",
-      "total_invocations": 2,
-      "successful_invocations": 2,
+      "total_invocations": 3,
+      "successful_invocations": 3,
       "failed_invocations": 0,
       "total_duration_ms": 0,
       "avg_duration_ms": 0,
-      "last_used": "2026-03-27T12:31:13.756965",
+      "last_used": "2026-03-27T17:58:06.440218",
       "invocations_by_day": {
-        "2026-03-27": 2
+        "2026-03-27": 3
       },
       "invocations_by_agent": {
-        "Test Agent": 2
+        "Test Agent": 2,
+        "Development Engineer": 1
       },
       "errors": []
     },
@@ -738,17 +742,18 @@
     },
     "competitor-research": {
       "name": "competitor-research",
-      "total_invocations": 1,
-      "successful_invocations": 1,
+      "total_invocations": 3,
+      "successful_invocations": 3,
       "failed_invocations": 0,
       "total_duration_ms": 0,
       "avg_duration_ms": 0,
-      "last_used": "2026-03-27T12:32:44.334981",
+      "last_used": "2026-03-27T17:53:21.678639",
       "invocations_by_day": {
-        "2026-03-27": 1
+        "2026-03-27": 3
       },
       "invocations_by_agent": {
-        "Test Agent": 1
+        "Test Agent": 2,
+        "Product Owner": 1
       },
       "errors": []
     },
@@ -834,17 +839,18 @@
     },
     "feature-prioritization": {
       "name": "feature-prioritization",
-      "total_invocations": 1,
-      "successful_invocations": 1,
+      "total_invocations": 3,
+      "successful_invocations": 3,
       "failed_invocations": 0,
       "total_duration_ms": 0,
       "avg_duration_ms": 0,
-      "last_used": "2026-03-27T13:49:12.710458",
+      "last_used": "2026-03-27T17:53:47.896064",
       "invocations_by_day": {
-        "2026-03-27": 1
+        "2026-03-27": 3
       },
       "invocations_by_agent": {
-        "Test Agent": 1
+        "Test Agent": 2,
+        "Product Owner": 1
       },
       "errors": []
     },
@@ -866,17 +872,17 @@
     },
     "user-persona-creation": {
       "name": "user-persona-creation",
-      "total_invocations": 1,
-      "successful_invocations": 1,
+      "total_invocations": 2,
+      "successful_invocations": 2,
       "failed_invocations": 0,
       "total_duration_ms": 0,
       "avg_duration_ms": 0,
-      "last_used": "2026-03-27T13:49:32.101096",
+      "last_used": "2026-03-27T17:48:50.072471",
       "invocations_by_day": {
-        "2026-03-27": 1
+        "2026-03-27": 2
       },
       "invocations_by_agent": {
-        "Test Agent": 1
+        "Test Agent": 2
       },
       "errors": []
     },
@@ -1215,8 +1221,74 @@
         "Test Agent": 1
       },
       "errors": []
+    },
+    "feedback-synthesis": {
+      "name": "feedback-synthesis",
+      "total_invocations": 2,
+      "successful_invocations": 2,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T17:53:35.272568",
+      "invocations_by_day": {
+        "2026-03-27": 2
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1,
+        "Product Owner": 1
+      },
+      "errors": []
+    },
+    "api-design": {
+      "name": "api-design",
+      "total_invocations": 2,
+      "successful_invocations": 2,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T17:55:33.509050",
+      "invocations_by_day": {
+        "2026-03-27": 2
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1,
+        "Product Owner": 1
+      },
+      "errors": []
+    },
+    "saas-metrics-analysis": {
+      "name": "saas-metrics-analysis",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T17:56:27.886089",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Product Owner": 1
+      },
+      "errors": []
+    },
+    "user-journey-mapping": {
+      "name": "user-journey-mapping",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T18:00:17.745901",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "UX/UI Designer": 1
+      },
+      "errors": []
     }
   },
   "sessions": [],
-  "last_updated": "2026-03-27T13:51:59.646241"
+  "last_updated": "2026-03-27T18:00:17.745901"
 }
