@@ -265,3 +265,27 @@ def search_skills(q: str = "") -> Dict[str, Any]:
         ],
         "query": q,
     }
+
+
+@app.get("/api/usage/stats")
+def get_usage_stats() -> Dict[str, Any]:
+    """Return overall usage statistics (admin only)."""
+    from services.usage_tracker import get_usage_stats
+    return get_usage_stats()
+
+
+@app.get("/api/usage/skills/{skill_name}")
+def get_skill_usage(skill_name: str) -> Dict[str, Any]:
+    """Return usage stats for a specific skill (admin only)."""
+    from services.usage_tracker import get_skill_usage
+    stats = get_skill_usage(skill_name)
+    if stats is None:
+        return {"error": "Skill not found or never used"}, 404
+    return stats
+
+
+@app.get("/api/usage/all")
+def get_all_usage() -> Dict[str, Any]:
+    """Return all usage data (admin only)."""
+    from services.usage_tracker import get_all_usage
+    return get_all_usage()

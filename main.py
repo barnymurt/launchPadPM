@@ -130,6 +130,36 @@ try:
 except ImportError:
     AGILE_COACH_AVAILABLE = False
 
+try:
+    from agents.security_architect_agent import SecurityArchitectAgent
+    SECURITY_ARCHITECT_AVAILABLE = True
+except ImportError:
+    SECURITY_ARCHITECT_AVAILABLE = False
+
+try:
+    from agents.database_expert_agent import DatabaseExpertAgent
+    DATABASE_EXPERT_AVAILABLE = True
+except ImportError:
+    DATABASE_EXPERT_AVAILABLE = False
+
+try:
+    from agents.api_expert_agent import APIExpertAgent
+    API_EXPERT_AVAILABLE = True
+except ImportError:
+    API_EXPERT_AVAILABLE = False
+
+try:
+    from agents.mobile_expert_agent import MobileExpertAgent
+    MOBILE_EXPERT_AVAILABLE = True
+except ImportError:
+    MOBILE_EXPERT_AVAILABLE = False
+
+try:
+    from agents.cloud_infra_expert_agent import CloudInfraExpertAgent
+    CLOUD_INFRA_EXPERT_AVAILABLE = True
+except ImportError:
+    CLOUD_INFRA_EXPERT_AVAILABLE = False
+
 
 def initialize_framework(settings: Optional[Settings] = None) -> None:
     """
@@ -265,6 +295,31 @@ def register_available_agents() -> None:
     if AGILE_COACH_AVAILABLE:
         coach_agent = AgileCoachAgent()
         AgentRegistry.register_agent(coach_agent)
+        registered_count += 1
+
+    if SECURITY_ARCHITECT_AVAILABLE:
+        sec_agent = SecurityArchitectAgent()
+        AgentRegistry.register_agent(sec_agent)
+        registered_count += 1
+
+    if DATABASE_EXPERT_AVAILABLE:
+        db_agent = DatabaseExpertAgent()
+        AgentRegistry.register_agent(db_agent)
+        registered_count += 1
+
+    if API_EXPERT_AVAILABLE:
+        api_agent = APIExpertAgent()
+        AgentRegistry.register_agent(api_agent)
+        registered_count += 1
+
+    if MOBILE_EXPERT_AVAILABLE:
+        mobile_agent = MobileExpertAgent()
+        AgentRegistry.register_agent(mobile_agent)
+        registered_count += 1
+
+    if CLOUD_INFRA_EXPERT_AVAILABLE:
+        cloud_agent = CloudInfraExpertAgent()
+        AgentRegistry.register_agent(cloud_agent)
         registered_count += 1
     
     if registered_count > 0:

@@ -1079,6 +1079,9 @@
             <div class="nav-item" data-page="analytics">
                 <span class="nav-icon">📈</span> Analytics
             </div>
+            <div class="nav-item" data-page="usage" id="nav-usage" style="display:none;">
+                <span class="nav-icon">📊</span> Usage
+            </div>
         </div>
         <div class="nav-section">
             <div class="nav-section-title">Configure</div>
@@ -1262,6 +1265,43 @@
         </div>
     </div>
 
+    <!-- Usage Page (Admin Only) -->
+    <div class="page" id="page-usage">
+        <div class="content">
+            <div style="margin-bottom: 24px;">
+                <h2 style="margin-bottom: 16px;">📊 Skill Usage Telemetry</h2>
+                <div id="usage-stats-cards" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
+                    <div class="ceremony-card">
+                        <h3>Total Invocations</h3>
+                        <div class="price" id="usage-total-invocations" style="font-size: 28px;">-</div>
+                    </div>
+                    <div class="ceremony-card">
+                        <h3>Successful</h3>
+                        <div class="price" id="usage-successful" style="font-size: 28px; color: #10b981;">-</div>
+                    </div>
+                    <div class="ceremony-card">
+                        <h3>Failed</h3>
+                        <div class="price" id="usage-failed" style="font-size: 28px; color: #ef4444;">-</div>
+                    </div>
+                    <div class="ceremony-card">
+                        <h3>Unique Skills Used</h3>
+                        <div class="price" id="usage-unique-skills" style="font-size: 28px;">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ceremony-card" style="margin-bottom: 16px;">
+                <h3>🏆 Top 10 Most Used Skills</h3>
+                <div id="usage-top-skills" style="margin-top: 12px;"></div>
+            </div>
+
+            <div class="ceremony-card">
+                <h3>📋 All Skill Usage</h3>
+                <div id="usage-all-skills" style="margin-top: 12px; max-height: 400px; overflow-y: auto;"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Connections Page -->
     <div class="page" id="page-connections">
         <div class="content">
@@ -1323,6 +1363,7 @@
                     <div class="settings-nav-item" data-settings="providers">AI Providers</div>
                     <div class="settings-nav-item" data-settings="orchestration">Orchestration</div>
                     <div class="settings-nav-item" data-settings="product">Product</div>
+                    <div class="settings-nav-item" data-settings="admin">Admin</div>
                 </div>
                 <div class="settings-content" id="settings-panel-general">
                     <div class="settings-section">
@@ -1386,6 +1427,25 @@
                             <input class="input-field" style="width: 80px;" value="3" type="number" min="1" max="5" id="max-depth">
                         </div>
                         <button class="btn btn-primary" style="margin-top: 12px;" onclick="saveProviderSettings()">Save Provider Settings</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                <div class="settings-content" id="settings-panel-admin" style="display: none;">
+                    <div class="settings-section">
+                        <h3>Admin Settings</h3>
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <div class="setting-label">Admin Mode</div>
+                                <div class="setting-desc">Enable admin features including Usage telemetry</div>
+                            </div>
+                            <div class="toggle" id="toggle-admin" onclick="toggleAdminMode()"></div>
+                        </div>
+                        <div id="admin-status" style="margin-top: 12px; padding: 12px; background: var(--bg); border-radius: 8px;">
+                            <div style="font-size: 12px; color: var(--text-muted);">Admin mode is currently: <strong id="admin-status-text">Disabled</strong></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1567,6 +1627,8 @@ function init() {
     setupNav();
     setupSettings();
     setupToggles();
+    setAdminMode(isAdminMode());
+    updateAdminToggleUI();
 }
 
 async function loadAgents() {
@@ -1594,6 +1656,63 @@ async function loadSkills() {
     } catch (e) {
         console.error('Failed to load skills', e);
         showToast('Failed to load skills: ' + e.message, true);
+    }
+}
+
+async function loadUsageData() {
+    try {
+        const res = await fetch(`${API_BASE}/api/usage/stats`);
+        if (!res.ok) {
+            showToast('Failed to load usage data', true);
+            return;
+        }
+        const data = await res.json();
+        
+        document.getElementById('usage-total-invocations').textContent = data.total_skill_invocations || 0;
+        document.getElementById('usage-successful').textContent = data.total_successful || 0;
+        document.getElementById('usage-failed').textContent = data.total_failed || 0;
+        document.getElementById('usage-unique-skills').textContent = data.unique_skills_used || 0;
+        
+        // Top skills
+        const topSkillsEl = document.getElementById('usage-top-skills');
+        if (data.top_skills && data.top_skills.length > 0) {
+            topSkillsEl.innerHTML = data.top_skills.map((s, i) => `
+                <div style="display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border);">
+                    <span style="font-weight: bold; width: 24px; color: ${i < 3 ? '#4f46e5' : 'var(--text-muted)'};">#${i+1}</span>
+                    <span style="flex: 1;">${s.name}</span>
+                    <span style="color: var(--text-muted);">${s.invocations} invocations</span>
+                </div>
+            `).join('');
+        } else {
+            topSkillsEl.innerHTML = '<p style="color: var(--text-muted);">No skill usage data yet.</p>';
+        }
+        
+        // All skills usage
+        const allSkillsRes = await fetch(`${API_BASE}/api/usage/all`);
+        const allData = await allSkillsRes.json();
+        const allSkillsEl = document.getElementById('usage-all-skills');
+        
+        if (allData.skills && Object.keys(allData.skills).length > 0) {
+            const sortedSkills = Object.values(allData.skills).sort((a, b) => b.total_invocations - a.total_invocations);
+            allSkillsEl.innerHTML = sortedSkills.map(s => `
+                <div style="padding: 12px 0; border-bottom: 1px solid var(--border);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                        <strong>${s.name}</strong>
+                        <span>${s.total_invocations} total / ${s.successful_invocations} ✓ / ${s.failed_invocations} ✗</span>
+                    </div>
+                    <div style="font-size: 12px; color: var(--text-muted);">
+                        Last used: ${s.last_used ? new Date(s.last_used).toLocaleString() : 'Never'} | 
+                        Avg: ${s.avg_duration_ms ? (s.avg_duration_ms/1000).toFixed(1) + 's' : 'N/A'}
+                    </div>
+                    ${s.errors && s.errors.length > 0 ? `<div style="font-size: 11px; color: #ef4444; margin-top: 4px;">Last error: ${s.errors[s.errors.length-1].error}</div>` : ''}
+                </div>
+            `).join('');
+        } else {
+            allSkillsEl.innerHTML = '<p style="color: var(--text-muted);">No skill usage data yet. Use skills in Agent Chat to see telemetry.</p>';
+        }
+    } catch (e) {
+        console.error('Failed to load usage data', e);
+        showToast('Failed to load usage data: ' + e.message, true);
     }
 }
 
@@ -1833,6 +1952,22 @@ function renderVelocity() {
     }
 }
 
+function setAdminMode(enabled) {
+    localStorage.setItem('adminMode', enabled ? 'true' : 'false');
+    document.getElementById('nav-usage').style.display = enabled ? 'flex' : 'none';
+    if (!enabled) {
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('page-sprint-board').classList.add('active');
+        document.querySelector('.nav-item[data-page="sprint-board"]').classList.add('active');
+        document.getElementById('page-title').textContent = 'Sprint Board';
+    }
+}
+
+function isAdminMode() {
+    return localStorage.getItem('adminMode') === 'true';
+}
+
 function setupNav() {
     document.querySelectorAll('.nav-item[data-page]').forEach(item => {
         item.addEventListener('click', () => {
@@ -1841,10 +1976,12 @@ function setupNav() {
             item.classList.add('active');
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(`page-${page}`).classList.add('active');
-            const titles = { sprint:'Sprint Board', roadmap:'Feature Roadmap', team:'Team Board', ceremonies:'Scrum Ceremonies', 'agent-chat':'Agent Chat', velocity:'Velocity', analytics:'Analytics', connections:'Connections', settings:'Settings', pricing:'Pricing' };
+            const titles = { sprint:'Sprint Board', roadmap:'Feature Roadmap', team:'Team Board', ceremonies:'Scrum Ceremonies', 'agent-chat':'Agent Chat', velocity:'Velocity', analytics:'Analytics', usage:'Usage', connections:'Connections', settings:'Settings', pricing:'Pricing' };
             document.getElementById('page-title').textContent = titles[page] || page;
             if (page === 'agent-chat') {
                 initAgentChat();
+            } else if (page === 'usage') {
+                loadUsageData();
             }
         });
     });
@@ -1859,53 +1996,83 @@ let selectedSkills = new Set();
 
 const agentSquads = {
     'Discovery': ['Market Research Analyst', 'User Researcher', 'Opportunity Analyst'],
-    'Product': ['Product Manager', 'Head of Product', 'Business Analyst'],
+    'Product': ['Product Manager', 'Head of Product', 'Business Analyst', 'Product Owner'],
     'Design': ['UX Designer', 'UI Designer', 'Brand Designer'],
-    'Technical': ['Frontend Developer', 'Backend Developer', 'DevOps Engineer', 'Architect'],
+    'Technical': ['Frontend Developer', 'Backend Developer', 'DevOps Engineer', 'Architect', 'Database Expert', 'API Expert', 'Mobile Expert'],
     'Data': ['Data Analyst', 'ML Engineer', 'Analytics Lead'],
     'QA': ['QA Engineer', 'Test Automation Engineer', 'Performance Tester'],
     'GTM/Launch': ['Product Marketing Manager', 'Growth Hacker', 'Content Strategist'],
-    'Security': ['Security Engineer', 'Compliance Officer', 'Privacy Specialist'],
-    'Infrastructure': ['Cloud Architect', 'Platform Engineer', 'Site Reliability Engineer'],
+    'Security': ['Security Engineer', 'Security Architect', 'Compliance Officer', 'Privacy Specialist'],
+    'Infrastructure': ['Cloud Architect', 'Cloud Infrastructure Expert', 'Platform Engineer', 'Site Reliability Engineer'],
     'Research': ['Technical Researcher', 'Competitive Intelligence Analyst', 'Innovation Lead'],
-    'Iteration': ['Scrum Master', 'Agile Coach', 'Continuous Improvement Lead']
+    'Iteration': ['Scrum Master', 'Agile Coach', 'Delivery Manager']
 };
 
 const agentSkillMap = {
-    'Market Research Analyst': ['competitor-research', 'user-persona-creation', 'requirements-elicitation', 'saas-metrics-analysis', 'feedback-synthesis'],
-    'User Researcher': ['user-journey-mapping', 'user-persona-creation', 'requirements-elicitation', 'feedback-synthesis', 'competitor-research'],
-    'Opportunity Analyst': ['business-case-modeling', 'feature-prioritization', 'competitor-research', 'saas-metrics-analysis', 'devils-advocate'],
-    'Product Manager': ['feature-prioritization', 'requirements-elicitation', 'feedback-synthesis', 'business-case-modeling', 'saas-metrics-analysis', 'user-journey-mapping'],
-    'Head of Product': ['business-case-modeling', 'feature-prioritization', 'saas-metrics-analysis', 'devils-advocate', 'competitor-research', 'feedback-synthesis'],
-    'Business Analyst': ['requirements-elicitation', 'feedback-synthesis', 'user-journey-mapping', 'user-persona-creation', 'feature-prioritization'],
-    'UX Designer': ['user-journey-mapping', 'user-persona-creation', 'canvas-design', 'requirements-elicitation', 'feedback-synthesis'],
-    'UI Designer': ['canvas-design', 'frontend-design', 'brand-guidelines', 'theme-factory', 'user-journey-mapping'],
-    'Brand Designer': ['brand-guidelines', 'theme-factory', 'canvas-design', 'internal-comms', 'algorithmic-art'],
-    'Frontend Developer': ['frontend-design', 'webapp-testing', 'mcp-builder', 'web-artifacts-builder', 'canvas-design'],
-    'Backend Developer': ['mcp-builder', 'webapp-testing', 'saas-metrics-analysis', 'frontend-design', 'web-artifacts-builder'],
-    'DevOps Engineer': ['mcp-builder', 'webapp-testing', 'saas-metrics-analysis', 'frontend-design', 'feature-prioritization'],
-    'Architect': ['mcp-builder', 'business-case-modeling', 'saas-metrics-analysis', 'frontend-design', 'feature-prioritization'],
-    'Data Analyst': ['saas-metrics-analysis', 'feedback-synthesis', 'competitor-research', 'business-case-modeling', 'feature-prioritization'],
-    'ML Engineer': ['saas-metrics-analysis', 'mcp-builder', 'webapp-testing', 'feature-prioritization', 'business-case-modeling'],
-    'Analytics Lead': ['saas-metrics-analysis', 'feedback-synthesis', 'competitor-research', 'business-case-modeling', 'feature-prioritization'],
-    'QA Engineer': ['webapp-testing', 'feedback-synthesis', 'requirements-elicitation', 'mcp-builder', 'feature-prioritization'],
-    'Test Automation Engineer': ['webapp-testing', 'mcp-builder', 'frontend-design', 'saas-metrics-analysis', 'feature-prioritization'],
-    'Performance Tester': ['webapp-testing', 'saas-metrics-analysis', 'feedback-synthesis', 'mcp-builder', 'feature-prioritization'],
-    'Product Marketing Manager': ['internal-comms', 'competitor-research', 'brand-guidelines', 'canvas-design', 'feedback-synthesis'],
-    'Growth Hacker': ['competitor-research', 'feedback-synthesis', 'feature-prioritization', 'saas-metrics-analysis', 'canvas-design'],
-    'Content Strategist': ['internal-comms', 'doc-coauthoring', 'brand-guidelines', 'feedback-synthesis', 'algorithmic-art'],
-    'Security Engineer': ['mcp-builder', 'feedback-synthesis', 'webapp-testing', 'requirements-elicitation', 'feature-prioritization'],
-    'Compliance Officer': ['feedback-synthesis', 'requirements-elicitation', 'business-case-modeling', 'saas-metrics-analysis', 'feature-prioritization'],
-    'Privacy Specialist': ['feedback-synthesis', 'requirements-elicitation', 'business-case-modeling', 'competitor-research', 'feature-prioritization'],
-    'Cloud Architect': ['mcp-builder', 'saas-metrics-analysis', 'business-case-modeling', 'webapp-testing', 'feature-prioritization'],
-    'Platform Engineer': ['mcp-builder', 'webapp-testing', 'saas-metrics-analysis', 'frontend-design', 'feature-prioritization'],
-    'Site Reliability Engineer': ['saas-metrics-analysis', 'webapp-testing', 'mcp-builder', 'feedback-synthesis', 'feature-prioritization'],
-    'Technical Researcher': ['competitor-research', 'mcp-builder', 'business-case-modeling', 'saas-metrics-analysis', 'feature-prioritization'],
-    'Competitive Intelligence Analyst': ['competitor-research', 'feedback-synthesis', 'business-case-modeling', 'saas-metrics-analysis', 'feature-prioritization'],
-    'Innovation Lead': ['business-case-modeling', 'feature-prioritization', 'competitor-research', 'devils-advocate', 'saas-metrics-analysis', 'algorithmic-art'],
-    'Scrum Master': ['feedback-synthesis', 'feature-prioritization', 'requirements-elicitation', 'user-journey-mapping', 'saas-metrics-analysis'],
-    'Agile Coach': ['feedback-synthesis', 'feature-prioritization', 'requirements-elicitation', 'user-journey-mapping', 'saas-metrics-analysis'],
-    'Continuous Improvement Lead': ['feedback-synthesis', 'business-case-modeling', 'saas-metrics-analysis', 'feature-prioritization', 'user-journey-mapping']
+    // Discovery/Research Agents
+    'Market Research Analyst': ['competitor-research', 'user-persona-creation', 'requirements-elicitation', 'saas-metrics-analysis', 'feedback-synthesis', 'analyst-relations', 'community-building', 'survey-design', 'heuristic-evaluation', 'gap-analysis', 'user-journey-mapping', 'feature-prioritization'],
+    'User Researcher': ['user-journey-mapping', 'user-persona-creation', 'requirements-elicitation', 'feedback-synthesis', 'competitor-research', 'interview-guide-creation', 'survey-design', 'usability-test-planning', 'heuristic-evaluation', 'gap-analysis'],
+    'Opportunity Analyst': ['business-case-modeling', 'feature-prioritization', 'competitor-research', 'saas-metrics-analysis', 'devils-advocate', 'gap-analysis', 'kpi-tracking', 'product-okrs'],
+    
+    // Product Agents
+    'Product Manager': ['feature-prioritization', 'requirements-elicitation', 'feedback-synthesis', 'business-case-modeling', 'saas-metrics-analysis', 'user-journey-mapping', 'product-vision', 'roadmap-planning', 'kpi-tracking', 'product-okrs', 'stakeholder-analysis', 'process-mapping'],
+    'Head of Product': ['business-case-modeling', 'feature-prioritization', 'saas-metrics-analysis', 'devils-advocate', 'competitor-research', 'feedback-synthesis', 'product-vision', 'roadmap-planning', 'product-okrs', 'stakeholder-analysis', 'devils-advocate-gtm'],
+    'Business Analyst': ['requirements-elicitation', 'feedback-synthesis', 'user-journey-mapping', 'user-persona-creation', 'feature-prioritization', 'process-mapping', 'stakeholder-analysis', 'kpi-tracking'],
+    'Product Owner': ['feature-prioritization', 'requirements-elicitation', 'feedback-synthesis', 'user-journey-mapping', 'saas-metrics-analysis', 'product-vision', 'roadmap-planning', 'kpi-tracking', 'stakeholder-analysis', 'user-story-generation'],
+    
+    // Design Agents
+    'UX Designer': ['user-journey-mapping', 'user-persona-creation', 'canvas-design', 'requirements-elicitation', 'feedback-synthesis', 'information-architecture', 'wireframing', 'usability-test-planning', 'accessibility-review', 'design-system'],
+    'UI Designer': ['canvas-design', 'frontend-design', 'brand-guidelines', 'theme-factory', 'user-journey-mapping', 'ui-patterns', 'responsive-patterns', 'design-system', 'animation-motion', 'accessibility-review'],
+    'Brand Designer': ['brand-guidelines', 'theme-factory', 'canvas-design', 'internal-comms', 'algorithmic-art', 'design-system', 'animation-motion', 'content-strategy'],
+    
+    // Technical Agents
+    'Frontend Developer': ['frontend-design', 'webapp-testing', 'mcp-builder', 'web-artifacts-builder', 'canvas-design', 'frontend-performance', 'responsive-patterns', 'ui-patterns', 'accessibility-review', 'tdd', 'test-strategy', 'automation-framework'],
+    'Backend Developer': ['mcp-builder', 'webapp-testing', 'saas-metrics-analysis', 'frontend-design', 'web-artifacts-builder', 'api-design', 'data-modeling', 'schema-design', 'performance-tuning', 'tdd', 'test-strategy', 'serverless-development'],
+    'DevOps Engineer': ['ci-cd-pipeline', 'infrastructure-as-code', 'monitoring-observability', 'webapp-testing', 'saas-metrics-analysis', 'backup-recovery', 'cloud-platforms', 'scale-readiness', 'release-management', 'automation-framework'],
+    'Architect': ['architecture-design', 'component-architecture', 'data-modeling', 'schema-design', 'api-design', 'mcp-builder', 'business-case-modeling', 'saas-metrics-analysis', 'technical-readiness-pack', 'security-architecture-review'],
+    'Technical Researcher': ['competitor-research', 'mcp-builder', 'business-case-modeling', 'saas-metrics-analysis', 'feature-prioritization', 'architecture-design', 'technical-readiness-pack', 'ml-llm-integration', 'edge-computing'],
+    
+    // Data/ML Agents
+    'Data Analyst': ['saas-metrics-analysis', 'feedback-synthesis', 'competitor-research', 'business-case-modeling', 'feature-prioritization', 'cohort-analysis', 'funnel-analysis', 'data-visualization', 'metrics-dashboard-creation', 'ab-test-design'],
+    'ML Engineer': ['saas-metrics-analysis', 'mcp-builder', 'webapp-testing', 'feature-prioritization', 'business-case-modeling', 'ml-llm-integration', 'data-modeling', 'performance-tuning', 'ab-test-design'],
+    'Analytics Lead': ['saas-metrics-analysis', 'feedback-synthesis', 'competitor-research', 'business-case-modeling', 'feature-prioritization', 'cohort-analysis', 'funnel-analysis', 'metrics-dashboard-creation', 'ab-test-design', 'kpi-tracking'],
+    
+    // QA Agents
+    'QA Engineer': ['webapp-testing', 'feedback-synthesis', 'requirements-elicitation', 'mcp-builder', 'feature-prioritization', 'test-strategy', 'usability-test-planning', 'accessibility-review', 'validation-pack'],
+    'Test Automation Engineer': ['webapp-testing', 'mcp-builder', 'frontend-design', 'saas-metrics-analysis', 'feature-prioritization', 'tdd', 'test-strategy', 'automation-framework', 'performance-tuning'],
+    'Performance Tester': ['webapp-testing', 'saas-metrics-analysis', 'feedback-synthesis', 'mcp-builder', 'feature-prioritization', 'performance-tuning', 'metrics-dashboard-creation', 'monitoring-observability'],
+    
+    // GTM/Launch Agents
+    'Product Marketing Manager': ['internal-comms', 'competitor-research', 'brand-guidelines', 'canvas-design', 'feedback-synthesis', 'content-strategy', 'messaging-framework', 'pricing-strategy', 'launch-planning', 'channel-strategy'],
+    'Growth Hacker': ['competitor-research', 'feedback-synthesis', 'feature-prioritization', 'saas-metrics-analysis', 'canvas-design', 'ab-test-design', 'funnel-analysis', 'paid-acquisition', 'referral-program', 'launch-analytics'],
+    'Content Strategist': ['internal-comms', 'doc-coauthoring', 'brand-guidelines', 'feedback-synthesis', 'algorithmic-art', 'content-strategy', 'seo-foundation', 'messaging-framework'],
+    
+    // Security Agents
+    'Security Engineer': ['webapp-testing', 'feedback-synthesis', 'requirements-elicitation', 'feature-prioritization', 'security-architecture-review', 'threat-modeling', 'data-security', 'security-requirements-baseline', 'privacy-regulation-assessment'],
+    'Compliance Officer': ['feedback-synthesis', 'requirements-elicitation', 'business-case-modeling', 'saas-metrics-analysis', 'feature-prioritization', 'security-compliance-roadmap', 'privacy-regulation-assessment', 'data-protection-assessment', 'security-requirements-baseline'],
+    'Privacy Specialist': ['feedback-synthesis', 'requirements-elicitation', 'business-case-modeling', 'competitor-research', 'feature-prioritization', 'privacy-regulation-assessment', 'data-protection-assessment', 'security-compliance-roadmap', 'threat-modeling'],
+    'Security Architect': ['security-architecture-review', 'threat-modeling', 'security-requirements-baseline', 'security-compliance-roadmap', 'data-security', 'data-protection-assessment', 'privacy-regulation-assessment', 'security-baseline-pack', 'architecture-design'],
+    
+    // Infrastructure Agents
+    'Cloud Architect': ['cloud-platforms', 'infrastructure-as-code', 'migration-planning', 'scale-readiness', 'ci-cd-pipeline', 'monitoring-observability', 'backup-recovery', 'automation-framework', 'architecture-design'],
+    'Platform Engineer': ['infrastructure-as-code', 'monitoring-observability', 'ci-cd-pipeline', 'webapp-testing', 'saas-metrics-analysis', 'frontend-design', 'feature-prioritization', 'automation-framework', 'scale-readiness'],
+    'Site Reliability Engineer': ['saas-metrics-analysis', 'webapp-testing', 'mcp-builder', 'feedback-synthesis', 'feature-prioritization', 'monitoring-observability', 'performance-tuning', 'incident-response', 'backup-recovery'],
+    'Cloud Infrastructure Expert': ['cloud-platforms', 'infrastructure-as-code', 'monitoring-observability', 'scale-readiness', 'ci-cd-pipeline', 'automation-framework', 'migration-planning', 'backup-recovery', 'release-management', 'cost-optimization'],
+    
+    // Database/Backend
+    'Database Expert': ['data-modeling', 'schema-design', 'backup-recovery', 'migration-planning', 'performance-tuning', 'saas-metrics-analysis', 'webapp-testing', 'security-requirements-baseline', 'privacy-regulation-assessment'],
+    'API Expert': ['api-design', 'serverless-development', 'ml-llm-integration', 'edge-computing', 'webapp-testing', 'mcp-builder', 'integration', 'mobile-ios', 'mobile-android', 'performance-tuning'],
+    'Mobile Expert': ['mobile-android', 'mobile-ios', 'responsive-patterns', 'accessibility-review', 'ui-patterns', 'frontend-design', 'webapp-testing', 'app-store', 'performance-tuning'],
+    
+    // Process Agents
+    'Scrum Master': ['feedback-synthesis', 'feature-prioritization', 'requirements-elicitation', 'user-journey-mapping', 'saas-metrics-analysis', 'iteration-planning', 'ticket-refinement', 'process-mapping', 'retrospectives'],
+    'Agile Coach': ['feedback-synthesis', 'feature-prioritization', 'requirements-elicitation', 'user-journey-mapping', 'saas-metrics-analysis', 'iteration-planning', 'ticket-refinement', 'process-mapping', 'continuous-improvement'],
+    'Delivery Manager': ['kpi-tracking', 'process-mapping', 'stakeholder-analysis', 'feature-prioritization', 'release-management', 'iteration-planning', 'saas-metrics-analysis', 'feedback-synthesis'],
+    
+    // Strategic Agents
+    'Competitive Intelligence Analyst': ['competitor-research', 'feedback-synthesis', 'business-case-modeling', 'saas-metrics-analysis', 'feature-prioritization', 'analyst-relations', 'community-building', 'market-intelligence'],
+    'Innovation Lead': ['business-case-modeling', 'feature-prioritization', 'competitor-research', 'devils-advocate', 'saas-metrics-analysis', 'algorithmic-art', 'ml-llm-integration', 'edge-computing', 'innovation-pipeline'],
+    'Head of Product (CEO)': ['product-vision', 'roadmap-planning', 'business-case-modeling', 'feature-prioritization', 'saas-metrics-analysis', 'kpi-tracking', 'product-okrs', 'stakeholder-analysis', 'devils-advocate', 'competitive-intelligence']
 };
 
 function initAgentChat() {
@@ -2172,10 +2339,29 @@ function saveProviderSettings() {
 
 function setupToggles() {
     document.querySelectorAll('.toggle').forEach(t => {
+        if (t.id === 'toggle-admin') return;
         t.addEventListener('click', () => {
             t.classList.toggle('on');
         });
     });
+}
+
+function toggleAdminMode() {
+    const toggle = document.getElementById('toggle-admin');
+    const isEnabled = toggle.classList.toggle('on');
+    setAdminMode(isEnabled);
+    document.getElementById('admin-status-text').textContent = isEnabled ? 'Enabled' : 'Disabled';
+    showToast('Admin mode ' + (isEnabled ? 'enabled' : 'disabled'));
+}
+
+function updateAdminToggleUI() {
+    const toggle = document.getElementById('toggle-admin');
+    const statusText = document.getElementById('admin-status-text');
+    if (toggle && statusText) {
+        const isEnabled = isAdminMode();
+        toggle.classList.toggle('on', isEnabled);
+        statusText.textContent = isEnabled ? 'Enabled' : 'Disabled';
+    }
 }
 
 function createTask() {

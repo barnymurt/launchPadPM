@@ -59,3 +59,7 @@ notion_config.json
 # Temporary files
 *.tmp
 *.temp
+
+# Synced skills (AgentPad is source of truth)
+skills/*.md
+skills/*/

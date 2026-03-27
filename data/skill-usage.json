@@ -1,0 +1,1222 @@
+{
+  "skills": {
+    "ml-llm-integration": {
+      "name": "ml-llm-integration",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:27:04.521139",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "brand-guidelines": {
+      "name": "brand-guidelines",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:27:19.243276",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "test-strategy": {
+      "name": "test-strategy",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:27:28.214867",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "backup-recovery": {
+      "name": "backup-recovery",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:27:29.755541",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "mobile-android": {
+      "name": "mobile-android",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:27:42.930562",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "threat-modeling": {
+      "name": "threat-modeling",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:27:44.037173",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "migration-planning": {
+      "name": "migration-planning",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:27:44.460245",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "ticket-refinement": {
+      "name": "ticket-refinement",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:27:49.619088",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "mobile-ios": {
+      "name": "mobile-ios",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:28:01.638436",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "ui-patterns": {
+      "name": "ui-patterns",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:28:10.258688",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "canvas-design": {
+      "name": "canvas-design",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:28:15.879734",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "monitoring-observability": {
+      "name": "monitoring-observability",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:28:25.849298",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "business-case-modeling": {
+      "name": "business-case-modeling",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:28:33.657358",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "usability-test-planning": {
+      "name": "usability-test-planning",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:28:39.602022",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "channel-strategy": {
+      "name": "channel-strategy",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:28:43.432182",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "ci-cd-pipeline": {
+      "name": "ci-cd-pipeline",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:28:43.915989",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "paid-acquisition": {
+      "name": "paid-acquisition",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:28:59.215486",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "user-story-generation": {
+      "name": "user-story-generation",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:29:09.254019",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "partner-strategy": {
+      "name": "partner-strategy",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:29:20.402040",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "performance-tuning": {
+      "name": "performance-tuning",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:29:34.437794",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "cohort-analysis": {
+      "name": "cohort-analysis",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:29:34.746750",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "cloud-platforms": {
+      "name": "cloud-platforms",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:29:42.664469",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "wireframing": {
+      "name": "wireframing",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:29:45.314984",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "community-building": {
+      "name": "community-building",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:29:57.070360",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "frontend-design": {
+      "name": "frontend-design",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:30:07.139512",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "mcp-builder": {
+      "name": "mcp-builder",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:30:10.814187",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "pricing-launch": {
+      "name": "pricing-launch",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:30:13.510693",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "component-architecture": {
+      "name": "component-architecture",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:30:26.862723",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "privacy-regulation-assessment": {
+      "name": "privacy-regulation-assessment",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:30:37.061677",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "webapp-testing": {
+      "name": "webapp-testing",
+      "total_invocations": 2,
+      "successful_invocations": 2,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:31:13.756965",
+      "invocations_by_day": {
+        "2026-03-27": 2
+      },
+      "invocations_by_agent": {
+        "Test Agent": 2
+      },
+      "errors": []
+    },
+    "content-strategy": {
+      "name": "content-strategy",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:30:50.833262",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "pricing-strategy": {
+      "name": "pricing-strategy",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:30:58.026499",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "data-modeling": {
+      "name": "data-modeling",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:31:03.537827",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "web-artifacts-builder": {
+      "name": "web-artifacts-builder",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:31:07.442037",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "product-health-check": {
+      "name": "product-health-check",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:31:16.708853",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "process-mapping": {
+      "name": "process-mapping",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:31:17.930018",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "docx": {
+      "name": "docx",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:31:23.525767",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "data-protection-assessment": {
+      "name": "data-protection-assessment",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:31:36.028137",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "internal-comms": {
+      "name": "internal-comms",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:31:45.388882",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "product-vision": {
+      "name": "product-vision",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:31:55.339630",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "data-security": {
+      "name": "data-security",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:32:06.718405",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "product-okrs": {
+      "name": "product-okrs",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:32:15.275748",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "pdf": {
+      "name": "pdf",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:32:25.261109",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "data-visualization": {
+      "name": "data-visualization",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:32:32.911867",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "design-system": {
+      "name": "design-system",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:32:36.147238",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "referral-program": {
+      "name": "referral-program",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:32:39.457950",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "competitor-research": {
+      "name": "competitor-research",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:32:44.334981",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "pptx": {
+      "name": "pptx",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:32:44.890753",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "release-management": {
+      "name": "release-management",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:32:57.787366",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "devils-advocate": {
+      "name": "devils-advocate",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T12:33:07.725825",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "edge-computing": {
+      "name": "edge-computing",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:49:03.885420",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "Delivery Manager": {
+      "name": "Delivery Manager",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:49:09.666660",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "feature-prioritization": {
+      "name": "feature-prioritization",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:49:12.710458",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "frontend-performance": {
+      "name": "frontend-performance",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:49:31.891116",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "user-persona-creation": {
+      "name": "user-persona-creation",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:49:32.101096",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "sales-enablement": {
+      "name": "sales-enablement",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:49:44.063646",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "Scrum Master": {
+      "name": "Scrum Master",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:49:47.918330",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "schema-design": {
+      "name": "schema-design",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:49:52.837482",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "scale-readiness": {
+      "name": "scale-readiness",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:49:54.549024",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "Skill Orchestrator": {
+      "name": "Skill Orchestrator",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:50:06.316915",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "funnel-analysis": {
+      "name": "funnel-analysis",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:50:13.059084",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "Skill Reviewer": {
+      "name": "Skill Reviewer",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:50:17.710847",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "security-architecture-review": {
+      "name": "security-architecture-review",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:50:26.155804",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "security-compliance-roadmap": {
+      "name": "security-compliance-roadmap",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:50:38.700067",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "gap-analysis": {
+      "name": "gap-analysis",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:50:47.478839",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "heuristic-evaluation": {
+      "name": "heuristic-evaluation",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:50:48.087830",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "ab-test-design": {
+      "name": "ab-test-design",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:50:55.249173",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "accessibility-review": {
+      "name": "accessibility-review",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:51:04.093706",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "seo-foundation": {
+      "name": "seo-foundation",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:51:19.806165",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "agent-browser": {
+      "name": "agent-browser",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:51:27.017935",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "information-architecture": {
+      "name": "information-architecture",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:51:27.237306",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "security-requirements-baseline": {
+      "name": "security-requirements-baseline",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:51:29.247062",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "interview-guide-creation": {
+      "name": "interview-guide-creation",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:51:35.690275",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "infrastructure-as-code": {
+      "name": "infrastructure-as-code",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:51:50.054439",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "algorithmic-art": {
+      "name": "algorithmic-art",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:51:51.251207",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    },
+    "skill-creator": {
+      "name": "skill-creator",
+      "total_invocations": 1,
+      "successful_invocations": 1,
+      "failed_invocations": 0,
+      "total_duration_ms": 0,
+      "avg_duration_ms": 0,
+      "last_used": "2026-03-27T13:51:59.634506",
+      "invocations_by_day": {
+        "2026-03-27": 1
+      },
+      "invocations_by_agent": {
+        "Test Agent": 1
+      },
+      "errors": []
+    }
+  },
+  "sessions": [],
+  "last_updated": "2026-03-27T13:51:59.646241"
+}

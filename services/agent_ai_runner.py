@@ -129,6 +129,19 @@ def run_agent_ai(
         "skills_used": skill_names,
     }
 
+    # Track skill usage
+    if skill_names:
+        try:
+            from services.usage_tracker import track_skill_usage
+            for skill_name in skill_names:
+                track_skill_usage(
+                    skill_name=skill_name,
+                    agent_name=agent.role,
+                    success=True
+                )
+        except Exception:
+            pass  # Don't fail the request if tracking fails
+
     return agent.format_response(
         response_text=response_text,
         recommendations=[],
