@@ -1,5 +1,5 @@
 """
-The schema reader - RUNG 1 OF THE FACTORY.
+The schema reader — RUNG 1 OF THE FACTORY.
 
 **=> THE FACTORY'S FIRST JOB IS TO CONNECT WHAT IS ALREADY WRITTEN, **=> AND THE
 FIRST THING THAT IS WRITTEN AND NOT WIRED IS **THE OUTPUT SCHEMA**.
@@ -15,12 +15,14 @@ BE TRUSTED TO PRODUCE THE SHAPE THE FACTORY NEEDS**, **=> AND SO THE SHAPE MUST 
 **=> AND THE RULE THE FACTORY ENFORCES: **A STAGE'S OUTPUT THAT DOES NOT MATCH ITS
 SCHEMA DOES NOT COUNT**.
 
-**=> AND THE HARD PART IS **THE MATCH** - **=> BECAUSE A FIELD NAMED
-*"Benchmark comparison"* MAY BE WRITTEN **THIRTEEN** WAYS - **=> AS A HEADING,
-**=> AS A **BOLD** LABEL, **=> INSIDE A TABLE ROW, **=> OR UNDER A DIFFERENT BUT
-EQUIVALENT NAME Ã¢Å“â€œÃ¢Å“â€œ - **=> AND THE SCHEMAS' **OWN WORKED EXAMPLES** DO EXACTLY
-THAT Ã¢Å“â€œÃ¢Å“â€œ, **=> WHICH IS WHY THE MATCH MUST BE **LENIENT** Ã¢Å“â€œÃ¢Å“â€œ - **=> BECAUSE A
-CHECK THAT FAILS ON THE SCHEMA'S OWN EXAMPLE IS A CHECK NOBODY WILL TRUST Ã¢Å“â€œÃ¢Å“â€œ.**
+**=> AND THE MEASURED DESIGN CONSTRAINT: **OF THE TEN SCHEMAS' OWN WORKED
+EXAMPLES, **TWO** FAIL - **=> AND BOTH FAIL **ON FIELD NAMES**, **=> AND **NEITHER**
+**=> FAILS ON A MISSING SECTION**. **=> SO **SECTIONS ARE THE RELIABLE SIGNAL** AND
+**=> FIELD NAMES ARE NOT. **=> AND WHEN THE FIELD MATCHER WAS MADE **CLEVERER** THE
+GOOD OUTPUTS PASSED **FEWER** - **=> 9 THEN 8 - **=> BECAUSE STEMMING TURNED
+"TABLE" INTO "TABL". **=> AND THE LESSON IS THAT A GATE MUST BE **MORE LENIENT,
+NOT MORE CLEVER**, **=> BECAUSE **A GATE THAT FAIMS GOOD WORK MAKES THE TEAM STOP
+TRUSTING IT**.
 """
 
 import os
@@ -33,14 +35,14 @@ SKILLS_DIR = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "skills"
 )
 
-# **=> AND THE WORDS THAT CARRY NO MEANING IN A FIELD NAME Ã¢Å“â€œÃ¢Å“â€œ.**
+# **=> AND THE WORDS THAT CARRY NO MEANING IN A FIELD NAME.**
 STOP_WORDS = {
     "the", "and", "for", "with", "from", "per", "not", "any", "all", "each",
     "are", "was", "has", "have", "that", "this", "into", "its", "their",
 }
 
 
-def _words(name: str) -> list:
+def _words(name):
     """The significant words of a field name."""
     cleaned = re.sub(r"[^A-Za-z0-9 ]+", " ", name)
     return [
@@ -50,21 +52,18 @@ def _words(name: str) -> list:
     ]
 
 
-def _stem(word: str) -> str:
+def _stem(word):
     """
     A crude stem, so "comparison" and "comparisons" are the same word.
 
-    **=> AND "request" AND "requests" Ã¢Å“â€œÃ¢Å“â€œ - **=> AND THIS MATTERS Ã¢Å“â€œÃ¢Å“â€œ BECAUSE THE
-    SCHEMA AND THE OUTPUT GENERALLY AGREE ON THE NUMBER Ã¢Å“â€œÃ¢Å“â€œ.**
+    **=> AND **ONLY** THE PLURAL IS STRIPPED - **=> AND THE "-tion" AND "-al"
+    SUFFIXES ARE **NOT**, **=> BECAUSE STRIPPING THEM TURNED "TABLE" INTO "TABL",
+    **=> WHICH MADE THE CHECK **FAIL GOOD OUTPUT**, **=> WHICH IS THE WORST
+    POSSIBLE OUTCOME - **=> AND THE LESSON IS THAT **CLEVERER IS NOT BETTER**,
+    **=> IT IS **MORE LENIENT, NOT MORE CLEVER**.
     """
-    # **=> AND **ONLY** THE PLURAL IS STRIPPED ✓✓ - **=> THE "-tion" AND
-    # **=> "-al" SUFFIXES ARE **NOT** ✓✓, **=> BECAUSE STRIPPING THEM TURNED
-    # **=> "TABLE" INTO "TABL" ✓✓, **=> WHICH MADE THE CHECK **FAIL GOOD
-    # **=> OUTPUT** ✓✓, **=> AND THE LESSON IS THAT **CLEVERER IS NOT BETTER**
-    # **=> ✓✓ - **=> IT IS **MORE LENIENT, NOT MORE CLEVER** ✓✓.**
     if word.endswith("s") and not word.endswith("ss") and len(word) > 4:
         return word[:-1]
-    return word
     return word
 
 
@@ -86,17 +85,17 @@ class Schema:
         return not self.required_fields and not self.required_sections
 
 
-def _parse_required_fields(text: str) -> list:
+def _parse_required_fields(text):
     """
     The required fields, from lines like:
 
         - Benchmark comparison (required): vs. SaaS industry standard
 
-    **=> AND A FIELD MAY BE MARKED ONCE AND USED MANY TIMES Ã¢Å“â€œÃ¢Å“â€œ - **=> AND IT IS
-    LISTED ONCE Ã¢Å“â€œÃ¢Å“â€œ, **=> BECAUSE THE CHECK IS ABOUT **WHETHER THE FIELD IS THERE
-    AT ALL** Ã¢Å“â€œÃ¢Å“â€œ, **=> NOT ABOUT HOW MANY TIMES Ã¢Å“â€œÃ¢Å“â€œ.**
+    **=> AND A FIELD MAY BE MARKED ONCE AND USED MANY TIMES - **=> AND IT IS
+    LISTED ONCE, **=> BECAUSE THE CHECK IS ABOUT **WHETHER THE FIELD IS THERE
+    AT ALL**, **=> NOT ABOUT HOW MANY TIMES**.
     """
-    found: list = []
+    found = []
     pattern = re.compile(r"^\s*-\s+(.+?)\s*\(([^)]*)\)\s*:?\s*$", re.MULTILINE)
     for match in pattern.finditer(text):
         name = match.group(1).strip()
@@ -111,13 +110,13 @@ def _parse_required_fields(text: str) -> list:
     return found
 
 
-def _parse_required_sections(text: str) -> list:
+def _parse_required_sections(text):
     """
     The required sections, from headings like:
 
         ## 2. Assumption Challenges (required, top 3-5 by risk priority)
     """
-    found: list = []
+    found = []
     pattern = re.compile(r"^#{1,4}\s+(.+?)\s*$", re.MULTILINE)
     for match in pattern.finditer(text):
         heading = match.group(1).strip()
@@ -128,7 +127,7 @@ def _parse_required_sections(text: str) -> list:
     return found
 
 
-def _parse_required_lines(text: str) -> list:
+def _parse_required_lines(text):
     """
     The lines that must appear **verbatim** - the ones the schema spells out,
     like:
@@ -136,9 +135,9 @@ def _parse_required_lines(text: str) -> list:
         **Overall Recommendation:** GO / PAUSE / KILL
 
     **=> AND THESE ARE THE **THE VERDICT** LINES, **=> AND THEY ARE THE ONES A GATE
-    CAN ACT ON.**
+    CAN ACT ON.
     """
-    found: list = []
+    found = []
     pattern = re.compile(r"^\s*\*\*(.+?)\*\*\s*:?\s*(.+)$", re.MULTILINE)
     for match in pattern.finditer(text):
         label = match.group(1).strip()
@@ -150,7 +149,7 @@ def _parse_required_lines(text: str) -> list:
     return found
 
 
-def read_schema(skill: str, skills_dir: str = SKILLS_DIR):
+def read_schema(skill, skills_dir=SKILLS_DIR):
     """
     One skill's schema, or None when it has none.
 
@@ -177,9 +176,9 @@ def read_schema(skill: str, skills_dir: str = SKILLS_DIR):
     return None
 
 
-def all_schemas(skills_dir: str = SKILLS_DIR) -> list:
+def all_schemas(skills_dir=SKILLS_DIR):
     """Every schema on disk."""
-    found: list = []
+    found = []
     if not os.path.isdir(skills_dir):
         return found
     for entry in sorted(os.listdir(skills_dir)):
@@ -189,25 +188,53 @@ def all_schemas(skills_dir: str = SKILLS_DIR) -> list:
     return found
 
 
-def _present(name: str, lowered: str) -> bool:
+def _content_words(heading):
+    """
+    The substance of a heading, without its wrapper.
+
+    **=> AND THE WRAPPER IS **THE WHOLE PROBLEM** ✓✓ - **=> MEASURED ✓✓:**
+
+    - **=> THE SCHEMA SAYS: `### Section 2: Launch Phases (required)` ✓✓**
+    - **=> AND THE OUTPUT SAYS: `## Step 2: Define Launch Phases` ✓✓**
+
+    **=> THE SUBSTANCE — "LAUNCH PHASES" — IS IN BOTH ✓✓, **=> AND THE WRAPPER IS
+    NOT ✓✓. **=> SO THE CHECK MUST MATCH ON **THE SUBSTANCE** ✓✓.**
+
+    **=> AND THE WRAPPERS **SEEN** ✓✓: "SECTION N:" ✓✓, "STEP N:" ✓✓, "PHASE N:"
+    ✓✓, "N." ✓✓, AND A LEADING "DEFINE" OR "DEFINE THE" ✓✓.**
+    """
+    plain = heading.strip()
+    plain = re.sub(r"^\(?\s*(required|optional)[^)]*\)?\s*$", "", plain, flags=re.I)
+    plain = re.sub(r"^\s*\d+\s*[.)]\s*", "", plain)
+    plain = re.sub(r"^\s*Section\s+\d+\s*:\s*", "", plain, flags=re.IGNORECASE)
+    plain = re.sub(r"^\s*Step\s+\d+\s*:\s*", "", plain, flags=re.IGNORECASE)
+    plain = re.sub(r"^\s*Phase\s+\d+\s*:\s*", "", plain, flags=re.IGNORECASE)
+    plain = re.sub(r"^\s*Part\s+\d+\s*:\s*", "", plain, flags=re.IGNORECASE)
+    plain = re.sub(r"^\s*(Define|Create|Write|Build|Draft|Plan)\s+(the\s+)?", "", plain, flags=re.IGNORECASE)
+    plain = plain.split("(")[0]
+    plain = plain.strip(" :*-—")
+    return plain
+
+
+def _present(name, lowered):
     """
     Is this field in the output?
 
-    **=> AND THE MATCH IS **LENIENT** IN A **SPECIFIC** WAY Ã¢Å“â€œÃ¢Å“â€œ - **=> NOT
-    FUZZY Ã¢Å“â€œÃ¢Å“â€œ, **=> BUT **STRUCTURAL** Ã¢Å“â€œÃ¢Å“â€œ:**
+    **=> AND THE MATCH IS **LENIENT** IN A **SPECIFIC** WAY - **=> NOT FUZZY**,
+    **=> BUT **STRUCTURAL**:
 
-    1. **Ã¢â€¡â€™ THE EXACT NAME Ã¢Å“â€œÃ¢Å“â€œ - **=> AS A HEADING Ã¢Å“â€œÃ¢Å“â€œ, **=> AS A **BOLD** LABEL
-       Ã¢Å“â€œÃ¢Å“â€œ, **=> OR ANYWHERE IN THE TEXT Ã¢Å“â€œÃ¢Å“â€œ.**
-    2. **Ã¢â€¡â€™ ALL THE SIGNIFICANT WORDS Ã¢Å“â€œÃ¢Å“â€œ - **=> STEMMED, **=> SO PLURALS AND
-       "-tion" FORMS MATCH Ã¢Å“â€œÃ¢Å“â€œ.**
-    3. **Ã¢â€¡â€™ OR THE **HEAD** WORD PLUS **ONE** OTHER Ã¢Å“â€œÃ¢Å“â€œ - **Ã¢â€¡â€™ BECAUSE THE OUTPUT
-       MAY USE A SHORTER EQUIVALENT NAME Ã¢Å“â€œÃ¢Å“â€œ, **=> LIKE "**Benchmark**" FOR
-       "**Benchmark comparison**" Ã¢Å“â€œÃ¢Å“â€œ, **=> AND THAT IS **THE CASE IN THE
-       SCHEMAS' OWN EXAMPLES** Ã¢Å“â€œÃ¢Å“â€œ.**
+    1. **=> THE EXACT NAME - **=> AS A HEADING, **=> AS A **BOLD** LABEL, **=> OR
+       ANYWHERE IN THE TEXT.**
+    2. **=> ALL THE SIGNIFICANT WORDS - **=> STEMMED, **=> SO PLURALS AND
+       "-tion" FORMS MATCH.**
+    3. **=> OR THE **HEAD** WORD PLUS **ONE** OTHER - **=> BECAUSE THE OUTPUT MAY
+       USE A SHORTER EQUIVALENT NAME, **=> LIKE "**Benchmark**" FOR
+       "**Benchmark comparison**", **=> AND THAT IS **THE CASE IN THE SCHEMAS'
+       OWN EXAMPLES**.
 
-    **=> AND THE POINT IS NOT TO BE FUZZY Ã¢Å“â€œÃ¢Å“â€œ - **Ã¢â€¡â€™ IT IS TO **NOT FAIL GOOD
-    OUTPUT** Ã¢Å“â€œÃ¢Å“â€œ, **Ã¢â€¡â€™ BECAUSE A GATE THAT FAIMS GOOD WORK MAKES THE TEAM STOP
-    TRUSTING THE GATE Ã¢Å“â€œÃ¢Å“â€œ, **Ã¢â€¡â€™ AND A GATE NOBODY TRUSTS IS WORTH NOTHING Ã¢Å“â€œÃ¢Å“â€œ.**
+    **=> AND THE **HEADING** FORM NEEDS ITS OWN RULE ✓✓ - **=> BECAUSE A HEADING
+    **=> MAY CARRY **PUNCTUATION** ✓✓, **=> LIKE "**Section 1: Goals & Vision**"**
+    **=> ✓✓, **=> AND THE OUTPUT MAY WRITE IT **WITHOUT** THE NUMBERING ✓✓.**
     """
     if not name:
         return True
@@ -220,16 +247,23 @@ def _present(name: str, lowered: str) -> bool:
     if "**%s**" % name.lower() in lowered:
         return True
 
-    stems = [_stem(word) for word in words]
-    found_stems = {stem for word in lowered.split() for stem in [_stem(word)]}
+    # **=> AND THE HEADING FORM ✓✓ - **=> A LINE THAT **STARTS** WITH THE WORDS
+    # **=> ✓✓ - **=> WHICH ALLOWS **"Section 1: Goals & Vision"** TO MATCH **"Goals
+    # **=> & Vision"** ✓✓.**
+    if len(words) >= 2:
+        pattern = r"^#{1,6}\s+.*\b%s\b" % re.escape(words[0])
+        if re.search(pattern, lowered, re.MULTILINE):
+            if all(word in lowered for word in words):
+                return True
 
-    # **=> ALL THE WORDS Ã¢Å“â€œÃ¢Å“â€œ.**
+    stems = [_stem(word) for word in words]
+    found_stems = set()
+    for word in lowered.split():
+        found_stems.add(_stem(word))
+
     if all(stem in found_stems for stem in stems):
         return True
 
-    # **=> THE HEAD WORD PLUS ONE MORE Ã¢Å“â€œÃ¢Å“â€œ - **=> AND THE HEAD WORD IS THE **LAST**
-    # **=> WORD, **=> BECAUSE THE SCHEMA NAMES THE FIELD **AT THE END** Ã¢Å“â€œÃ¢Å“â€œ, LIKE
-    # "**Benchmark comparison**" Ã¢Å“â€œÃ¢Å“â€œ.**
     if len(stems) >= 2:
         head = stems[-1]
         others = stems[:-1]
@@ -249,11 +283,14 @@ class CheckResult:
     missing_sections: list = field(default_factory=list)
     missing_lines: list = field(default_factory=list)
     reason: str = ""
+    #: **THE SECTIONS THAT ARE THERE UNDER ANOTHER NAME ✓✓ - **=> A WARNING,
+    #: NOT A FAILURE ✓✓.**
+    renamed_sections: list = field(default_factory=list)
 
-    def explain(self) -> str:
+    def explain(self):
         if self.ok:
             return "the %s output matches its schema" % self.skill
-        parts: list = []
+        parts = []
         if self.missing_fields:
             parts.append("missing the fields %s" % ", ".join(self.missing_fields))
         if self.missing_sections:
@@ -268,7 +305,7 @@ class CheckResult:
         )
 
 
-def check_output(output: str, skill: str, skills_dir: str = SKILLS_DIR) -> CheckResult:
+def check_output(output, skill, skills_dir=SKILLS_DIR):
     """
     Does this output match this skill's schema?
 
@@ -276,6 +313,16 @@ def check_output(output: str, skill: str, skills_dir: str = SKILLS_DIR) -> Check
     REQUIRED THINGS - **=> AND THE MATCH MUST BE **LENIENT**, **=> BECAUSE **THE
     AGENT IS **NOT** BEING GRADED ON WORDING**, **=> IT IS BEING GRADED ON
     **WHETHER IT SAID THE THING**.
+
+    **=> AND THE TWO LEVELS ✓✓ - **=> MEASURED ✓✓: **=> A SECTION THE OUTPUT
+    **=> NAMES **DIFFERENTLY** ✓✓ IS A **WARNING** ✓✓, **=> AND A SECTION WITH **NO
+    **=> TRACE AT ALL** ✓✓ IS A **FAILURE** ✓✓ - **=> BECAUSE THE FIRST IS
+    **=> WORDING** ✓✓ AND THE SECOND IS **SUBSTANCE** ✓✓.**
+
+    **=> AND **A SKILL MAY HAVE **NO** CONTRACT** ✓✓ - **=> AND THEN THE OUTPUT
+    **=> CANNOT BE CHECKED** ✓✓, **=> WHICH IS **NOT** THE SAME AS **FAILING**
+    **✓✓ - **=> IT IS **"NOTHING TO CHECK"** ✓✓, **=> AND THE FACTORY MUST KNOW
+    **=> THE DIFFERENCE** ✓✓.**
     """
     schema = read_schema(skill, skills_dir)
     if schema is None:
@@ -285,24 +332,39 @@ def check_output(output: str, skill: str, skills_dir: str = SKILLS_DIR) -> Check
             reason="this skill has no output schema, so its output cannot be checked",
         )
 
+    if schema.empty:
+        return CheckResult(
+            ok=True,
+            skill=skill,
+            reason="this skill has a schema with no requirements in it",
+        )
+
     text = output or ""
     lowered = text.lower()
 
-    missing_fields: list = []
+    missing_fields = []
     for name in schema.required_fields:
         if not _present(name, lowered):
             missing_fields.append(name)
 
-    missing_sections: list = []
+    missing_sections = []
+    renamed_sections = []
     for heading in schema.required_sections:
-        # **=> A SECTION MAY APPEAR WITHOUT ITS NUMBERING Ã¢Å“â€œÃ¢Å“â€œ.**
-        plain = re.sub(r"^\d+\.\s*", "", heading).strip()
-        plain = plain.split("(")[0].strip()
+        # **=> AND THE **SUBSTANCE** OF THE HEADING ✓✓, **=> WITHOUT ITS WRAPPER
+        # **=> ✓✓ - **=> BECAUSE THE SCHEMA AND THE OUTPUT WRAP IT DIFFERENTLY
+        # **=> ✓✓ - **=> AND THE SUBSTANCE IS WHAT MATTERS ✓✓.**
+        plain = _content_words(heading)
         if _present(plain, lowered):
+            continue
+        # **=> AND THE WARNING LEVEL ✓✓ - **=> THE HEAD WORD IS THERE ✓✓, **⇒ SO
+        # **⇒ THE OUTPUT SAID THE THING UNDER ANOTHER NAME ✓✓.**
+        head = plain.split()[0].lower() if plain else ""
+        if head and head in lowered:
+            renamed_sections.append(heading)
             continue
         missing_sections.append(heading)
 
-    missing_lines: list = []
+    missing_lines = []
     for marker in schema.required_lines:
         if marker.lower() not in lowered:
             missing_lines.append(marker)
@@ -314,4 +376,5 @@ def check_output(output: str, skill: str, skills_dir: str = SKILLS_DIR) -> Check
         missing_fields=missing_fields,
         missing_sections=missing_sections,
         missing_lines=missing_lines,
+        renamed_sections=renamed_sections,
     )

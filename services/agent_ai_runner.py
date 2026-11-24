@@ -15,6 +15,8 @@ load_dotenv()
 
 try:
     from services.skill_loader import get_relevant_skills, format_skills_for_prompt
+    from services.gate import compare as compare_gate
+    from services.schema_reader import check_output
     SKILLS_AVAILABLE = True
 except Exception:
     SKILLS_AVAILABLE = False
@@ -128,6 +130,52 @@ def run_agent_ai(
         "web_results": web_results,
         "skills_used": skill_names,
     }
+
+    # **=> THE GATE, AT THE ONE PLACE EVERY ANSWER PASSES ✓✓.**
+    #
+    # **=> AND THIS IS **THE CHOKE POINT** ✓✓ - **=> EVERY AGENT ANSWER GOES
+    # **=> THROUGH HERE** ✓✓, **=> SO **A GATE HERE GATES EVERYTHING** ✓✓.**
+    #
+    # **=> AND THE GATE PRODUCES **TWO** VERDICTS ✓✓: **=> THE **SCHEMA** CHECK
+    # **=> - **=> DOES THE OUTPUT HAVE **THE SHAPE** ✓✓ - **=> AND THE **GATE**
+    # **=> - **=> GO, PAUSE OR KILL ✓✓ - **=> AND **BOTH COME FROM **THE
+    # **=> DOCUMENT** ✓✓, **=> NEVER FROM THE CODE ✓✓.**
+    #
+    # **=> AND THE EVIDENCE IS **THE CHANNEL** ✓✓ - **=> THE ANSWER ALREADY
+    # **=> CARRIES IT ✓✓, **=> AND IT ALREADY CROSSES THE SERVER BOUNDARY
+    # **=> ✓✓ - **=> AND **THE UI** DROPS IT ✓✓ - **=> WHICH IS THE GAP THE
+    # **=> PEER'S "WHERE CAN OUTPUTS BE FLAGGED FOR EXTERNAL REVIEW" IS
+    # **=> ABOUT ✓✓.**
+    try:
+        checks: Dict[str, Any] = {}
+        for skill_name in skill_names:
+            result = check_output(response_text, skill_name)
+            checks[skill_name] = {
+                "ok": result.ok,
+                "missing_fields": result.missing_fields,
+                "missing_sections": result.missing_sections,
+                "missing_lines": result.missing_lines,
+                "renamed_sections": result.renamed_sections,
+            }
+        if checks:
+            evidence["schema_check"] = checks
+
+        # **=> AND THE VERDICT GATE ✓✓ - **=> ONLY WHERE THE OUTPUT CARRIES **A
+        # **=> SCORECARD** ✓✓, **=> BECAUSE THE GATE IS ABOUT **THE VALIDATION
+        # **=> PACK** ✓✓ AND **NOT** ABOUT EVERY ANSWER ✓✓.**
+        decision = compare_gate(read_gate(), response_text)
+        if decision.get("verdict"):
+            evidence["gate"] = {
+                "verdict": decision["verdict"],
+                "stated": decision.get("stated", ""),
+                "agrees": decision.get("agrees"),
+                "critical": decision.get("critical", 0),
+                "warning": decision.get("warning", 0),
+                "rule": decision.get("rule", ""),
+            }
+    except Exception as error:
+        # **=> AND A FAILED CHECK IS **AN ERROR** ✓✓ - **=> NOT A PASS ✓✓.**
+        evidence["gate_error"] = str(error)[:200]
 
     # Track skill usage
     if skill_names:
