@@ -102,6 +102,10 @@ seams:
     from: design
     skill: roadmap-planning
     skill_note: The edge devils-advocate.relatedAfter -> roadmap-planning
+  - to: testing
+    from: development
+    skill: test-strategy
+    skill_note: The edge tdd.relatedAfter -> test-strategy
   - to: launch
     from: development
     skill: pricing-strategy
