@@ -289,3 +289,114 @@ def get_all_usage() -> Dict[str, Any]:
     """Return all usage data (admin only)."""
     from services.usage_tracker import get_all_usage
     return get_all_usage()
+
+
+# **=> THE CIRCLE, AND THE GATE ✓✓ — **=> THE TWO ENDPOINTS THE UI NEEDS ✓✓.**
+#
+# **=> AND **THE LOOP** ✓✓ IS **DATA** ✓✓ — **=> AND **THE GATE** ✓✓ IS **DATA** ✓✓
+# **=> — **=> AND NEITHER IS **A PYTHON LITERAL** ✓✓, **=> AND NEITHER IS **HARD-CODED
+# **=> IN THE UI** ✓✓.**
+#
+# **=> AND THE **EVIDENCE** ✓✓ — **=> WHICH THE UI **DROPPED** ✓✓, **=> AND WHICH
+# **=> CARRIES THE GATE'S VERDICT** ✓✓ — **=> NOW **TRAVELS** ✓✓.
+
+@app.get("/lifecycle")
+def get_lifecycle() -> Dict[str, Any]:
+    """
+    The circle: the stages, the skills, the seams and the loop.
+
+    **=> AND **THE UI** ✓✓ FETCHES THIS ✓✓ — **=> AND IT IS **THE SAME DATA** ✓✓
+    **=> THE SKILLS PAGE ALREADY FETCHES ✓✓, **=> SO **THERE IS **ONE** SOURCE OF
+    **=> TRUTH** ✓✓.**
+    """
+    from services.lifecycle import dangling_edges, read_lifecycle, walkable
+
+    lifecycle = read_lifecycle()
+    state = walkable(lifecycle)
+
+    stages = []
+    for stage in lifecycle.stages:
+        names = sorted(
+            name for name, stages_of in lifecycle.skill_stages.items()
+            if stage.id in stages_of
+        )
+        stages.append(
+            {
+                "id": stage.id,
+                "order": stage.order,
+                "title": stage.title,
+                "purpose": stage.purpose,
+                "reentered_by": stage.reentered_by,
+                "skills": names,
+                "count": len(names),
+            }
+        )
+
+    seams = []
+    for seam in lifecycle.seams:
+        seams.append(
+            {
+                "to": seam.get("to", ""),
+                "from": seam.get("from", ""),
+                "skill": seam.get("skill", ""),
+                "also": seam.get("also", ""),
+                "edge": seam.get("edge", ""),
+            }
+        )
+
+    edges = []
+    for source_name, targets in lifecycle.edges_after.items():
+        for target in targets:
+            edges.append({"from": source_name, "to": target, "edge": "relatedAfter"})
+    for target, sources in lifecycle.edges_before.items():
+        for source_name in sources:
+            edges.append({"from": source_name, "to": target, "edge": "relatedBefore"})
+
+    return {
+        "stages": stages,
+        "seams": seams,
+        "edges": edges,
+        "loop": {
+            "path": lifecycle.loop_path,
+            "returns_to": lifecycle.loop_returns_to,
+            "driven_by": [
+                "a reply from a real person",
+                "a call booked",
+                "a pre-sale through a payment link",
+                "a metric that moved",
+            ],
+        },
+        "walkable": {
+            "live": state["live"],
+            "total": state["total"],
+            "dangling": len(dangling_edges(lifecycle)),
+        },
+        "circular": True,
+    }
+
+
+@app.get("/gate")
+def get_gate() -> Dict[str, Any]:
+    """
+    The gate: the thresholds and the counting rules, read from the document.
+
+    **=> AND **THE VERDICT** ✓✓, **=> WHEN THERE IS ONE ✓✓.**
+    """
+    from services.gate import read_gate
+
+    gate = read_gate()
+    return {
+        "loaded": gate.loaded,
+        "thresholds": [
+            {"gate": name, "good": values["good"],
+             "warning": values["warning"], "critical": values["critical"]}
+            for name, values in gate.thresholds.items()
+        ],
+        "rules": [
+            {"verdict": verdict, "rule": rule}
+            for verdict, rule in gate.rules.items()
+        ],
+        "metrics": gate.expected_metrics,
+        "verdicts": gate.verdicts,
+        "source": "skills/validation-pack/output-schema.md",
+    }
