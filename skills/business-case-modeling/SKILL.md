@@ -6,6 +6,9 @@ category: product
 outputSummary: Business case with financial projections and ROI analysis
 relatedAfter: roadmap-planning,pricing-strategy
 nextSteps: Use insights for roadmap-planning and stakeholder alignment
+stage: ideation, post-launch
+outputs: Business case with financial projections and ROI analysis
+triggers: business case, revenue model, LTV, CAC, unit economics, ROI
 ---
 
 # Business Case Modeling

@@ -7,6 +7,9 @@ relatedBefore: requirements-elicitation,interview-guide-creation
 relatedAfter: user-journey-mapping,feature-prioritization
 outputSummary: Detailed user persona cards with demographics, goals, pain points, behavior patterns, and quotes
 nextSteps: Map out the user journey with user-journey-mapping, then prioritize features based on persona needs using feature-prioritization
+stage: research
+outputs: Detailed user persona cards with demographics, goals, pain points, behavior patterns, and quotes
+triggers: who is our customer, user personas, target audience, customer profile
 ---
 
 # User Persona Creation

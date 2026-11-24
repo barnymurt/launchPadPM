@@ -6,6 +6,9 @@ category: product
 outputSummary: Critical analysis identifying risks and weaknesses in your approach
 relatedAfter: feature-prioritization,roadmap-planning
 nextSteps: Address identified risks in your planning and execution
+stage: ideation, research
+outputs: Critical analysis identifying risks and weaknesses in your approach
+triggers: challenge, assumption, objection, why would customers, is this a good idea
 ---
 
 # Devil's Advocate

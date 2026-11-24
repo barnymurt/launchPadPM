@@ -7,6 +7,8 @@ import os
 import re
 from typing import Any, Dict, List, Optional
 from dataclasses import dataclass, field
+
+from .lifecycle import read_lifecycle  # THE SEVEN STAGES, READ FROM THE DATA
 from pathlib import Path
 
 
@@ -34,87 +36,8 @@ class Skill:
     full_content: str = ""
 
 
-LIFECYCLE_STAGES = {
-    "Discovery": {
-        "order": 1,
-        "description": "Understand the problem, the market, and the customer before deciding what to build.",
-        "skills": ["competitor-research", "user-persona-creation", "requirements-elicitation", "feedback-synthesis", "user-journey-mapping"],
-    },
-    "Strategy": {
-        "order": 2,
-        "description": "Define what to build and why. Score ideas, model business cases, challenge assumptions.",
-        "skills": ["feature-prioritization", "business-case-modeling", "devils-advocate", "saas-metrics-analysis", "algorithmic-art", "canvas-design", "doc-coauthoring", "brand-guidelines"],
-    },
-    "Build": {
-        "order": 3,
-        "description": "Design and build the product. From frontend to backend, testing to infrastructure.",
-        "skills": ["frontend-design", "web-artifacts-builder", "mcp-builder", "webapp-testing", "creator"],
-    },
-    "Launch": {
-        "order": 4,
-        "description": "Position, package, and go to market. Branding, messaging, and launch planning.",
-        "skills": ["brand-guidelines", "theme-factory", "internal-comms", "docx", "pdf", "pptx", "quality-checklist"],
-    },
-    "Iteration": {
-        "order": 5,
-        "description": "Measure, learn, and improve. Metrics analysis, feedback synthesis, and roadmap updates.",
-        "skills": ["saas-metrics-analysis", "feedback-synthesis", "feature-prioritization", "validation-pack"],
-    },
-}
 
-SKILL_TRIGGERS = {
-    "competitor-research": ["who are our competitors", "competitive landscape", "vs", "alternative to", "market analysis"],
-    "user-persona-creation": ["who is our customer", "user personas", "target audience", "customer profile"],
-    "requirements-elicitation": ["requirements", "what should we build", "functional specs", "acceptance criteria"],
-    "feedback-synthesis": ["customer feedback", "user research", "interview synthesis", "survey results"],
-    "user-journey-mapping": ["user journey", "customer journey", "touchpoints", "experience mapping"],
-    "feature-prioritization": ["prioritize", "rank features", "what to build next", "RICE", "ICE scoring"],
-    "business-case-modeling": ["business case", "revenue model", "LTV", "CAC", "unit economics", "ROI"],
-    "devils-advocate": ["challenge", "assumption", "objection", "why would customers", "is this a good idea"],
-    "saas-metrics-analysis": ["churn", "MRR", "ARR", "LTV", "metrics", "cohort analysis", "funnel"],
-    "frontend-design": ["design the UI", "frontend", "landing page", "mockup", "interface"],
-    "web-artifacts-builder": ["build landing page", "React", "prototype", "web app"],
-    "mcp-builder": ["MCP server", "model context protocol", "agent tool", "tool integration"],
-    "webapp-testing": ["testing", "QA", "playwright", "E2E", "test coverage"],
-    "brandguidelines": ["brand", "logo", "colors", "typography", "brand identity"],
-    "theme-factory": ["theme", "design system", "consistent styling", "CSS variables"],
-    "internalcomms": ["team update", "stakeholder communication", "internal messaging"],
-    "docx": ["document", "Word", "spec document", "report"],
-    "pdf": ["PDF", "report", "downloadable document"],
-    "pptx": ["presentation", "pitch deck", "slides", "PowerPoint"],
-    "algorithmic-art": ["visual", "art", "image", "generative", "canvas"],
-    "canvasdesign": ["canvas", "graphic", "social media", "visual asset"],
-    "doc-coauthor": ["co-author", "writing", "document collaboration"],
-    "quality-checklist": ["quality", "checklist", "review", "audit"],
-    "creator": ["create a skill", "new skill", "build a skill"],
-}
 
-SKILL_OUTPUTS = {
-    "competitor-research": "Competitive landscape matrix with 8-dimension scoring, ranked competitor list, strategic gap analysis, positioning recommendations",
-    "user-persona-creation": "3-5 detailed personas with jobs-to-be-done, pain points, goals, and behavior patterns",
-    "requirements-elicitation": "Structured requirements document with functional/non-functional specs, acceptance criteria, and traceability matrix",
-    "feedback-synthesis": "Themed insight report with sentiment analysis, priority issue list, and actionable recommendations",
-    "user-journey-mapping": "End-to-end journey map with pain points, moments of delight, and improvement opportunities",
-    "feature-prioritization": "Prioritized backlog with RICE/ICE scores, ranking rationale, confidence levels, and build/validate/park tiers",
-    "business-case-modeling": "Financial model with TAM/SAM/SOM, revenue projections, LTV/CAC/payback period, and scenario analysis",
-    "devils-advocate": "Assumption challenge report with top objections, switching cost analysis, and value proposition gap map",
-    "saas-metrics-analysis": "Metrics dashboard with MRR/ARR trends, churn analysis, cohort retention curves, and growth recommendations",
-    "frontend-design": "Component architecture, design system specifications, responsive layout wireframes, and interaction patterns",
-    "web-artifacts-builder": "Production-ready React/Tailwind landing page or web app prototype",
-    "mcp-builder": "Working MCP server with tool definitions, JSON schema, and integration examples",
-    "webapp-testing": "Playwright E2E test suite with coverage report, bug list, and quality assessment",
-    "brandguidelines": "Brand identity document with logo usage, color palette, typography scale, and tone of voice",
-    "theme-factory": "CSS theme with design tokens, component styles, and dark/light mode variants",
-    "internalcomms": "Stakeholder update template, team announcement, and communication cadence playbook",
-    "docx": "Formatted Word document — business plan, product spec, or proposal with proper heading hierarchy",
-    "pdf": "Print-ready PDF — one-pager, report, or polished deliverable",
-    "pptx": "PowerPoint presentation — pitch deck, stakeholder update, or sales collateral",
-    "algorithmic-art": "Generated visual/illustration for marketing or UI use",
-    "canvasdesign": "Social media graphics, banners, or visual content assets",
-    "doc-coauthor": "Co-written document with structured outline, key arguments, and editorial notes",
-    "quality-checklist": "Skill quality audit with pass/fail criteria and improvement recommendations",
-    "creator": "New SKILL.md file with frontmatter, workflow, and reference templates",
-}
 
 
 @dataclass
@@ -177,12 +100,27 @@ def _extract_list(content: str, heading: str) -> List[str]:
 
 
 def _get_lifecycle_stage(skill_name: str) -> tuple:
-    for stage_name, stage_info in LIFECYCLE_STAGES.items():
-        if skill_name in stage_info["skills"]:
-            return stage_name, stage_info["order"]
-    fallback_order = 2
-    fallback_stage = "Strategy"
-    return fallback_stage, fallback_order
+    """
+    The stages a skill serves, read from the data.
+
+    **=> AND A SKILL MAY SERVE **MORE THAN ONE** **=> BECAUSE THE
+    PRODUCT'S LIFE **FLIPS BACK AND FORWARD** **=> AND THE PEER'S
+    CLASSIFICATION IS **PER SKILL** **=>.**
+
+    **=> AND THE SEVEN STAGES COME FROM
+    `governance/product-development-lifecycle.md` **=> NOT FROM A PYTHON
+    DICT **=>.**
+    """
+    lifecycle = read_lifecycle()
+    stages = lifecycle.stages_for(skill_name)
+    if not stages:
+        # **=> AND A SKILL WITH NO STAGE IS **NOT A FAILURE** **=> IT IS
+        # **UNCLASSIFIED** **=> AND THE FACTORY MUST KNOW THE DIFFERENCE
+        # **=>.**
+        return "", 0
+    first = stages[0]
+    stage = lifecycle.stage(first)
+    return first, (stage.order if stage else 0)
 
 
 def _load_skill_file(skill_path: str) -> Optional[Skill]:
@@ -208,8 +146,12 @@ def _load_skill_file(skill_path: str) -> Optional[Skill]:
         skill_type=_determine_skill_type(raw_name, skill_path),
         lifecycle_stage=stage_name,
         lifecycle_order=stage_order,
-        outputs=SKILL_OUTPUTS.get(name, "Structured output — see skill content for details"),
-        triggers=SKILL_TRIGGERS.get(name, []),
+        outputs=fm.get("outputs") or fm.get("outputSummary", ""),
+        triggers=[
+            piece.strip()
+            for piece in fm.get("triggers", "").split(",")
+            if piece.strip()
+        ],
         workflow_steps=_extract_workflow_steps(content),
         quality_criteria=_extract_list(content, "Quality Criteria"),
         common_mistakes=_extract_list(content, "Common Mistakes"),
@@ -268,12 +210,17 @@ def get_skill(name: str) -> Optional[Skill]:
 def get_skills_by_stage() -> Dict[str, Dict[str, Any]]:
     _ensure_index()
     result: Dict[str, Dict[str, Any]] = {}
-    for stage_name, stage_info in sorted(LIFECYCLE_STAGES.items(), key=lambda x: x[1]["order"]):
-        skills_in_stage = [s for s in _skills_index if s.lifecycle_stage == stage_name]
+    # **=> THE SEVEN STAGES, IN ORDER, FROM THE DATA **=>.**
+    lifecycle = read_lifecycle()
+    for stage in lifecycle.stages:
+        skills_in_stage = [
+            s for s in _skills_index if stage.id in lifecycle.stages_for(s.name)
+        ]
         if skills_in_stage:
-            result[stage_name] = {
-                "order": stage_info["order"],
-                "description": stage_info["description"],
+            result[stage.title] = {
+                "id": stage.id,
+                "order": stage.order,
+                "description": stage.purpose,
                 "skills": [_skill_to_dict(s) for s in skills_in_stage],
             }
     return result

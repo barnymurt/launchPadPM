@@ -7,6 +7,9 @@ relatedBefore: requirements-elicitation,user-persona-creation
 relatedAfter: user-story-generation,iteration-planning
 outputSummary: Ranked feature backlog with ICE/RICE scores, build tiers (must-have, should-have, nice-to-have), and confidence ratings
 nextSteps: Use the ranked backlog to generate user stories with user-story-generation, then plan sprints with iteration-planning
+stage: ideation, post-launch
+outputs: Ranked feature backlog with ICE/RICE scores, build tiers (must-have, should-have, nice-to-have), and confidence ratings
+triggers: prioritize, rank features, what to build next, RICE, ICE scoring
 ---
 
 # Feature Prioritization

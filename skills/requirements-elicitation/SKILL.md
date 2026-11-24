@@ -6,6 +6,9 @@ category: research
 outputSummary: Product requirements document with user stories and acceptance criteria
 relatedAfter: feature-prioritization,user-story-generation
 nextSteps: Prioritize requirements with feature-prioritization
+stage: research, design
+outputs: Product requirements document with user stories and acceptance criteria
+triggers: requirements, what should we build, functional specs, acceptance criteria
 ---
 
 # Requirements Elicitation

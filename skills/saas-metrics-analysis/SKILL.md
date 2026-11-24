@@ -6,6 +6,9 @@ category: research
 outputSummary: SaaS metrics analysis with MRR, churn, and LTV insights
 relatedAfter: kpi-tracking,cohort-analysis
 nextSteps: Use insights to improve metrics with kpi-tracking
+stage: testing, post-launch
+outputs: SaaS metrics analysis with MRR, churn, and LTV insights
+triggers: churn, MRR, ARR, LTV, metrics, cohort analysis, funnel
 ---
 
 # SaaS Metrics Analysis

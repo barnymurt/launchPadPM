@@ -7,6 +7,9 @@ relatedBefore: product-vision
 relatedAfter: pricing-strategy,messaging-framework
 outputSummary: Competitive landscape map with feature comparisons, pricing analysis, market gaps, and positioning recommendations
 nextSteps: Use competitive insights to inform your pricing-strategy and develop your unique messaging-framework
+stage: ideation, research
+outputs: Competitive landscape map with feature comparisons, pricing analysis, market gaps, and positioning recommendations
+triggers: who are our competitors, competitive landscape, vs, alternative to, market analysis
 ---
 
 # Competitor Research

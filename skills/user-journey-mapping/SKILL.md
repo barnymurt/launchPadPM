@@ -5,6 +5,9 @@ lifecycle: discovery
 category: research
 outputSummary: User journey maps with touchpoints and pain points
 nextSteps: Design improvements based on journey insights
+stage: research, design
+outputs: User journey maps with touchpoints and pain points
+triggers: user journey, customer journey, touchpoints, experience mapping
 ---
 
 # User Journey Mapping

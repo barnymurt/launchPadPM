@@ -6,6 +6,9 @@ category: research
 outputSummary: Synthesized user feedback themes with actionable insights
 relatedAfter: user-persona-creation,feature-prioritization
 nextSteps: Create actionable insights for product improvements
+stage: research, post-launch
+outputs: Synthesized user feedback themes with actionable insights
+triggers: customer feedback, user research, interview synthesis, survey results
 ---
 
 # Feedback Synthesis
