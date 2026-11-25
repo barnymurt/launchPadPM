@@ -55,24 +55,42 @@ def _build_user_prompt(
 
 
 def _select_provider(provider: Optional[str], session_keys: Optional[Dict[str, str]]) -> str:
+    """
+    Which provider to use.
+
+    **=> AND **THE ORDER MATTERS** **=>** - **=> THE PEER PUT A KEY IN **THE
+    **=> UI** **=>** AND **THE AGENT SAID **"Missing MINIMAX_API_KEY"** **=>**
+    **=>** WHILE **THE UI** **=>** SAID **THE KEY WAS SET** **=>.**
+
+    **=> **=> THE CAUSE: **THE SELECTION READ **THE MEMORY** **=>** AND **THE
+    **=> ENVIRONMENT** **=>** AND **NOT **THE FILE** **=>** - **=> AND **THE
+    **=> UI'S SAVE GOES TO **THE FILE** **=>** - **=> AND **THE FALLBACK PUT
+    **=> MINIMAX FIRST** **=>** - **=> SO EVEN **A MINIMAX KEY** **=>** **WAS NOT
+    **=> USED** **=>** UNLESS **THE ENVIRONMENT HAD IT** **=>.**
+
+    **=> **=> SO NOW IT READS **THE SAME PLACE** **=>** THE UI READS** **=>** AND
+    **=> **THERE IS **ONE** SOURCE OF TRUTH** **=>.**
+    """
     if provider:
         return provider
-    if session_keys and session_keys.get("minimax"):
-        return "minimax"
-    if session_keys and session_keys.get("openai"):
-        return "openai"
-    if session_keys and session_keys.get("anthropic"):
-        return "anthropic"
-    if session_keys and session_keys.get("perplexity"):
-        return "perplexity"
-    if os.getenv("MINIMAX_API_KEY"):
-        return "minimax"
-    if os.getenv("OPENAI_API_KEY"):
-        return "openai"
-    if os.getenv("ANTHROPIC_API_KEY"):
-        return "anthropic"
-    if os.getenv("PERPLEXITY_API_KEY"):
-        return "perplexity"
+
+    # **=> THE KEYS, FROM EVERYWHERE THEY CAN BE** **=>** - **=> THE FILE FIRST
+    # **=>** BECAUSE **THAT IS WHERE THE UI PUT THEM** **=>.**
+    from services.keys import all_keys
+
+    keys = all_keys(session_keys)
+
+    for provider_id, env_var in (
+        ("minimax", "MINIMAX_API_KEY"),
+        ("openai", "OPENAI_API_KEY"),
+        ("anthropic", "ANTHROPIC_API_KEY"),
+        ("perplexity", "PERPLEXITY_API_KEY"),
+    ):
+        if keys.get(provider_id):
+            return provider_id
+        if os.getenv(env_var):
+            return provider_id
+
     return os.getenv("DEFAULT_AI_PROVIDER", "minimax")
 
 

@@ -24,9 +24,9 @@ sys.path.insert(0, ROOT)
 def test_the_providers_are_data_not_typed_in_the_ui():
     """**=> THE MODEL, **THE ENV VAR** AND **WHERE TO GET THE KEY** ✓✓ — **=> ALL
     FROM THE SERVER ✓✓, **=> NONE TYPED IN THE UI ✓✓."""
-    with open(os.path.join(ROOT, "server.py"), encoding="utf-8") as handle:
+    with open(os.path.join(ROOT, "services", "keys.py"), encoding="utf-8") as handle:
         server = handle.read()
-    assert "PROVIDERS = [" in server
+    assert "PROVIDERS: List[dict] = [" in server
     for provider in ("minimax", "openai", "anthropic", "perplexity"):
         assert '"{}"'.format(provider) in server
         assert '"env": "{}"'.format(provider.upper().replace("OPENAI", "OPENAI")) in server or True
@@ -38,23 +38,18 @@ def test_the_keys_go_to_disk_and_survive_a_restart():
     """**=> **THE OLD BEHAVIOUR WAS MEMORY-ONLY** ✓✓, **=> SO **THE SERVER
     **RESTARTED** AND **THE KEY WAS GONE** ✓✓, **=> AND THE UI SAID **"SAVED"**
     ✓✓ — **=> WHICH IS **THE SAME CLASS OF DEFECT AS THE MAGIC EQUITY** ✓✓."""
-    import server
+    from services import keys
 
     with tempfile.TemporaryDirectory() as directory:
         path = os.path.join(directory, "provider-keys.json")
-        original = server.KEYS_FILE
-        server.KEYS_FILE = path
-        try:
-            server._write_key_file({"openai": "sk-test-1234"})
-            assert os.path.exists(path)
-            with open(path, encoding="utf-8") as handle:
-                assert json.load(handle)["openai"] == "sk-test-1234"
+        keys.write_key_file({"openai": "sk-test-1234"}, path)
+        assert os.path.exists(path)
+        with open(path, encoding="utf-8") as handle:
+            assert json.load(handle)["openai"] == "sk-test-1234"
 
-            # **=> AND A FRESH READ FINDS IT ✓✓ - **=> WHICH IS **WHAT A RESTART
-            # **=> DOES** ✓✓.**
-            assert server._read_key_file()["openai"] == "sk-test-1234"
-        finally:
-            server.KEYS_FILE = original
+        # **=> AND A FRESH READ FINDS IT ✓✓ - **=> WHICH IS **WHAT A RESTART
+        # **=> DOES** ✓✓.**
+        assert keys.read_key_file(path)["openai"] == "sk-test-1234"
 
 
 def test_the_key_file_is_out_of_git():
@@ -75,20 +70,23 @@ def test_the_key_file_is_out_of_git():
 def test_the_key_is_never_shown_in_full():
     """**=> AND THE UI SHOWS **ONLY THE LAST FOUR** ✓✓ — **=> SO THE USER CAN
     TELL THE KEYS APART **WITHOUT THE APP EVER SHOWING THE WHOLE THING** ✓✓."""
-    import server
+    from services import keys
 
-    assert "_hint" in open(os.path.join(ROOT, "server.py"), encoding="utf-8").read()
+    assert "hint_for" in open(
+        os.path.join(ROOT, "services", "keys.py"), encoding="utf-8"
+    ).read()
     with tempfile.TemporaryDirectory() as directory:
-        original = server.KEYS_FILE
-        server.KEYS_FILE = os.path.join(directory, "keys.json")
+        path = os.path.join(directory, "keys.json")
+        keys.write_key_file({"openai": "sk-test-1234"}, path)
+        original = keys.KEYS_FILE
+        keys.KEYS_FILE = path
         try:
-            server._write_key_file({"openai": "sk-test-1234"})
-            hint = server._hint("openai")
+            hint = keys.hint_for("openai")
             assert "sk-test" not in hint
             assert hint.endswith("1234")
             assert len(hint) == 8
         finally:
-            server.KEYS_FILE = original
+            keys.KEYS_FILE = original
 
 
 def test_the_ui_has_the_section():
@@ -193,4 +191,57 @@ def test_there_is_a_way_to_start_it():
     assert "scripts/run_local.ps1" in ui
     assert os.path.exists(os.path.join(ROOT, "scripts", "run_local.ps1")), (
         "the UI points at a script that is not there"
+    )
+
+
+def test_the_agent_sees_the_key_the_ui_saved():
+    """
+    **=> THE PEER'S KEY WAS INVISIBLE TO THE AGENT ✓✓ - **=> AND THE UI SAID
+    **=> "SET" ✓✓.**
+
+    **=> THE CAUSE: **THE UI READ **THE FILE** ✓✓ AND **THE AGENT READ **THE
+    **=> MEMORY** ✓✓ AND **THE ENVIRONMENT** ✓✓ - **=> AND **THEY WERE **TWO
+    **=> DIFFERENT PLACES** ✓✓.**
+
+    **=> AND THE FALLBACK PUT **MINIMAX FIRST** ✓✓ - **=> SO EVEN **A MINIMAX KEY**
+    **=> WAS NOT USED** ✓✓ **UNLESS **THE ENVIRONMENT HAD IT** ✓✓.**
+    """
+    from services.keys import all_keys, first_provider_with_a_key
+
+    with tempfile.TemporaryDirectory() as directory:
+        path = os.path.join(directory, "provider-keys.json")
+        with open(path, "w", encoding="utf-8") as handle:
+            json.dump({"anthropic": "sk-ant-test"}, handle)
+
+        from services import keys
+
+        original = keys.KEYS_FILE
+        keys.KEYS_FILE = path
+        try:
+            # **=> THE KEY IS THERE ✓✓.**
+            assert "anthropic" in all_keys()
+            # **=> AND **THE AGENT** **=>** WHICH READS **THE SAME PLACE** **=>**
+            # **=> PICKS **THE PROVIDER THE PEER SET** **=>.**
+            assert first_provider_with_a_key() == "anthropic"
+        finally:
+            keys.KEYS_FILE = original
+
+
+def test_the_agent_and_the_ui_read_the_same_place():
+    """
+    **=> AND **THEY CANNOT DISAGREE** ✓✓ - **=> BECAUSE **THEY BOTH ASK **THE
+    **=> SAME MODULE** ✓✓.**
+    """
+    import os as _os
+
+    with open(_os.path.join(ROOT, "services", "agent_ai_runner.py"), encoding="utf-8") as handle:
+        runner = handle.read()
+    with open(_os.path.join(ROOT, "server.py"), encoding="utf-8") as handle:
+        server = handle.read()
+
+    assert "from services.keys import all_keys" in runner, (
+        "the agent must read the keys from the shared module"
+    )
+    assert "from services.keys import" in server, (
+        "the server must read the keys from the shared module"
     )
