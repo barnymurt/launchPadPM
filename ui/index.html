@@ -2528,6 +2528,17 @@ async function sendAgentChat() {
         });
         const data = await res.json();
         const lastMsg = messagesEl.querySelector('.agent-message.ai:last-child');
+        // A FAILED REQUEST MUST SAY WHY. The server knows exactly what is
+        // wrong - a missing key, most of all - and the UI used to throw that
+        // away and show "No response", which reads like the agent had
+        // nothing to say rather than the agent not being able to run.
+        if (!res.ok) {
+            if (lastMsg) {
+                lastMsg.querySelector('.agent-message-content').innerHTML =
+                    renderRequestFailure(data);
+            }
+            return;
+        }
         if (lastMsg) {
             // **=> AND THE EVIDENCE IS **NO LONGER DROPPED** **=>.** **=> IT
             // **=> CARRIES THE GATE'S VERDICT** **=> AND THE SCHEMA CHECK
@@ -3007,6 +3018,38 @@ init();
             status.className = 'key-status bad';
             status.textContent = 'Could not clear them: ' + e.message;
         }
+    }
+
+
+    /**
+     * A request that failed, shown properly.
+     *
+     * **=> AND THE COMMONEST CAUSE IS **NO KEY** ✓✓ — **=> SO IT SAYS SO ✓✓,
+     * **=> AND IT POINTS AT **THE SECTION** WHERE THE KEY GOES** ✓✓.**
+     */
+    function renderRequestFailure(data) {
+        const detail = (data && (data.detail || data.error)) || 'The request failed.';
+        const message = String(detail);
+        const missingKey = /missing\s+\w+_API_KEY/i.test(message);
+        let html = '<div class="answer-verdict kill">';
+        html += '<span class="verdict-word">the agent could not answer</span>';
+        html += '<div class="verdict-rule">' + escapeHtmlValue(message) + '</div>';
+        if (missingKey) {
+            html += '<div class="verdict-note">There is no LLM key set, so there is no '
+                + 'agent to answer. Put one in and it will work. '
+                + '<a href="#" onclick="goToTheKeys(); return false;">Settings, API keys</a></div>';
+        }
+        html += '</div>';
+        return html;
+    }
+
+    function goToTheKeys() {
+        const nav = document.querySelector('.nav-item[data-page="settings"]');
+        if (nav) nav.click();
+        setTimeout(() => {
+            const item = document.querySelector('.settings-nav-item[data-settings="keys"]');
+            if (item) item.click();
+        }, 120);
     }
 
 </script>

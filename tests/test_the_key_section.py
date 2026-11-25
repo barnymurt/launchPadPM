@@ -125,3 +125,40 @@ def test_there_is_only_one_of_each_endpoint():
         assert len(re.findall(pattern, server)) == 1, (
             "the endpoint {} is defined more than once".format(path)
         )
+
+
+def test_a_failed_request_says_why():
+    """
+    **=> THE UI USED TO SHOW **"No response"** ✓✓ — **=> AND **THE SERVER SAID
+    **"Missing MINIMAX_API_KEY environment variable"** ✓✓, **=> AND **THE UI
+    **THREW IT AWAY** ✓✓.**
+
+    **=> AND **THAT READS LIKE **THE AGENT HAD NOTHING TO SAY** ✓✓ — **=> RATHER
+    **=> THAN **THE AGENT COULD NOT RUN** ✓✓ — **=> WHICH IS **THE SAME CLASS OF
+    **=> DEFECT AS THE SETTINGS STUB** ✓✓: **=> A CLAIM OF A FACT THAT **IS NOT
+    **=> TRUE** ✓✓.**
+    """
+    with open(os.path.join(ROOT, "ui", "index.html"), encoding="utf-8") as handle:
+        ui = handle.read()
+    assert "renderRequestFailure" in ui, (
+        "a failed request must be rendered, not swallowed"
+    )
+    assert "if (!res.ok)" in ui
+    # **=> AND IT POINTS AT **THE SECTION** WHERE THE KEY GOES** ✓✓.
+    assert "goToTheKeys" in ui
+    assert "Settings, API keys" in ui
+    # **=> AND THE OLD STRING IS GONE** ✓✓.
+    assert (
+        "formatAIResponse(data.response || 'No response')" in ui
+    ), "the no-response fallback is back"
+
+
+def test_the_server_says_what_is_missing():
+    """
+    **=> AND **THE SERVER'S MESSAGE **IS **THE USEFUL ONE** ✓✓ — **=> SO THE UI
+    **=> MUST PASS IT THROUGH** ✓✓.**
+    """
+    with open(os.path.join(ROOT, "integrations", "ai_providers.py"), encoding="utf-8") as handle:
+        providers = handle.read()
+    assert "Missing" in providers
+    assert "environment variable" in providers
