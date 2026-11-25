@@ -2552,9 +2552,26 @@ async function sendAgentChat() {
     } catch (e) {
         const lastMsg = messagesEl.querySelector('.agent-message.ai:last-child');
         if (lastMsg) {
-            lastMsg.querySelector('.agent-message-content').innerHTML = 'Error: ' + e.message;
+            lastMsg.querySelector('.agent-message-content').innerHTML =
+                renderRequestFailure({ detail: describeTheFailure(e) });
         }
     }
+}
+
+/**
+ * What actually went wrong, in words a person can act on.
+ *
+ * **=> AND "Failed to fetch" IS **THE BROWSER SAYING IT COULD NOT REACH THE
+ * **=> SERVER** ✓✓ — **=> WHICH IS **THE MOST COMMON FAILURE** ✓✓, **=> AND **THE
+ * **=> ONE THAT SAYS **NOTHING** ✓✓.**
+ */
+function describeTheFailure(error) {
+    const message = String((error && error.message) || error || '');
+    if (message === 'Failed to fetch' || /networkerror|failed to fetch/i.test(message)) {
+        return 'the server could not be reached, so it may have been stopped. '
+            + 'Start it again with scripts/run_local.ps1 and reload this page.';
+    }
+    return message;
 }
 
 function formatAIResponse(text) {
@@ -2937,7 +2954,8 @@ init();
             renderKeyProviders();
         } catch (e) {
             const el = document.getElementById('key-providers');
-            if (el) el.innerHTML = '<p class="settings-note">Could not load the providers: ' + escapeHtmlValue(e.message) + '</p>';
+            if (el) el.innerHTML = '<p class="settings-note">Could not load the providers: '
+                + escapeHtmlValue(describeTheFailure(e)) + '</p>';
         }
     }
 
@@ -3000,7 +3018,7 @@ init();
             }
         } catch (e) {
             status.className = 'key-status bad';
-            status.textContent = 'Could not save: ' + e.message;
+            status.textContent = 'Could not save: ' + describeTheFailure(e);
         }
     }
 

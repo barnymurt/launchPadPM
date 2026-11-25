@@ -162,3 +162,35 @@ def test_the_server_says_what_is_missing():
         providers = handle.read()
     assert "Missing" in providers
     assert "environment variable" in providers
+
+
+def test_a_dead_server_says_so():
+    """
+    **=> THE BROWSER SAYS **"Failed to fetch"** **=> WHEN **THE SERVER IS GONE**
+    **=> **=> - **=> AND **THAT IS **THE MOST COMMON FAILURE** **=>, **=> AND IT SAYS
+    **=> **NOTHING USEFUL** **=>.**
+
+    **=> AND IT COST THE PEER TIME **=>: **=> A KEY SAVED AND AN AGENT ASKED **=>,
+    **=> BOTH **"Failed to fetch"** **=>, **=> AND THE CAUSE WAS **A SERVER THAT
+    **=> HAD BEEN STOPPED** **=>.**
+    """
+    with open(os.path.join(ROOT, "ui", "index.html"), encoding="utf-8") as handle:
+        ui = handle.read()
+    assert "describeTheFailure" in ui
+    assert "may have been stopped" in ui
+    # **=> AND THE KEY HANDLERS USE IT TOO **=> - **=> BECAUSE **THE SAVE** IS
+    # **=> WHERE **THE PEER HIT IT** **=>.**
+    assert ui.count("describeTheFailure(e)") >= 3
+
+
+def test_there_is_a_way_to_start_it():
+    """
+    **=> AND **THE UI SAYS WHERE TO START IT** **=> - **=> SO THE PERSON IS NOT
+    **=> LEFT GUESSING** **=>.**
+    """
+    with open(os.path.join(ROOT, "ui", "index.html"), encoding="utf-8") as handle:
+        ui = handle.read()
+    assert "scripts/run_local.ps1" in ui
+    assert os.path.exists(os.path.join(ROOT, "scripts", "run_local.ps1")), (
+        "the UI points at a script that is not there"
+    )
