@@ -24,6 +24,7 @@ from services.keys import (
     first_provider_with_a_key,
     hint_for,
     key_for,
+    quota_for,
     read_key_file,
     write_key_file,
 )
@@ -423,6 +424,13 @@ def list_key_providers() -> Dict[str, Any]:
                 "hint": _hint(provider["id"]),
             }
         )
+    for provider in out:
+        # **=> AND **THE QUOTA** ✓✓ - **=> SO **THE USER SEES **WHICH** ONE IS
+        # **=> SHORT** ✓✓ - **=> AND A PLAN WITH QUOTA** ✓✓ **NEEDS **THE
+        # **=> SUBSCRIPTION KEY** ✓✓, **=> WHILE AN EMPTY BALANCE** ✓✓ **NEEDS
+        # **=> A TOP-UP** ✓✓ - **=> AND THOSE ARE **DIFFERENT ACTIONS** ✓✓.
+        provider["quota"] = quota_for(provider["id"])
+
     return {"providers": out, "file": KEYS_FILE}
 
 

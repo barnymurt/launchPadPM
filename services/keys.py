@@ -150,3 +150,56 @@ def hint_for(provider_id: str, session_keys: Optional[Dict[str, str]] = None) ->
     if len(key) <= 4:
         return "*" * len(key)
     return "*" * 4 + key[-4:]
+
+
+def quota_for(provider_id: str, session_keys: Optional[Dict[str, str]] = None) -> dict:
+    """
+    The plan's remaining quota, when the provider publishes one.
+
+    **=> AND **THIS IS **THE POINT** ✓✓ — **=> THE USER SHOULD NOT HAVE TO GUESS
+    **=> WHICH QUOTA IS SHORT** ✓✓ - **=> THE APP CAN **ASK** ✓✓.**
+
+    **=> AND **THE ANSWER CHANGES WHAT THEY SHOULD DO** ✓✓ - **=> A PLAN WITH
+    **=> QUOTA LEFT** ✓✓ **NEEDS **THE SUBSCRIPTION KEY** ✓✓, **=> AND AN EMPTY
+    **=> BALANCE** ✓✓ **NEEDS **A TOP-UP** ✓✓ - **=> AND THOSE ARE **DIFFERENT
+    **=> ACTIONS** ✓✓.**
+
+    **=> AND **IT FAILS QUIETLY** ✓✓ - **=> BECAUSE **A PROVIDER WITH NO QUOTA
+    ENDPOINT** ✓✓ **IS NOT AN ERROR** ✓✓, **=> IT IS **A PROVIDER THAT DOES NOT
+    PUBLISH ONE** ✓✓.
+    """
+    empty = {"available": False, "groups": [], "reason": ""}
+    if provider_id != "minimax":
+        return empty
+
+    key = key_for(provider_id, session_keys)
+    if not key:
+        return empty
+
+    import json
+    import urllib.request
+
+    url = "https://api.minimax.io/v1/token_plan/remains"
+    request = urllib.request.Request(
+        url, headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"}
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=20) as response:
+            body = json.loads(response.read().decode())
+    except Exception:
+        return empty
+
+    groups = []
+    for row in body.get("model_remains", []):
+        groups.append(
+            {
+                "name": row.get("model_name", "?"),
+                "the_window": row.get("current_interval_remaining_percent"),
+                "the_week": row.get("current_weekly_remaining_percent"),
+                "the_window_total": row.get("current_interval_total_count"),
+                "the_window_used": row.get("current_interval_usage_count"),
+                "the_week_total": row.get("current_weekly_total_count"),
+                "the_week_used": row.get("current_weekly_usage_count"),
+            }
+        )
+    return {"available": True, "groups": groups, "reason": ""}

@@ -164,11 +164,29 @@ def run_agent_ai(
         # **=>** EXACTLY WHAT TO DO **=>.**
         message = str(provider_error)
         if "insufficient balance" in message.lower():
-            raise RuntimeError(
-                "the provider says the balance is too low for this call - "
-                + "add credit to the account, or use another provider. "
-                + message[:200]
-            ) from provider_error
+            # **=> AND **THE QUOTA SAYS **WHICH** FIX** ✓✓ - **=> A PLAN WITH
+            # **=> QUOTA LEFT** ✓✓ **NEEDS **THE SUBSCRIPTION KEY** ✓✓, **=> AND AN
+            # **=> EMPTY BALANCE** ✓✓ **NEEDS **A TOP-UP** ✓✓ - **=> AND THOSE ARE
+            # **=> **DIFFERENT ACTIONS** ✓✓, **=> SO THE MESSAGE MUST SAY WHICH
+            # **=> ONE** ✓✓.
+            advice = "add credit to the account, or use another provider."
+            try:
+                from services.keys import quota_for
+
+                quota = quota_for(selected_provider, session_keys)
+                for group in quota.get("groups", []):
+                    week = group.get("the_week")
+                    if week is not None and int(week) > 0:
+                        advice = (
+                            "the plan has quota left ({}% of the week) but this key "
+                            "is a pay-as-you-go key, which draws on the balance "
+                            "instead - use the plan's subscription key, or add "
+                            "credit."
+                        ).format(week)
+                        break
+            except Exception:
+                pass
+            raise RuntimeError(advice + " " + message[:200]) from provider_error
         if "invalid api key" in message.lower():
             raise RuntimeError(
                 "the provider rejected the key - check that it is the right "
