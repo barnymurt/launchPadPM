@@ -76,8 +76,16 @@ def call_minimax(
     api_key: Optional[str] = None,
 ) -> str:
     api_key = _require_key("MINIMAX_API_KEY", api_key)
-    base_url = os.getenv("MINIMAX_BASE_URL", "https://api.minimax.chat/v1")
-    model_name = model or os.getenv("MINIMAX_MODEL", "minimax-M2.7")
+    # **=> AND **THE HOST AND **THE MODEL** ✓✓ - **=> BOTH WERE WRONG ✓✓ - **=> AND
+    # **=> BOTH WERE **HARD-CODED** ✓✓ - **=> AND **THEY ARE **NOW **DATA** ✓✓,
+    # **=> IN **THE ONE PLACE** ✓✓, **=> WITH **THE PROVIDER LIST** ✓✓.
+    from services.keys import PROVIDERS
+
+    settings = next((p for p in PROVIDERS if p["id"] == "minimax"), None)
+    default_base = settings["base"] if settings else "https://api.minimax.io/v1"
+    default_model = settings["model"] if settings else "MiniMax-M3"
+    base_url = os.getenv("MINIMAX_BASE_URL", default_base)
+    model_name = model or os.getenv("MINIMAX_MODEL", default_model)
     client = OpenAI(api_key=api_key, base_url=base_url)
     response = client.chat.completions.create(model=model_name, messages=messages, max_tokens=max_tokens)
     return response.choices[0].message.content or ""

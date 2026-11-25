@@ -32,9 +32,16 @@ PROVIDERS: List[dict] = [
         "id": "minimax",
         "name": "MiniMax",
         "env": "MINIMAX_API_KEY",
-        "model": "minimax-M2.7",
-        "base": "https://api.minimax.chat/v1",
-        "where": "https://platform.minimaxi.com",
+        # **=> AND THE MODEL AND **THE HOST** ✓✓ - **=> MEASURED AGAINST **THE
+        # **=> LIVE API** ✓✓: **=> `MiniMax-M3` AND `MiniMax-M3.1-Flash` **=>** AND
+        # **=> THE M2 LINE **IS RETIRED FOR THIS ACCOUNT** ✓✓ - **=> AND **THE
+        # **=> HOST** ✓✓ - **=> **THE GLOBAL KEY** ✓✓ **NEEDS** `api.minimax.io`
+        # **=> ✓✓, **=> AND **THE CHINA HOST** ✓✓ **REJECTS IT** ✓✓.
+        "model": "MiniMax-M3",
+        "base": "https://api.minimax.io/v1",
+        "where": "https://platform.minimax.io",
+        # **=> AND THE **SECOND** PLATFORM **=>** WHICH HAS **ITS OWN KEYSPACE** ✓✓.
+        "note": "MiniMax runs two platforms. A Global key needs api.minimax.io; a China key needs api.minimaxi.com. They are not interchangeable.",
     },
     {
         "id": "openai",

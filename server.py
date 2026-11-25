@@ -399,6 +399,7 @@ def list_key_providers() -> Dict[str, Any]:
     **=> AND **THE ENV VAR IT MAPS TO** ✓✓ — **=> ALL READ FROM HERE ✓✓, **=> NOT
     **=> TYPED IN THE UI ✓✓.**
     """
+    keys = all_keys()
     out = []
     for provider in PROVIDERS:
         source = "unset"
@@ -414,7 +415,7 @@ def list_key_providers() -> Dict[str, Any]:
                 "model": provider["model"],
                 "base": provider["base"],
                 "where": provider["where"],
-                "has_key": bool(stored.get(provider["id"]) or os.getenv(provider["env"])),
+                "has_key": bool(keys.get(provider["id"])),
                 "source": source,
                 # **=> AND **ONLY THE **LAST FOUR** CHARACTERS** ✓✓ — **=> SO THE
                 # **=> USER CAN SEE THE KEY IS THERE** ✓✓, **=> WITHOUT THE UI

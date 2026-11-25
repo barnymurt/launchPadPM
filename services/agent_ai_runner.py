@@ -16,6 +16,7 @@ load_dotenv()
 try:
     from services.skill_loader import get_relevant_skills, format_skills_for_prompt
     from services.gate import compare as compare_gate
+    from services.keys import all_keys
     from services.schema_reader import check_output
     SKILLS_AVAILABLE = True
 except Exception:
@@ -76,8 +77,6 @@ def _select_provider(provider: Optional[str], session_keys: Optional[Dict[str, s
 
     # **=> THE KEYS, FROM EVERYWHERE THEY CAN BE** **=>** - **=> THE FILE FIRST
     # **=>** BECAUSE **THAT IS WHERE THE UI PUT THEM** **=>.**
-    from services.keys import all_keys
-
     keys = all_keys(session_keys)
 
     for provider_id, env_var in (
@@ -95,15 +94,30 @@ def _select_provider(provider: Optional[str], session_keys: Optional[Dict[str, s
 
 
 def _call_provider(provider: str, messages: List[dict], session_keys: Optional[Dict[str, str]]) -> str:
+    """
+    Call the provider, **with the key the selection found**.
+
+    **=> AND **THIS IS **THE THIRD PLACE** THAT USED TO LOOK FOR THE KEY** ✓✓ -
+    **=> THE SELECTION READ **THE MEMORY** ✓✓ AND **THE ENVIRONMENT** ✓✓, **=> AND
+    **THE CALL** ✓✓ **READ **THE MEMORY** ✓✓ AND **THE ENVIRONMENT** ✓✓ - **=> AND
+    **THE FILE** ✓✓ **WAS IN **NEITHER** ✓✓.**
+
+    **=> **=> AND THAT IS **WHY THE PEER'S KEY** ✓✓ - **=> WHICH **THE UI** ✓✓
+    **=>** SAID **WAS SET** ✓✓ - **=>** **WAS NEVER SENT** ✓✓.**
+
+    **=> **=> SO NOW **BOTH** READ **THE SAME PLACE** ✓✓ - **=> `all_keys()` ✓✓ -
+    **=> AND **THE SELECTION** ✓✓ AND **THE CALL** ✓✓ **BOTH ASK IT** ✓✓.
+    """
     provider_key = provider.lower()
+    keys = all_keys(session_keys)
     if provider_key == "minimax":
-        return call_minimax(messages, api_key=(session_keys or {}).get("minimax"))
+        return call_minimax(messages, api_key=keys.get("minimax"))
     if provider_key == "openai":
-        return call_openai(messages, api_key=(session_keys or {}).get("openai"))
+        return call_openai(messages, api_key=keys.get("openai"))
     if provider_key == "anthropic":
-        return call_anthropic(messages, api_key=(session_keys or {}).get("anthropic"))
+        return call_anthropic(messages, api_key=keys.get("anthropic"))
     if provider_key == "perplexity":
-        return call_perplexity(messages, api_key=(session_keys or {}).get("perplexity"))
+        return call_perplexity(messages, api_key=keys.get("perplexity"))
     raise RuntimeError("Unsupported provider")
 
 
@@ -141,7 +155,27 @@ def run_agent_ai(
         {"role": "user", "content": _build_user_prompt(agent, query, web_results, skill_context)},
     ]
 
-    response_text = _call_provider(selected_provider, messages, session_keys)
+    try:
+        response_text = _call_provider(selected_provider, messages, session_keys)
+    except Exception as provider_error:
+        # **=> AND **THE PROVIDER'S OWN ERROR** **=>** IS **THE MOST USEFUL THING
+        # **=>** THE USER CAN ACT ON **=>** - **=> AND **A GENERIC "Error: 402"**
+        # **=>** SAYS **NOTHING** **=>** AND "INSUFFICIENT BALANCE" **=>** SAYS
+        # **=>** EXACTLY WHAT TO DO **=>.**
+        message = str(provider_error)
+        if "insufficient balance" in message.lower():
+            raise RuntimeError(
+                "the provider says the balance is too low for this call - "
+                + "add credit to the account, or use another provider. "
+                + message[:200]
+            ) from provider_error
+        if "invalid api key" in message.lower():
+            raise RuntimeError(
+                "the provider rejected the key - check that it is the right "
+                + "key for this provider's region and platform. "
+                + message[:200]
+            ) from provider_error
+        raise
     response_text = re.sub(r"<think>[\s\S]*?</think>", "", response_text).strip()
     evidence: Dict[str, Any] = {
         "provider": selected_provider,
