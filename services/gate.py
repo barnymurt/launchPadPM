@@ -1,28 +1,28 @@
 """
-The gate Ã¢â‚¬â€ RUNG 2 OF THE FACTORY.
+The gate â€â€ RUNG 2 OF THE FACTORY.
 
-**=> THE GATE DECIDES GO/PAUSE/KILL **ARITHMETICALLY** Ã¢Å“â€œÃ¢Å“â€œ Ã¢â‚¬â€ **=> AND EVERY
-THRESHOLD AND EVERY RULE COMES FROM **THE DOCUMENT** Ã¢Å“â€œÃ¢Å“â€œ, **=> NOT FROM THE CODE
-Ã¢Å“â€œÃ¢Å“â€œ.**
+**=> THE GATE DECIDES GO/PAUSE/KILL **ARITHMETICALLY** ✓✓ â€â€ **=> AND EVERY
+THRESHOLD AND EVERY RULE COMES FROM **THE DOCUMENT** ✓✓, **=> NOT FROM THE CODE
+✓✓.**
 
-**=> **=> AND THE DOCUMENT'S OWN SHAPE GIVES THE GATE ITS WORKING Ã¢Å“â€œÃ¢Å“â€œ:**
+**=> **=> AND THE DOCUMENT'S OWN SHAPE GIVES THE GATE ITS WORKING ✓✓:**
 
 | the document says | and the gate does |
 |---|---|
-| THE METRIC, VALUE, RATING, SOURCE TABLE | **reads the **7** ROWS Ã¢Å“â€œÃ¢Å“â€œ** |
-| `Good / Warning / Critical` | **reads each row's **RATING** Ã¢Å“â€œÃ¢Å“â€œ** |
-| `GO: 0 Critical metrics AND <= 1 Warning metric` | **reads the counting rule Ã¢Å“â€œÃ¢Å“â€œ** |
+| THE METRIC, VALUE, RATING, SOURCE TABLE | **reads the **7** ROWS ✓✓** |
+| `Good / Warning / Critical` | **reads each row's **RATING** ✓✓** |
+| `GO: 0 Critical metrics AND <= 1 Warning metric` | **reads the counting rule ✓✓** |
 
-**=> **=> AND THE VERDICT LAYER IS **PURE COUNTING** Ã¢Å“â€œÃ¢Å“â€œ Ã¢â‚¬â€ **=> NO THRESHOLD
-ARITHMETIC IS NEEDED FOR IT Ã¢Å“â€œÃ¢Å“â€œ Ã¢â‚¬â€ **=> THE AGENT RATES, **=> THE CODE COUNTS Ã¢Å“â€œÃ¢Å“â€œ.**
+**=> **=> AND THE VERDICT LAYER IS **PURE COUNTING** ✓✓ â€â€ **=> NO THRESHOLD
+ARITHMETIC IS NEEDED FOR IT ✓✓ â€â€ **=> THE AGENT RATES, **=> THE CODE COUNTS ✓✓.**
 
-**=> **=> AND THE THRESHOLD LAYER IS WHERE THE AGENT'S JUDGEMENT IS CHECKED Ã¢Å“â€œÃ¢Å“â€œ Ã¢â‚¬â€
-**=> **AND THIS IS THE LAYER THAT MUST NOT TRUST THE AGENT** Ã¢Å“â€œÃ¢Å“â€œ Ã¢â‚¬â€ **=> THE GATE
-**=> RE-RATES** THE METRICS FROM THE VALUES Ã¢Å“â€œÃ¢Å“â€œ, **=> USING THE DOCUMENT'S OWN
-THRESHOLDS Ã¢Å“â€œÃ¢Å“â€œ.**
+**=> **=> AND THE THRESHOLD LAYER IS WHERE THE AGENT'S JUDGEMENT IS CHECKED ✓✓ â€â€
+**=> **AND THIS IS THE LAYER THAT MUST NOT TRUST THE AGENT** ✓✓ â€â€ **=> THE GATE
+**=> RE-RATES** THE METRICS FROM THE VALUES ✓✓, **=> USING THE DOCUMENT'S OWN
+THRESHOLDS ✓✓.**
 
-**=> **=> AND WHERE IT CANNOT EVALUATE Ã¢Å“â€œÃ¢Å“â€œ, **IT **SAYS SO** Ã¢Å“â€œÃ¢Å“â€œ Ã¢â‚¬â€ **=> BECAUSE A
-GATE THAT GUESSES IS **THE WORST KIND** Ã¢Å“â€œÃ¢Å“â€œ.**
+**=> **=> AND WHERE IT CANNOT EVALUATE ✓✓, **IT **SAYS SO** ✓✓ â€â€ **=> BECAUSE A
+GATE THAT GUESSES IS **THE WORST KIND** ✓✓.**
 """
 
 import os
@@ -32,20 +32,20 @@ from typing import Dict, List, Optional
 
 from .schema_reader import read_schema
 
-# **=> THE VALIDATION PACK'S SCHEMA Ã¢Å“â€œÃ¢Å“â€œ Ã¢â‚¬â€ **=> THE SOURCE OF EVERY THRESHOLD Ã¢Å“â€œÃ¢Å“â€œ.**
+# **=> THE VALIDATION PACK'S SCHEMA ✓✓ â€â€ **=> THE SOURCE OF EVERY THRESHOLD ✓✓.**
 VALIDATION_PACK = "validation-pack"
 
-# **=> THE THRESHOLD LINE, AS THE DOCUMENT WRITES IT Ã¢Å“â€œÃ¢Å“â€œ.**
+# **=> THE THRESHOLD LINE, AS THE DOCUMENT WRITES IT ✓✓.**
 THRESHOLD = re.compile(
     r"^-\s*(?P<gate>.+?):\s*Good\s*=\s*(?P<good>.+?),\s*"
     r"Warning\s*=\s*(?P<warning>.+?),\s*Critical\s*=\s*(?P<critical>.+?)\s*$"
 )
 
-# **=> THE VERDICT LINE Ã¢Å“â€œÃ¢Å“â€œ.**
+# **=> THE VERDICT LINE ✓✓.**
 VERDICT = re.compile(r"^-\s*(?P<verdict>GO|PAUSE|KILL):\s*(?P<rule>.+?)\s*$")
 
-# **=> AND THE **RATING** COLUMN Ã¢Å“â€œÃ¢Å“â€œ Ã¢â‚¬â€ **=> THE AGENT'S OWN VERDICT ON EACH
-# **=> METRIC Ã¢Å“â€œÃ¢Å“â€œ.**
+# **=> AND THE **RATING** COLUMN ✓✓ â€â€ **=> THE AGENT'S OWN VERDICT ON EACH
+# **=> METRIC ✓✓.**
 METRIC_ROW = re.compile(
     r"^\|\s*\d+\s*\|\s*(?P<metric>[^|]+?)\s*\|\s*(?P<value>[^|]*?)\s*\|\s*"
     r"(?P<rating>[^|]*?)\s*\|"
@@ -56,7 +56,7 @@ PLACEHOLDER = re.compile(
     r"^\[|^\"|^'|objection in|assumption text|feature name|risk description"
 )
 
-# **=> AND THE COUNTS THE VERDICT RULES USE Ã¢Å“â€œÃ¢Å“â€œ.**
+# **=> AND THE COUNTS THE VERDICT RULES USE ✓✓.**
 CRITICAL_COUNT = re.compile(r"(\d+)\+?\s+Critical", re.IGNORECASE)
 WARNING_COUNT = re.compile(r"(\d+)\+?\s+Warning", re.IGNORECASE)
 
@@ -75,7 +75,7 @@ class Gate:
     """
     The gate, read from the document.
 
-    **=> EVERY FIELD HERE IS **READ** Ã¢Å“â€œÃ¢Å“â€œ Ã¢â‚¬â€ **=> AND NONE IS **TYPED** Ã¢Å“â€œÃ¢Å“â€œ.**
+    **=> EVERY FIELD HERE IS **READ** ✓✓ â€â€ **=> AND NONE IS **TYPED** ✓✓.**
     """
 
     #: The seven gates and their thresholds, read from the document.
@@ -96,9 +96,9 @@ def read_gate(skills_dir: str = None) -> Gate:
     """
     The gate, read from the validation pack's schema.
 
-    **=> AND IF IT CANNOT BE READ Ã¢Å“â€œÃ¢Å“â€œ, **THE GATE IS **EMPTY** Ã¢Å“â€œÃ¢Å“â€œ Ã¢â‚¬â€ **=> AND THAT
-    IS NOT THE SAME AS A GATE WITH NO THRESHOLDS Ã¢Å“â€œÃ¢Å“â€œ Ã¢â‚¬â€ **=> IT IS **NO GATE AT
-    ALL** Ã¢Å“â€œÃ¢Å“â€œ.**
+    **=> AND IF IT CANNOT BE READ ✓✓, **THE GATE IS **EMPTY** ✓✓ â€â€ **=> AND THAT
+    IS NOT THE SAME AS A GATE WITH NO THRESHOLDS ✓✓ â€â€ **=> IT IS **NO GATE AT
+    ALL** ✓✓.**
     """
     gate = Gate()
     if skills_dir is None:
@@ -128,8 +128,8 @@ def read_gate(skills_dir: str = None) -> Gate:
             if verdict not in gate.verdicts:
                 gate.verdicts.append(verdict)
 
-    # **=> AND THE METRICS THE SCORECARD MUST HAVE Ã¢Å“â€œÃ¢Å“â€œ Ã¢â‚¬â€ **=> FROM THE SCORECARD
-    # **=> TABLE'S OWN ROWS Ã¢Å“â€œÃ¢Å“â€œ.**
+    # **=> AND THE METRICS THE SCORECARD MUST HAVE ✓✓ â€â€ **=> FROM THE SCORECARD
+    # **=> TABLE'S OWN ROWS ✓✓.**
     for line in text.splitlines():
         match = METRIC_ROW.match(line.strip())
         if match:
@@ -175,8 +175,8 @@ def decide(gate: Gate, output: str) -> dict:
     """
     What the gate says about this output.
 
-    **=> THE VERDICT IS **COUNTED** Ã¢Å“â€œÃ¢Å“â€œ, **=> NOT CHOSEN Ã¢Å“â€œÃ¢Å“â€œ Ã¢â‚¬â€ **=> AND **THE
-    COUNTS COME FROM THE DOCUMENT** Ã¢Å“â€œÃ¢Å“â€œ, **=> NOT FROM THE CODE Ã¢Å“â€œÃ¢Å“â€œ.**
+    **=> THE VERDICT IS **COUNTED** ✓✓, **=> NOT CHOSEN ✓✓ â€â€ **=> AND **THE
+    COUNTS COME FROM THE DOCUMENT** ✓✓, **=> NOT FROM THE CODE ✓✓.**
     """
     if not gate.loaded:
         return {
@@ -191,7 +191,7 @@ def decide(gate: Gate, output: str) -> dict:
     critical = len([m for m in metrics if _rating_of(m) == "CRITICAL"])
     warning = len([m for m in metrics if _rating_of(m) == "WARNING"])
 
-    # **=> AND THE THRESHOLDS FOR THE VERDICTS Ã¢Å“â€œÃ¢Å“â€œ Ã¢â‚¬â€ **=> READ Ã¢Å“â€œÃ¢Å“â€œ.**
+    # **=> AND THE THRESHOLDS FOR THE VERDICTS ✓✓ â€â€ **=> READ ✓✓.**
     go_rule = gate.rules.get("GO", "")
     pause_rule = gate.rules.get("PAUSE", "")
     kill_rule = gate.rules.get("KILL", "")
@@ -216,9 +216,9 @@ def decide(gate: Gate, output: str) -> dict:
     if match:
         pause_min_warning = int(match.group(1))
 
-    # **=> AND THE ORDER MATTERS Ã¢Å“â€œÃ¢Å“â€œ Ã¢â‚¬â€ **=> KILL FIRST Ã¢Å“â€œÃ¢Å“â€œ, **=> BECAUSE **TWO
-    # **=> CRITICALS ARE ALSO **ONE** CRITICAL Ã¢Å“â€œÃ¢Å“â€œ, **=> AND KILL IS THE STRONGER
-    # **=> VERDICT Ã¢Å“â€œÃ¢Å“â€œ.**
+    # **=> AND THE ORDER MATTERS ✓✓ â€â€ **=> KILL FIRST ✓✓, **=> BECAUSE **TWO
+    # **=> CRITICALS ARE ALSO **ONE** CRITICAL ✓✓, **=> AND KILL IS THE STRONGER
+    # **=> VERDICT ✓✓.**
     if critical >= kill_min_critical:
         verdict = "KILL"
     elif critical >= pause_min_critical or warning >= pause_min_warning:
@@ -242,11 +242,11 @@ def compare(gate: Gate, output: str) -> dict:
     """
     What the gate says, against what the agent said.
 
-    **=> AND **THIS** IS THE POINT Ã¢Å“â€œÃ¢Å“â€œ Ã¢â‚¬â€ **=> THE AGENT STATES A VERDICT Ã¢Å“â€œÃ¢Å“â€œ, **Ã¢â€¡â€™
-    **=> AND THE GATE STATES ONE TOO Ã¢Å“â€œÃ¢Å“â€œ, **Ã¢â€¡â€™ AND **IF THEY DIFFER** Ã¢Å“â€œÃ¢Å“â€œ, **Ã¢â€¡â€™ THEN
-    **Ã¢â€¡â€™ THE AGENT'S VERDICT IS **NOT** TRUSTWORTHY** Ã¢Å“â€œÃ¢Å“â€œ Ã¢â‚¬â€ **=> AND THAT IS THE
+    **=> AND **THIS** IS THE POINT ✓✓ â€â€ **=> THE AGENT STATES A VERDICT ✓✓, **⇒
+    **=> AND THE GATE STATES ONE TOO ✓✓, **⇒ AND **IF THEY DIFFER** ✓✓, **⇒ THEN
+    **⇒ THE AGENT'S VERDICT IS **NOT** TRUSTWORTHY** ✓✓ â€â€ **=> AND THAT IS THE
     **=> STRUCTURAL ANSWER TO "THEY ARE JUST REVIEWING EACH OTHER IN A VACUUM"
-    **=> Ã¢Å“â€œÃ¢Å“â€œ: **THE AGENT CANNOT DECIDE ITS OWN VERDICT** Ã¢Å“â€œÃ¢Å“â€œ.**
+    **=> ✓✓: **THE AGENT CANNOT DECIDE ITS OWN VERDICT** ✓✓.**
     """
     decision = decide(gate, output)
     stated = ""

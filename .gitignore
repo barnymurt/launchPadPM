@@ -37,6 +37,10 @@ ENV/
 .env
 .env.local
 
+# The keys the user puts in. A KEY IN GIT IS A KEY IN EVERYONE'S CLONE,
+# so this directory is out of git entirely.
+.secrets/
+
 # Configuration (if sensitive)
 # config.json  # Uncomment if config contains secrets
 

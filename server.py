@@ -2,6 +2,7 @@
 FastAPI server for local staging/live environments.
 """
 
+import json
 import os
 from threading import Timer
 from typing import Any, Dict, List, Optional
@@ -101,35 +102,6 @@ def ui() -> FileResponse:
 def list_agents() -> Dict[str, List[str]]:
     _ensure_initialized()
     return {"roles": AgentRegistry.list_roles()}
-
-
-@app.get("/keys/status")
-def key_status() -> Dict[str, bool]:
-    return {
-        "openai": bool(_session_keys.get("openai") or os.getenv("OPENAI_API_KEY")),
-        "anthropic": bool(_session_keys.get("anthropic") or os.getenv("ANTHROPIC_API_KEY")),
-        "perplexity": bool(_session_keys.get("perplexity") or os.getenv("PERPLEXITY_API_KEY")),
-        "minimax": bool(_session_keys.get("minimax") or os.getenv("MINIMAX_API_KEY")),
-    }
-
-
-@app.post("/keys")
-def set_keys(payload: KeyRequest) -> Dict[str, bool]:
-    if payload.openai is not None:
-        _session_keys["openai"] = payload.openai.strip()
-    if payload.anthropic is not None:
-        _session_keys["anthropic"] = payload.anthropic.strip()
-    if payload.perplexity is not None:
-        _session_keys["perplexity"] = payload.perplexity.strip()
-    if payload.minimax is not None:
-        _session_keys["minimax"] = payload.minimax.strip()
-
-    return {
-        "openai": bool(_session_keys.get("openai")),
-        "anthropic": bool(_session_keys.get("anthropic")),
-        "perplexity": bool(_session_keys.get("perplexity")),
-        "minimax": bool(_session_keys.get("minimax")),
-    }
 
 
 @app.post("/restart")
@@ -400,3 +372,199 @@ def get_gate() -> Dict[str, Any]:
         "verdicts": gate.verdicts,
         "source": "skills/validation-pack/output-schema.md",
     }
+
+# **=> THE USER'S OWN KEYS ✓✓ — **=> WRITTEN **TO DISK** ✓✓, **=> IN A FILE THE
+# **=> PEER CAN EDIT** ✓✓, **=> AND **OUT OF GIT** ✓✓.**
+KEYS_FILE = ".secrets/provider-keys.json"
+
+# **=> AND THE PROVIDERS **ARE **DATA** ✓✓ — **=> READ FROM **THE MODULE** ✓✓
+# **=> AND **THE MODELS AND **THE ENV VARS** ✓✓ — **=> AND **NOT HARD-CODED IN
+# **=> THE UI** ✓✓.
+PROVIDERS = [
+    {
+        "id": "minimax",
+        "name": "MiniMax",
+        "env": "MINIMAX_API_KEY",
+        "model": "minimax-M2.7",
+        "base": "https://api.minimax.chat/v1",
+        "where": "https://platform.minimaxi.com",
+    },
+    {
+        "id": "openai",
+        "name": "OpenAI",
+        "env": "OPENAI_API_KEY",
+        "model": "gpt-4o-mini",
+        "base": "https://api.openai.com/v1",
+        "where": "https://platform.openai.com/api-keys",
+    },
+    {
+        "id": "anthropic",
+        "name": "Anthropic",
+        "env": "ANTHROPIC_API_KEY",
+        "model": "claude-3-5-sonnet-latest",
+        "base": "https://api.anthropic.com",
+        "where": "https://console.anthropic.com/settings/keys",
+    },
+    {
+        "id": "perplexity",
+        "name": "Perplexity",
+        "env": "PERPLEXITY_API_KEY",
+        "model": "sonar-pro",
+        "base": "https://api.perplexity.ai",
+        "where": "https://www.perplexity.ai/settings/api",
+    },
+]
+
+
+def _read_key_file() -> Dict[str, str]:
+    """The keys on disk, if the file is there."""
+    if not os.path.exists(KEYS_FILE):
+        return {}
+    try:
+        with open(KEYS_FILE, "r", encoding="utf-8") as handle:
+            data = json.load(handle)
+        return {str(k): str(v) for k, v in data.items() if v}
+    except Exception:
+        return {}
+
+
+def _write_key_file(keys: Dict[str, str]) -> None:
+    """
+    The keys, written to disk with the permissions they deserve.
+
+    **=> AND **THE FILE IS **OUT OF GIT** ✓✓ — **=> AND **THAT MATTERS ✓✓, **=> BECAUSE
+    **=> A KEY IN GIT **IS A KEY IN EVERYONE'S CLONE** ✓✓.**
+    """
+    directory = os.path.dirname(KEYS_FILE)
+    if directory:
+        os.makedirs(directory, exist_ok=True)
+    with open(KEYS_FILE, "w", encoding="utf-8") as handle:
+        json.dump(keys, handle, indent=2)
+    try:
+        os.chmod(KEYS_FILE, 0o600)
+    except OSError:
+        pass
+
+
+def _key_for(provider_id: str) -> str:
+    """The key for a provider - the file first, then the environment."""
+    provider = next((p for p in PROVIDERS if p["id"] == provider_id), None)
+    if provider is None:
+        return ""
+    stored = _read_key_file().get(provider_id, "")
+    if stored:
+        return stored
+    return os.getenv(provider["env"], "") or ""
+
+
+@app.get("/keys/providers")
+def list_key_providers() -> Dict[str, Any]:
+    """
+    The providers the user can put a key in.
+
+    **=> AND **THEY ARE **DATA** ✓✓ — **=> THE MODEL, **=> WHERE TO GET THE KEY
+    **=> AND **THE ENV VAR IT MAPS TO** ✓✓ — **=> ALL READ FROM HERE ✓✓, **=> NOT
+    **=> TYPED IN THE UI ✓✓.**
+    """
+    stored = _read_key_file()
+    out = []
+    for provider in PROVIDERS:
+        source = "unset"
+        if stored.get(provider["id"]):
+            source = "the key file"
+        elif os.getenv(provider["env"]):
+            source = "the environment"
+        out.append(
+            {
+                "id": provider["id"],
+                "name": provider["name"],
+                "env": provider["env"],
+                "model": provider["model"],
+                "base": provider["base"],
+                "where": provider["where"],
+                "has_key": bool(stored.get(provider["id"]) or os.getenv(provider["env"])),
+                "source": source,
+                # **=> AND **ONLY THE **LAST FOUR** CHARACTERS** ✓✓ — **=> SO THE
+                # **=> USER CAN SEE THE KEY IS THERE** ✓✓, **=> WITHOUT THE UI
+                # **=> EVER SHOWING **THE WHOLE THING** ✓✓.
+                "hint": _hint(provider["id"]),
+            }
+        )
+    return {"providers": out, "file": KEYS_FILE}
+
+
+def _hint(provider_id: str) -> str:
+    """The last four characters of the key, so the user can tell them apart."""
+    key = _key_for(provider_id)
+    if not key:
+        return ""
+    if len(key) <= 4:
+        return "*" * len(key)
+    return "*" * 4 + key[-4:]
+
+
+@app.get("/keys/status")
+def key_status() -> Dict[str, bool]:
+    return {
+        "openai": bool(_key_for("openai")),
+        "anthropic": bool(_key_for("anthropic")),
+        "perplexity": bool(_key_for("perplexity")),
+        "minimax": bool(_key_for("minimax")),
+    }
+
+
+@app.post("/keys")
+def set_keys(payload: KeyRequest) -> Dict[str, Any]:
+    """
+    The user's own keys, saved **TO DISK** ✓✓.
+
+    **=> AND **THE MEMORY COPY IS STILL KEPT** ✓✓ — **=> SO **THE RUNNING SERVER
+    **=> USES THEM **AT ONCE** ✓✓, **=> AND **THE NEXT START **READS THEM FROM
+    **=> THE FILE** ✓✓.**
+    """
+    for provider in PROVIDERS:
+        value = getattr(payload, provider["id"], None)
+        if value is None:
+            continue
+        value = value.strip()
+        if value:
+            _session_keys[provider["id"]] = value
+        else:
+            _session_keys.pop(provider["id"], None)
+
+    stored = _read_key_file()
+    for provider in PROVIDERS:
+        value = getattr(payload, provider["id"], None)
+        if value is None:
+            continue
+        value = value.strip()
+        if value:
+            stored[provider["id"]] = value
+        else:
+            stored.pop(provider["id"], None)
+    if stored:
+        _write_key_file(stored)
+    elif os.path.exists(KEYS_FILE):
+        try:
+            os.remove(KEYS_FILE)
+        except OSError:
+            pass
+
+    return {
+        "saved": True,
+        "providers": list_key_providers()["providers"],
+        "status": key_status(),
+    }
+
+
+@app.post("/keys/clear")
+def clear_keys() -> Dict[str, Any]:
+    """The keys, forgotten - from the memory AND from the disk."""
+    for provider in PROVIDERS:
+        _session_keys.pop(provider["id"], None)
+    if os.path.exists(KEYS_FILE):
+        try:
+            os.remove(KEYS_FILE)
+        except OSError:
+            pass
+    return {"saved": True, "providers": list_key_providers()["providers"], "status": key_status()}

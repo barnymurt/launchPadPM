@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgentPad â€” Scrum Team AI Agents</title>
+    <title>AgentPad — Scrum Team AI Agents</title>
     <style>
         :root {
             --bg: #f5f7fa;
@@ -579,7 +579,7 @@
             background: #f0fdf4;
         }
         .skill-card-new.selected::after {
-            content: 'âœ“';
+            content: '✓';
             position: absolute;
             bottom: 4px;
             right: 6px;
@@ -1157,6 +1157,27 @@
     .answer-schema { margin-top: 6px; font-size: 10.5px; color: var(--text-muted); }
     .answer-schema .schema-fail { color: #991b1b; }
 
+
+    /* THE USER'S OWN KEYS ✓✓. */
+    .settings-note { font-size: 11.5px; color: var(--text-muted); margin: 6px 0 14px 0; line-height: 1.5; }
+    .settings-note code { font-family: ui-monospace, monospace; background: var(--bg); padding: 1px 5px; border-radius: 3px; font-size: 10.5px; }
+    .key-provider { border-top: 1px solid var(--border); padding: 12px 0; }
+    .key-provider:first-of-type { border-top: none; }
+    .key-provider-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+    .key-provider-name { font-weight: 600; font-size: 13px; }
+    .key-provider-state { font-size: 10.5px; padding: 2px 8px; border-radius: 10px; }
+    .key-provider-state.set { background: #d1fae5; color: #065f46; }
+    .key-provider-state.unset { background: #f1f5f9; color: var(--text-muted); }
+    .key-provider-meta { font-size: 10.5px; color: var(--text-muted); margin-bottom: 8px; font-family: ui-monospace, monospace; }
+    .key-provider-where { font-size: 10.5px; margin-bottom: 8px; }
+    .key-provider-where a { color: var(--accent); text-decoration: none; }
+    .key-row { display: flex; align-items: center; gap: 8px; }
+    .key-row .input-field { flex: 1; max-width: 340px; }
+    .key-actions { display: flex; align-items: center; gap: 10px; margin-top: 14px; }
+    .key-status { font-size: 11.5px; color: var(--text-muted); }
+    .key-status.ok { color: #065f46; }
+    .key-status.bad { color: #991b1b; }
+
 </style>
 </head>
 <body>
@@ -1174,53 +1195,53 @@
         <div class="nav-section">
             <div class="nav-section-title">Workspace</div>
             <div class="nav-item active" data-page="sprint-board">
-                <span class="nav-icon">ðŸ“‹</span> Sprint Board
+                <span class="nav-icon">📋</span> Sprint Board
             </div>
             <div class="nav-item" data-page="roadmap">
-                <span class="nav-icon">ðŸ—ºï¸</span> Roadmap
+                <span class="nav-icon">🗺️</span> Roadmap
             </div>
             <div class="nav-item" data-page="team">
-                <span class="nav-icon">ðŸ‘¥</span> Team
+                <span class="nav-icon">👥</span> Team
             </div>
             <div class="nav-item" data-page="ceremonies">
-                <span class="nav-icon">ðŸ”„</span> Ceremonies
+                <span class="nav-icon">🔄</span> Ceremonies
             </div>
             <div class="nav-item" data-page="lifecycle">
-                <span class="nav-icon">ðŸ”„</span> Lifecycle
+                <span class="nav-icon">🔄</span> Lifecycle
             </div>
             <div class="nav-item" data-page="agent-chat">
-                <span class="nav-icon">ðŸ¤–</span> Agent Chat
+                <span class="nav-icon">🤖</span> Agent Chat
                 <span class="nav-badge">12</span>
             </div>
         </div>
         <div class="nav-section">
             <div class="nav-section-title">Insights</div>
             <div class="nav-item" data-page="velocity">
-                <span class="nav-icon">ðŸ“Š</span> Velocity
+                <span class="nav-icon">📊</span> Velocity
             </div>
             <div class="nav-item" data-page="analytics">
-                <span class="nav-icon">ðŸ“ˆ</span> Analytics
+                <span class="nav-icon">📈</span> Analytics
             </div>
             <div class="nav-item" data-page="usage" id="nav-usage" style="display:none;">
-                <span class="nav-icon">ðŸ“Š</span> Usage
+                <span class="nav-icon">📊</span> Usage
             </div>
         </div>
         <div class="nav-section">
             <div class="nav-section-title">Configure</div>
             <div class="nav-item" data-page="connections">
-                <span class="nav-icon">ðŸ”—</span> Connections
+                <span class="nav-icon">🔗</span> Connections
             </div>
             <div class="nav-item" data-page="settings">
-                <span class="nav-icon">âš™ï¸</span> Settings
+                <span class="nav-icon">⚙️</span> Settings
             </div>
             <div class="nav-item" data-page="pricing">
-                <span class="nav-icon">ðŸ’³</span> Pricing
+                <span class="nav-icon">💳</span> Pricing
             </div>
         </div>
     </nav>
     <div style="padding: 12px; border-top: 1px solid var(--border);">
         <div class="nav-item" style="font-size: 12px; color: var(--text-muted);">
-            <span class="nav-icon">â„¹ï¸</span> v1.0.0
+            <span class="nav-icon">ℹ️</span> v1.0.0
         </div>
     </div>
 </aside>
@@ -1230,8 +1251,8 @@
     <header class="header">
         <div class="header-title" id="page-title">Sprint Board</div>
         <div class="header-actions">
-            <span id="sprint-info" style="font-size: 12px; color: var(--text-muted);">Sprint 4 â€” 10 days remaining</span>
-            <button class="btn" onclick="showToast('Filters applied')">ðŸ” Filters</button>
+            <span id="sprint-info" style="font-size: 12px; color: var(--text-muted);">Sprint 4 — 10 days remaining</span>
+            <button class="btn" onclick="showToast('Filters applied')">🔍 Filters</button>
             <button class="btn btn-primary" onclick="createTask()">+ Create Epic</button>
         </div>
     </header>
@@ -1247,7 +1268,7 @@
     <div class="page" id="page-roadmap">
         <div class="content">
             <div class="velocity-chart" style="margin-bottom: 16px;">
-                <h3>ðŸ“Š Sprint Velocity</h3>
+                <h3>📊 Sprint Velocity</h3>
                 <div class="velocity-bars" id="velocity-bars"></div>
             </div>
             <div class="roadmap-container">
@@ -1325,7 +1346,7 @@
             <!-- Left Panel: Agents & Skills -->
             <div class="agent-left-panel">
                 <div class="agent-left-header">
-                    <h3>ðŸ¤– Agents</h3>
+                    <h3>🤖 Agents</h3>
                 </div>
                 <!-- Lifecycle Stage Tabs -->
                 <div class="agent-squad-tabs" id="agent-squad-tabs"></div>
@@ -1333,7 +1354,7 @@
                 <div class="agent-chips-row" id="agent-chips-row"></div>
                 
                 <div class="agent-left-header" style="border-top: 1px solid var(--border); margin-top: 8px; padding-top: 8px;">
-                    <h3>ðŸŽ¯ Skills <span id="selected-skills-count" style="font-size:10px;background:var(--accent);color:white;padding:2px 6px;border-radius:8px;font-weight:normal;margin-left:6px;">0</span></h3>
+                    <h3>🎯 Skills <span id="selected-skills-count" style="font-size:10px;background:var(--accent);color:white;padding:2px 6px;border-radius:8px;font-weight:normal;margin-left:6px;">0</span></h3>
                 </div>
                 <div class="skills-scroll-area" id="skills-scroll-area">
                     <div class="skills-cards-grid" id="skills-cards-grid"></div>
@@ -1377,7 +1398,7 @@
     <div class="page" id="page-velocity">
         <div class="content">
             <div class="velocity-chart" style="margin-bottom: 16px;">
-                <h3>ðŸ“Š Sprint Velocity (Story Points)</h3>
+                <h3>📊 Sprint Velocity (Story Points)</h3>
                 <div class="velocity-bars" id="velocity-bars-full"></div>
             </div>
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
@@ -1422,7 +1443,7 @@
                 </div>
             </div>
             <div class="ceremony-card">
-                <h3>ðŸ“ˆ Activity Over Time</h3>
+                <h3>📈 Activity Over Time</h3>
                 <p style="margin-top: 8px;">Feature delivery and sprint activity chart would render here.</p>
             </div>
         </div>
@@ -1432,7 +1453,7 @@
     <div class="page" id="page-usage">
         <div class="content">
             <div style="margin-bottom: 24px;">
-                <h2 style="margin-bottom: 16px;">ðŸ“Š Skill Usage Telemetry</h2>
+                <h2 style="margin-bottom: 16px;">📊 Skill Usage Telemetry</h2>
                 <div id="usage-stats-cards" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
                     <div class="ceremony-card">
                         <h3>Total Invocations</h3>
@@ -1454,12 +1475,12 @@
             </div>
 
             <div class="ceremony-card" style="margin-bottom: 16px;">
-                <h3>ðŸ† Top 10 Most Used Skills</h3>
+                <h3>🏆 Top 10 Most Used Skills</h3>
                 <div id="usage-top-skills" style="margin-top: 12px;"></div>
             </div>
 
             <div class="ceremony-card">
-                <h3>ðŸ“‹ All Skill Usage</h3>
+                <h3>📋 All Skill Usage</h3>
                 <div id="usage-all-skills" style="margin-top: 12px; max-height: 400px; overflow-y: auto;"></div>
             </div>
         </div>
@@ -1472,15 +1493,15 @@
                 <h2 style="font-size: 16px; margin-bottom: 16px;">Connections & Integrations</h2>
                 <div style="display: grid; gap: 12px;">
                     <div class="ceremony-card" style="display: flex; align-items: center; gap: 16px;">
-                        <span style="font-size: 28px;">ðŸ¤–</span>
+                        <span style="font-size: 28px;">🤖</span>
                         <div style="flex: 1;">
                             <div style="font-weight: 600; font-size: 13px;">AI Provider</div>
-                            <div style="font-size: 11px; color: var(--text-muted);">MiniMax (default) â€” OpenAI, Anthropic, Perplexity also available</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">MiniMax (default) — OpenAI, Anthropic, Perplexity also available</div>
                         </div>
                         <span class="status-badge connected"><span style="width:6px;height:6px;border-radius:50%;background:#22c55e;display:inline-block;"></span> Connected</span>
                     </div>
                     <div class="ceremony-card" style="display: flex; align-items: center; gap: 16px;">
-                        <span style="font-size: 28px;">ðŸ”</span>
+                        <span style="font-size: 28px;">🔍</span>
                         <div style="flex: 1;">
                             <div style="font-weight: 600; font-size: 13px;">Web Search (DuckDuckGo)</div>
                             <div style="font-size: 11px; color: var(--text-muted);">Enables agents to search for real-time context</div>
@@ -1488,7 +1509,7 @@
                         <span class="status-badge disconnected"><span style="width:6px;height:6px;border-radius:50%;background:#dc2626;display:inline-block;"></span> Off</span>
                     </div>
                     <div class="ceremony-card" style="display: flex; align-items: center; gap: 16px;">
-                        <span style="font-size: 28px;">ðŸ“Š</span>
+                        <span style="font-size: 28px;">📊</span>
                         <div style="flex: 1;">
                             <div style="font-weight: 600; font-size: 13px;">Notion Workspace</div>
                             <div style="font-size: 11px; color: var(--text-muted);">Sync product docs and specs to Notion</div>
@@ -1496,7 +1517,7 @@
                         <button class="btn">Connect</button>
                     </div>
                     <div class="ceremony-card" style="display: flex; align-items: center; gap: 16px;">
-                        <span style="font-size: 28px;">ðŸ’¬</span>
+                        <span style="font-size: 28px;">💬</span>
                         <div style="flex: 1;">
                             <div style="font-weight: 600; font-size: 13px;">Slack</div>
                             <div style="font-size: 11px; color: var(--text-muted);">Post sprint updates and notifications</div>
@@ -1504,7 +1525,7 @@
                         <button class="btn">Connect</button>
                     </div>
                     <div class="ceremony-card" style="display: flex; align-items: center; gap: 16px;">
-                        <span style="font-size: 28px;">ðŸ“±</span>
+                        <span style="font-size: 28px;">📱</span>
                         <div style="flex: 1;">
                             <div style="font-weight: 600; font-size: 13px;">Telegram</div>
                             <div style="font-size: 11px; color: var(--text-muted);">Bot notifications and team updates</div>
@@ -1522,6 +1543,7 @@
             <div class="settings-grid">
                 <div class="settings-nav">
                     <div class="settings-nav-item active" data-settings="general">General</div>
+                    <div class="settings-nav-item" data-settings="keys">API keys</div>
                     <div class="settings-nav-item" data-settings="agents">Agents</div>
                     <div class="settings-nav-item" data-settings="providers">AI Providers</div>
                     <div class="settings-nav-item" data-settings="orchestration">Orchestration</div>
@@ -1591,10 +1613,28 @@
                         </div>
                         <button class="btn btn-primary" style="margin-top: 12px;" onclick="saveProviderSettings()">Save Provider Settings</button>
                     </div>
-                </div>
-            </div>
         </div>
     </div>
+
+
+
+                    <div class="settings-content" id="settings-panel-keys" style="display: none;">
+                        <div class="settings-section">
+                            <h3>Your own LLM API keys</h3>
+                            <p class="settings-note">
+                                Put your own key in and the agents use it. The key is written to
+                                <code>.secrets/provider-keys.json</code> on this machine, with the permissions
+                                only you can read, and it is never put in git. You can also set the
+                                environment variable instead, and the app will use that.
+                            </p>
+                            <div id="key-providers"></div>
+                            <div class="key-actions">
+                                <button class="btn btn-primary" onclick="saveProviderKeys()">Save the keys</button>
+                                <button class="btn" onclick="clearProviderKeys()">Forget them</button>
+                                <span class="key-status" id="key-status"></span>
+                            </div>
+                </div>
+            </div>
 
                 <div class="settings-content" id="settings-panel-admin" style="display: none;">
                     <div class="settings-section">
@@ -1625,12 +1665,12 @@
                     <div class="price">$0<span>/mo</span></div>
                     <div class="credits">20 credits / month</div>
                     <div class="pricing-features">
-                        <div class="pricing-feature"><span class="check">âœ“</span> Sprint Board</div>
-                        <div class="pricing-feature"><span class="check">âœ“</span> 1 Active Project</div>
-                        <div class="pricing-feature"><span class="check">âœ“</span> AI Agent Chat</div>
-                        <div class="pricing-feature"><span class="check">âœ“</span> 3 AI Providers</div>
-                        <div class="pricing-feature" style="color: var(--text-muted);"><span>âœ—</span> Multi-agent Orchestration</div>
-                        <div class="pricing-feature" style="color: var(--text-muted);"><span>âœ—</span> Web Search</div>
+                        <div class="pricing-feature"><span class="check">✓</span> Sprint Board</div>
+                        <div class="pricing-feature"><span class="check">✓</span> 1 Active Project</div>
+                        <div class="pricing-feature"><span class="check">✓</span> AI Agent Chat</div>
+                        <div class="pricing-feature"><span class="check">✓</span> 3 AI Providers</div>
+                        <div class="pricing-feature" style="color: var(--text-muted);"><span>✗</span> Multi-agent Orchestration</div>
+                        <div class="pricing-feature" style="color: var(--text-muted);"><span>✗</span> Web Search</div>
                     </div>
                     <button class="btn" style="width: 100%;">Current Plan</button>
                 </div>
@@ -1639,12 +1679,12 @@
                     <div class="price">$29<span>/mo</span></div>
                     <div class="credits">200 credits / month</div>
                     <div class="pricing-features">
-                        <div class="pricing-feature"><span class="check">âœ“</span> All Free features</div>
-                        <div class="pricing-feature"><span class="check">âœ“</span> 5 Active Projects</div>
-                        <div class="pricing-feature"><span class="check">âœ“</span> Multi-agent Orchestration</div>
-                        <div class="pricing-feature"><span class="check">âœ“</span> Web Search</div>
-                        <div class="pricing-feature"><span class="check">âœ“</span> Notion + Slack</div>
-                        <div class="pricing-feature"><span class="check">âœ“</span> Priority Support</div>
+                        <div class="pricing-feature"><span class="check">✓</span> All Free features</div>
+                        <div class="pricing-feature"><span class="check">✓</span> 5 Active Projects</div>
+                        <div class="pricing-feature"><span class="check">✓</span> Multi-agent Orchestration</div>
+                        <div class="pricing-feature"><span class="check">✓</span> Web Search</div>
+                        <div class="pricing-feature"><span class="check">✓</span> Notion + Slack</div>
+                        <div class="pricing-feature"><span class="check">✓</span> Priority Support</div>
                     </div>
                     <button class="btn" style="width: 100%;">Upgrade</button>
                 </div>
@@ -1653,12 +1693,12 @@
                     <div class="price" style="color: var(--accent);">$79<span>/mo</span></div>
                     <div class="credits">1,000 credits / month</div>
                     <div class="pricing-features">
-                        <div class="pricing-feature"><span class="check">âœ“</span> All Starter features</div>
-                        <div class="pricing-feature"><span class="check">âœ“</span> Unlimited Projects</div>
-                        <div class="pricing-feature"><span class="check">âœ“</span> API Access</div>
-                        <div class="pricing-feature"><span class="check">âœ“</span> Custom Skills</div>
-                        <div class="pricing-feature"><span class="check">âœ“</span> Team Seats (3)</div>
-                        <div class="pricing-feature"><span class="check">âœ“</span> Dedicated Support</div>
+                        <div class="pricing-feature"><span class="check">✓</span> All Starter features</div>
+                        <div class="pricing-feature"><span class="check">✓</span> Unlimited Projects</div>
+                        <div class="pricing-feature"><span class="check">✓</span> API Access</div>
+                        <div class="pricing-feature"><span class="check">✓</span> Custom Skills</div>
+                        <div class="pricing-feature"><span class="check">✓</span> Team Seats (3)</div>
+                        <div class="pricing-feature"><span class="check">✓</span> Dedicated Support</div>
                     </div>
                     <button class="btn btn-primary" style="width: 100%;">Upgrade</button>
                 </div>
@@ -1667,12 +1707,12 @@
                     <div class="price">$199<span>/mo</span></div>
                     <div class="credits">5,000 credits / month</div>
                     <div class="pricing-features">
-                        <div class="pricing-feature"><span class="check">âœ“</span> All Growth features</div>
-                        <div class="pricing-feature"><span class="check">âœ“</span> Unlimited Team Seats</div>
-                        <div class="pricing-feature"><span class="check">âœ“</span> White-label</div>
-                        <div class="pricing-feature"><span class="check">âœ“</span> Custom Integrations</div>
-                        <div class="pricing-feature"><span class="check">âœ“</span> SLA Guarantee</div>
-                        <div class="pricing-feature"><span class="check">âœ“</span> Enterprise Onboarding</div>
+                        <div class="pricing-feature"><span class="check">✓</span> All Growth features</div>
+                        <div class="pricing-feature"><span class="check">✓</span> Unlimited Team Seats</div>
+                        <div class="pricing-feature"><span class="check">✓</span> White-label</div>
+                        <div class="pricing-feature"><span class="check">✓</span> Custom Integrations</div>
+                        <div class="pricing-feature"><span class="check">✓</span> SLA Guarantee</div>
+                        <div class="pricing-feature"><span class="check">✓</span> Enterprise Onboarding</div>
                     </div>
                     <button class="btn" style="width: 100%;">Contact Sales</button>
                 </div>
@@ -1682,18 +1722,18 @@
 </main>
 
 <script>
-// **=> THE API IS **THE SAME ORIGIN** âœ“âœ“.** **=> THE SERVER SERVES THIS PAGE
-// **=> ITSELF** âœ“âœ“, **=> SO THERE IS **NO PORT** TO NAME âœ“âœ“, **=> AND NO PORT
-// **=> TO GET WRONG âœ“âœ“.**
+// **=> THE API IS **THE SAME ORIGIN** ✓✓.** **=> THE SERVER SERVES THIS PAGE
+// **=> ITSELF** ✓✓, **=> SO THERE IS **NO PORT** TO NAME ✓✓, **=> AND NO PORT
+// **=> TO GET WRONG ✓✓.**
 //
-// **=> AND THE OLD LINE HARD-CODED **PORT 3000** âœ“âœ“, **=> WHICH MATCHED
-// **=> NEITHER** OF THE SERVER'S OWN PORTS âœ“âœ“ (`APP_PORT` âœ“âœ“, **=> 8000** FOR
-// **=> STAGING **=> AND 8001** FOR LIVE âœ“âœ“) â€” **=> SO **THE UI'S FETCHES WERE
-// **=> GOING TO A PORT NOTHING SERVED âœ“âœ“.**
+// **=> AND THE OLD LINE HARD-CODED **PORT 3000** ✓✓, **=> WHICH MATCHED
+// **=> NEITHER** OF THE SERVER'S OWN PORTS ✓✓ (`APP_PORT` ✓✓, **=> 8000** FOR
+// **=> STAGING **=> AND 8001** FOR LIVE ✓✓) — **=> SO **THE UI'S FETCHES WERE
+// **=> GOING TO A PORT NOTHING SERVED ✓✓.**
 //
-// **=> AND **A RELATIVE PATH** âœ“âœ“ IS **BETTER** âœ“âœ“: **=> IT WORKS ON **ANY
-// **=> PORT** âœ“âœ“, **=> ON **ANY** HOST âœ“âœ“, **=> INCLUDING **THE PEER'S PHONE**
-// **=> âœ“âœ“, **=> WHICH IS **WHERE THE APPROVAL FLOW LIVES** âœ“âœ“.**
+// **=> AND **A RELATIVE PATH** ✓✓ IS **BETTER** ✓✓: **=> IT WORKS ON **ANY
+// **=> PORT** ✓✓, **=> ON **ANY** HOST ✓✓, **=> INCLUDING **THE PEER'S PHONE**
+// **=> ✓✓, **=> WHICH IS **WHERE THE APPROVAL FLOW LIVES** ✓✓.**
 const API_BASE = '';
 let agents = [];
 let currentAgent = null;
@@ -1813,7 +1853,7 @@ async function loadAgents() {
         agents = data.roles;
         updateProviderStatus();
     } catch (e) {
-        showToast('Failed to load agents â€” is server running?', true);
+        showToast('Failed to load agents — is server running?', true);
     }
 }
 
@@ -1873,7 +1913,7 @@ async function loadUsageData() {
                 <div style="padding: 12px 0; border-bottom: 1px solid var(--border);">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
                         <strong>${s.name}</strong>
-                        <span>${s.total_invocations} total / ${s.successful_invocations} âœ“ / ${s.failed_invocations} âœ—</span>
+                        <span>${s.total_invocations} total / ${s.successful_invocations} ✓ / ${s.failed_invocations} ✗</span>
                     </div>
                     <div style="font-size: 12px; color: var(--text-muted);">
                         Last used: ${s.last_used ? new Date(s.last_used).toLocaleString() : 'Never'} | 
@@ -1892,12 +1932,12 @@ async function loadUsageData() {
 }
 
 const stageIconMap = {
-    'All': 'ðŸ“‹',
-    'Discovery': 'ðŸ”­',
-    'Strategy': 'ðŸŽ¯',
-    'Build': 'ðŸ”§',
-    'Launch': 'ðŸš€',
-    'Iteration': 'ðŸ”„',
+    'All': '📋',
+    'Discovery': '🔭',
+    'Strategy': '🎯',
+    'Build': '🔧',
+    'Launch': '🚀',
+    'Iteration': '🔄',
 };
 
 const stageColorMap = {
@@ -1934,7 +1974,7 @@ function renderSkillsPage() {
     list.innerHTML = `
         <div class="skills-header">
             <h3>Skills</h3>
-            <p>Skill Library Â· ${totalCount} skills across ${Object.keys(skillStagesData).length} lifecycle stages</p>
+            <p>Skill Library · ${totalCount} skills across ${Object.keys(skillStagesData).length} lifecycle stages</p>
         </div>
         <div class="skills-filters">
             <div class="filter-row">
@@ -1993,7 +2033,7 @@ function renderSkillsList() {
     }
 
     return skills.map(skill => {
-        const icon = stageIconMap[skill.stage] || 'ðŸ“Œ';
+        const icon = stageIconMap[skill.stage] || '📌';
         const color = getStageColor(skill.stage);
         const desc = cleanDesc(skill.description || '');
         
@@ -2054,7 +2094,7 @@ function renderRoadmap() {
             return `<div class="roadmap-cell">${phase ? `<div class="roadmap-bar ${phase.c}"></div>` : ''}</div>`;
         }).join('');
         return `<div class="roadmap-row">
-            <div class="roadmap-epic">ðŸ“Œ ${row.epic}</div>
+            <div class="roadmap-epic">📌 ${row.epic}</div>
             ${cells}
         </div>`;
     }).join('');
@@ -2076,21 +2116,21 @@ function renderTeamBoard() {
 
 function renderCeremonies() {
     const ceremonies = [
-        { icon: 'ðŸ“‹', name: 'Sprint Planning', desc: 'Define sprint goal and commit to deliverables. All team members participate.', cadence: 'Bi-weekly', duration: '2 hours', participants: 'Full Team' },
-        { icon: 'ðŸ“ž', name: 'Daily Standup', desc: 'Daily sync on progress, blockers, and today\'s plan. Keep it to 15 minutes max.', cadence: 'Daily', duration: '15 min', participants: 'Full Team' },
-        { icon: 'ðŸ”', name: 'Sprint Review', desc: 'Demonstrate completed work to stakeholders. Gather feedback on deliverables.', cadence: 'Bi-weekly', duration: '1 hour', participants: 'Team + Stakeholders' },
-        { icon: 'ðŸ”§', name: 'Sprint Retrospective', desc: 'Reflect on what went well, what didn\'t, and how to improve. Continuous improvement.', cadence: 'Bi-weekly', duration: '1 hour', participants: 'Full Team' },
-        { icon: 'ðŸ“', name: 'Backlog Refinement', desc: 'Groom upcoming stories. Clarify requirements, estimate effort, prioritize backlog.', cadence: 'Weekly', duration: '1 hour', participants: 'PM + Dev + Design' },
-        { icon: 'ðŸŽ¯', name: 'Sprint Goal Review', desc: 'Mid-sprint check on progress toward sprint goal. Adjust if needed.', cadence: 'Mid-sprint', duration: '30 min', participants: 'Full Team' },
+        { icon: '📋', name: 'Sprint Planning', desc: 'Define sprint goal and commit to deliverables. All team members participate.', cadence: 'Bi-weekly', duration: '2 hours', participants: 'Full Team' },
+        { icon: '📞', name: 'Daily Standup', desc: 'Daily sync on progress, blockers, and today\'s plan. Keep it to 15 minutes max.', cadence: 'Daily', duration: '15 min', participants: 'Full Team' },
+        { icon: '🔍', name: 'Sprint Review', desc: 'Demonstrate completed work to stakeholders. Gather feedback on deliverables.', cadence: 'Bi-weekly', duration: '1 hour', participants: 'Team + Stakeholders' },
+        { icon: '🔧', name: 'Sprint Retrospective', desc: 'Reflect on what went well, what didn\'t, and how to improve. Continuous improvement.', cadence: 'Bi-weekly', duration: '1 hour', participants: 'Full Team' },
+        { icon: '📝', name: 'Backlog Refinement', desc: 'Groom upcoming stories. Clarify requirements, estimate effort, prioritize backlog.', cadence: 'Weekly', duration: '1 hour', participants: 'PM + Dev + Design' },
+        { icon: '🎯', name: 'Sprint Goal Review', desc: 'Mid-sprint check on progress toward sprint goal. Adjust if needed.', cadence: 'Mid-sprint', duration: '30 min', participants: 'Full Team' },
     ];
     document.getElementById('ceremonies-grid').innerHTML = ceremonies.map(c => `
         <div class="ceremony-card">
             <h3>${c.icon} ${c.name}</h3>
             <p>${c.desc}</p>
             <div class="ceremony-info">
-                <span>ðŸ”„ ${c.cadence}</span>
-                <span>â± ${c.duration}</span>
-                <span>ðŸ‘¥ ${c.participants}</span>
+                <span>🔄 ${c.cadence}</span>
+                <span>⏱ ${c.duration}</span>
+                <span>👥 ${c.participants}</span>
             </div>
         </div>
     `).join('');
@@ -2182,7 +2222,7 @@ let selectedSkills = new Set();
 
 const agentSquads = {
     // Lifecycle Stage: Discovery
-    'ðŸ”­ Discovery': [
+    '🔭 Discovery': [
         'Market Research Analyst',
         'User Researcher', 
         'Opportunity Analyst',
@@ -2190,7 +2230,7 @@ const agentSquads = {
         'Technical Researcher'
     ],
     // Lifecycle Stage: Strategy
-    'ðŸŽ¯ Strategy': [
+    '🎯 Strategy': [
         'Product Manager',
         'Head of Product',
         'Business Analyst',
@@ -2199,7 +2239,7 @@ const agentSquads = {
         'Analytics Lead'
     ],
     // Lifecycle Stage: Build
-    'ðŸ”§ Build': [
+    '🔧 Build': [
         'UX Designer',
         'UI Designer',
         'Brand Designer',
@@ -2213,7 +2253,7 @@ const agentSquads = {
         'ML Engineer'
     ],
     // Lifecycle Stage: Launch
-    'ðŸš€ Launch': [
+    '🚀 Launch': [
         'Product Marketing Manager',
         'Growth Hacker',
         'Content Strategist',
@@ -2223,7 +2263,7 @@ const agentSquads = {
         'Release Manager'
     ],
     // Lifecycle Stage: Iteration
-    'ðŸ”„ Iteration': [
+    '🔄 Iteration': [
         'Scrum Master',
         'Agile Coach',
         'Delivery Manager',
@@ -2232,13 +2272,13 @@ const agentSquads = {
         'Performance Tester'
     ],
     // Cross-cutting
-    'ðŸ”’ Security': [
+    '🔒 Security': [
         'Security Engineer',
         'Security Architect',
         'Compliance Officer',
         'Privacy Specialist'
     ],
-    'â˜ï¸ Infrastructure': [
+    '🏗️ Infrastructure': [
         'Platform Engineer',
         'Site Reliability Engineer',
         'Cloud Infrastructure Expert'
@@ -2312,7 +2352,7 @@ const agentSkillMap = {
     'Head of Product (CEO)': ['product-vision', 'roadmap-planning', 'business-case-modeling', 'feature-prioritization', 'saas-metrics-analysis', 'kpi-tracking', 'product-okrs', 'stakeholder-analysis', 'devils-advocate', 'competitive-intelligence']
 };
 
-let selectedSquadTab = 'ðŸ”­ Discovery';
+let selectedSquadTab = '🔭 Discovery';
 
 function initAgentChat() {
     renderSquadTabs();
@@ -2356,13 +2396,13 @@ function renderAgentSquads() {
 }
 
 const squadIconMap = {
-    'ðŸ”­ Discovery': 'ðŸ”­',
-    'ðŸŽ¯ Strategy': 'ðŸŽ¯',
-    'ðŸ”§ Build': 'ðŸ”§',
-    'ðŸš€ Launch': 'ðŸš€',
-    'ðŸ”„ Iteration': 'ðŸ”„',
-    'ðŸ”’ Security': 'ðŸ”’',
-    'â˜ï¸ Infrastructure': 'â˜ï¸'
+    '🔭 Discovery': '🔭',
+    '🎯 Strategy': '🎯',
+    '🔧 Build': '🔧',
+    '🚀 Launch': '🚀',
+    '🔄 Iteration': '🔄',
+    '🔒 Security': '🔒',
+    '🏗️ Infrastructure': '🏗️'
 };
 
 function selectAgentChip(agent, squad, element) {
@@ -2403,7 +2443,7 @@ function renderSkillsCardsForAgent(agent) {
     }
     
     container.innerHTML = skills.map(skill => {
-        const icon = stageIconMap[skill.stage] || 'ðŸ“Œ';
+        const icon = stageIconMap[skill.stage] || '📌';
         const desc = cleanDesc(skill.description || '');
         const isSelected = selectedSkills.has(skill.name);
         const color = getStageColor(skill.stage);
@@ -2576,6 +2616,12 @@ function setupSettings() {
             document.querySelectorAll('.settings-content').forEach(p => p.style.display = 'none');
             const el = document.getElementById(`settings-panel-${panel}`);
             if (el) el.style.display = 'block';
+            // THE KEYS ARE FETCHED WHEN THE PANEL OPENS - NOT ON EVERY PAGE
+            // LOAD - BECAUSE THEY ARE THE PEER'S AND THEY ARE NOT NEEDED
+            // UNTIL THEY ARE ASKED FOR.
+            if (panel === 'keys') {
+                loadKeyProviders();
+            }
         });
     });
 }
@@ -2622,7 +2668,7 @@ function updateAdminToggleUI() {
 }
 
 function createTask() {
-    showToast('Create Epic dialog â€” coming soon');
+    showToast('Create Epic dialog — coming soon');
 }
 
 function showToast(msg, isError = false) {
@@ -2762,7 +2808,7 @@ init();
             const also = seam.also ? ' <span class="seam-skill">' + escapeHtmlValue(seam.also) + '</span>' : '';
             return '<div class="seam-row">'
                 + '<span>' + escapeHtmlValue(from) + '</span>'
-                + '<span class="seam-arrow">â†’</span>'
+                + '<span class="seam-arrow">→</span>'
                 + '<span>' + escapeHtmlValue(to) + '</span>'
                 + '<span class="seam-skill">' + escapeHtmlValue(seam.skill) + '</span>' + also
                 + '</div>';
@@ -2804,10 +2850,10 @@ init();
 
         let html = '<div class="loop-path">';
         path.forEach((skill, index) => {
-            if (index) html += '<span class="seam-arrow">â†’</span>';
+            if (index) html += '<span class="seam-arrow">→</span>';
             html += '<span class="loop-step on-the-loop">' + escapeHtmlValue(skill) + '</span>';
         });
-        html += '<span class="seam-arrow">â†’</span>';
+        html += '<span class="seam-arrow">→</span>';
         html += '<span class="loop-step on-the-loop">' + escapeHtmlValue(titleOf[returns] || returns) + '</span>';
         html += '</div>';
         if (driven.length) {
@@ -2862,6 +2908,105 @@ init();
             }
         }
         return html;
+    }
+
+
+    // ============================================================
+    // THE USER'S OWN KEYS.
+    // The providers come from the server, so the model, the
+    // environment variable and where to get the key are all data.
+    // ============================================================
+    let keyProviders = [];
+
+    async function loadKeyProviders() {
+        try {
+            const res = await fetch(`${API_BASE}/keys/providers`);
+            const data = await res.json();
+            keyProviders = data.providers || [];
+            renderKeyProviders();
+        } catch (e) {
+            const el = document.getElementById('key-providers');
+            if (el) el.innerHTML = '<p class="settings-note">Could not load the providers: ' + escapeHtmlValue(e.message) + '</p>';
+        }
+    }
+
+    function renderKeyProviders() {
+        const host = document.getElementById('key-providers');
+        if (!host) return;
+        host.innerHTML = keyProviders.map(provider => {
+            const state = provider.has_key
+                ? '<span class="key-provider-state set">set</span>'
+                : '<span class="key-provider-state unset">not set</span>';
+            const hint = provider.hint ? ' &middot; ' + escapeHtmlValue(provider.hint) : '';
+            return '<div class="key-provider">'
+                + '<div class="key-provider-head">'
+                + '<span class="key-provider-name">' + escapeHtmlValue(provider.name) + '</span>'
+                + state
+                + '</div>'
+                + '<div class="key-provider-meta">'
+                + escapeHtmlValue(provider.model) + ' &middot; ' + escapeHtmlValue(provider.env) + hint
+                + '</div>'
+                + '<div class="key-provider-where">get one at <a href="' + escapeHtmlValue(provider.where)
+                + '" target="_blank" rel="noreferrer">' + escapeHtmlValue(provider.where) + '</a></div>'
+                + '<div class="key-row">'
+                + '<input class="input-field" type="password" placeholder="paste the key" '
+                + 'id="key-input-' + escapeHtmlValue(provider.id) + '" autocomplete="off" spellcheck="false">'
+                + '</div>'
+                + '</div>';
+        }).join('');
+    }
+
+    async function saveProviderKeys() {
+        const status = document.getElementById('key-status');
+        const payload = {};
+        for (const provider of keyProviders) {
+            const input = document.getElementById('key-input-' + provider.id);
+            if (input && input.value.trim()) {
+                payload[provider.id] = input.value.trim();
+            }
+        }
+        if (!Object.keys(payload).length) {
+            status.className = 'key-status bad';
+            status.textContent = 'No key was pasted, so nothing was saved.';
+            return;
+        }
+        try {
+            const res = await fetch(`${API_BASE}/keys`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if (data.saved) {
+                status.className = 'key-status ok';
+                status.textContent = 'Saved. The keys are in ' + (data.providers[0] ? '' : '') + '.secrets/provider-keys.json and they survive a restart.';
+                keyProviders = data.providers || keyProviders;
+                renderKeyProviders();
+                updateProviderStatus();
+            } else {
+                status.className = 'key-status bad';
+                status.textContent = 'The server did not save them.';
+            }
+        } catch (e) {
+            status.className = 'key-status bad';
+            status.textContent = 'Could not save: ' + e.message;
+        }
+    }
+
+    async function clearProviderKeys() {
+        const status = document.getElementById('key-status');
+        try {
+            const res = await fetch(`${API_BASE}/keys/clear`, { method: 'POST' });
+            const data = await res.json();
+            keyProviders = data.providers || [];
+            renderKeyProviders();
+            updateProviderStatus();
+            status.className = 'key-status';
+            status.textContent = 'The keys are forgotten.';
+        } catch (e) {
+            status.className = 'key-status bad';
+            status.textContent = 'Could not clear them: ' + e.message;
+        }
     }
 
 </script>
